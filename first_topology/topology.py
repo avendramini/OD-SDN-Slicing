@@ -29,9 +29,6 @@ class Topology(Topo):
         for i in range(N_HOSTS):
             self.addHost("h%d" % (i + 1), inNamespace=True, ip=f"192.168.0.{i+1}/24",mac=f"00:00:00:00:00:{i:02x}")
             
- 
-
-
 
         # Add router links
         for link in LINKS:

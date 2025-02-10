@@ -28,7 +28,14 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
-        self.mac_to_port = {}
+        self.mac_to_port = {
+            "0000000000000001": {},
+            "0000000000000002": {},
+            "0000000000000003": {},
+            "0000000000000004": {},
+            "0000000000000005": {}
+        }
+
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):

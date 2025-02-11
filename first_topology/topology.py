@@ -33,8 +33,6 @@ class Topology(Topo):
     def __init__(self):
         Topo.__init__(self)
         
-        link_config = dict(bw=10)
-        host_link_config = dict()
         
         for i in range(N_SWITCHES):
             sconfig = {"dpid": "%016x" % (i + 1)}

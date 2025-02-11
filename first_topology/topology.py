@@ -45,8 +45,9 @@ class Topology(Topo):
             self.addSwitch("s%d" % (i + 1), **sconfig)
         
         for i in range(N_HOSTS):
-            self.addHost("h%d" % (i + 1), inNamespace=True, ip=f"192.168.1.{i+1}/24", mac=f"00:00:00:00:01:{i+1:02x}")
-        
+            host=self.addHost("h%d" % (i + 1), inNamespace=True, ip=f"192.168.1.{i+1}/24", mac=f"00:00:00:00:01:{i+1:02x}")
+            host.cmd("sysctl net.ipv6.conf.all.disable_ipv6=1")
+
         for link in LINKS:
             self.addLink(link[0], link[1], **link_config)
         

@@ -144,8 +144,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
             # ignore lldp packet
             return
-        dst = eth.dst
-        src = eth.src
+        
+        dst= eth.dst
+        src=eth.src
+
 
         dpid = format(datapath.id, "d").zfill(16)
         self.mac_to_port.setdefault(dpid, {})
@@ -154,10 +156,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         # learn a mac address to avoid FLOOD next time.
         #self.mac_to_port[dpid][src] = in_port
-        print(dst)
+        #print(dst)
         if dst in self.mac_to_port[dpid]:
             out_port = self.mac_to_port[dpid][dst]
-            print(out_port)
+            #print(out_port)
         else:
             out_port = ofproto.OFPP_FLOOD
 

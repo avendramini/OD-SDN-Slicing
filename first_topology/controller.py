@@ -154,12 +154,11 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         # learn a mac address to avoid FLOOD next time.
         #self.mac_to_port[dpid][src] = in_port
-        print(dpid)
+        print(dst)
         if dst in self.mac_to_port[dpid]:
             out_port = self.mac_to_port[dpid][dst]
             print(out_port)
         else:
-            print("FLOOD")
             out_port = ofproto.OFPP_FLOOD
 
         actions = [parser.OFPActionOutput(out_port)]

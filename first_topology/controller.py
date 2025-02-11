@@ -155,7 +155,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             dst_ip = pkt_ipv4.dst
         else:
             return
-        print(src_ip+"-"+dst_ip)
+        #print(src_ip+"-"+dst_ip)
         dpid = format(datapath.id, "d").zfill(16)
         self.mac_to_port.setdefault(dpid, {})
 
@@ -163,6 +163,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if dst_ip in self.mac_to_port[dpid]:
             out_port = self.mac_to_port[dpid][dst_ip]
+            print(out_port)
         else:
             out_port = ofproto.OFPP_FLOOD
 

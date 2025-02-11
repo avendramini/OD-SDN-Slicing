@@ -1,0 +1,3 @@
+[submodule "externals/ryu"]
+	path = externals/ryu
+	url = git@github.com:faucetsdn/ryu.git

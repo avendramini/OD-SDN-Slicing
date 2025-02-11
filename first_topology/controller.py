@@ -133,6 +133,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         if ev.msg.msg_len < ev.msg.total_len:
             self.logger.debug("packet truncated: only %s of %s bytes",
                               ev.msg.msg_len, ev.msg.total_len)
+        print("ciao sono qua")
         msg = ev.msg
         datapath = msg.datapath
         ofproto = datapath.ofproto
@@ -163,7 +164,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if dst_ip in self.mac_to_port[dpid]:
             out_port = self.mac_to_port[dpid][dst_ip]
-            print(out_port)
+            #print(out_port)
         else:
             out_port = ofproto.OFPP_FLOOD
 

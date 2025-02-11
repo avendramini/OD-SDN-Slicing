@@ -145,31 +145,30 @@ class SimpleSwitch13(app_manager.RyuApp):
             # ignore lldp packet
             return
         
-        dst= eth.dst
-        src=eth.src
+        dst = eth.dst
+        src = eth.src
 
-
+        pkt_ipv4 = pkt.get_protocol(ipv4.ipv4)
+        if pkt_ipv4:
+            src_ip = pkt_ipv4.src
+            dst_ip = pkt_ipv4.dst
+        else:
+            return
+        print(src_ip+"-"+dst_ip)
         dpid = format(datapath.id, "d").zfill(16)
         self.mac_to_port.setdefault(dpid, {})
 
-        self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
+        self.logger.info("packet in %s %s %s %s", dpid, src_ip, dst_ip, in_port)
 
-        # learn a mac address to avoid FLOOD next time.
-        #self.mac_to_port[dpid][src] = in_port
-        #print(dst)
-        if dst in self.mac_to_port[dpid]:
-            out_port = self.mac_to_port[dpid][dst]
-            #print(out_port)
+        if dst_ip in self.mac_to_port[dpid]:
+            out_port = self.mac_to_port[dpid][dst_ip]
         else:
             out_port = ofproto.OFPP_FLOOD
 
         actions = [parser.OFPActionOutput(out_port)]
 
-        # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
             match = parser.OFPMatch(in_port=in_port, eth_dst=dst, eth_src=src)
-            # verify if we have a valid buffer_id, if yes avoid to send both
-            # flow_mod & packet_out
             if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                 self.add_flow(datapath, 1, match, actions, msg.buffer_id)
                 return
@@ -180,5 +179,5 @@ class SimpleSwitch13(app_manager.RyuApp):
             data = msg.data
 
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-                                  in_port=in_port, actions=actions, data=data)
+                      in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)

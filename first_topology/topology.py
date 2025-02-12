@@ -13,20 +13,23 @@ LINKS = [
     ["s1", "s2",1,1],
     ["s1", "s3",2,1],
     ["s1", "s4",3,1],
-    ["s2", "s5",2,1]
+    ["s4", "s5",2,1],
+    ["s4", "s6",3,1]
 ]
 
 HOST_LINKS = [
-    ["h1", "s1",1,4],  # DB Server
-    ["h2", "s2",1,3],  # PC Admin 1
-    ["h3", "s2",1,4],  # PC Admin 2
-    ["h4", "s2",1,5],  # Sensori IoT
-    ["h5", "s3",1,2],  # PC Negozio 1
-    ["h6", "s3",1,3],  # PC Negozio 2
-    ["h7", "s4",1,2],  # Web Server
-    ["h8", "s4",1,3],  # Wi-Fi AP
-    ["h9", "s5",1,2],  # Telecamera IP
-    ["h10", "s5",1,3]  # Server Sicurezza
+    ["h1", "s1",1,3],  # DB Server
+    ["h2", "s1",1,4],  # PC Admin 1
+    ["h3", "s1",1,5],  # PC Admin 2
+    ["h4", "s2",1,2],  # Telecamera IP
+    ["h5", "s2",1,3],  # Server Sicurezza
+    ["h6", "s3",1,2],  # PC Negozio 1
+    ["h7", "s3",1,3],  # PC Negozio Controllo
+    ["h8", "s5",1,2],   # PC Controllo sensori
+    ["h9", "s5",1,3],   # Sensori IoT
+    ["h10", "s6",1,2],  # Web Server
+    ["h11", "s6",1,3],  # Wi-Fi AP
+    ["h12", "s6",1,4]   # PC controllo Wi-Fi
 ]
 
 class Topology(Topo):

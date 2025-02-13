@@ -18,9 +18,9 @@ LINKS = [
 ]
 
 HOST_LINKS = [
-    ["h1", "s1",1,3],  # DB Server
-    ["h2", "s1",1,4],  # PC Admin 1
-    ["h3", "s1",1,5],  # PC Admin 2
+    ["h1", "s1",1,4],  # DB Server
+    ["h2", "s1",1,5],  # PC Admin 1
+    ["h3", "s1",1,6],  # PC Admin 2
     ["h4", "s2",1,2],  # Telecamera IP
     ["h5", "s2",1,3],  # Server Sicurezza
     ["h6", "s3",1,2],  # PC Negozio 1

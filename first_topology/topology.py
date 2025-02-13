@@ -6,8 +6,8 @@ from mininet.node import OVSKernelSwitch, RemoteController
 from mininet.cli import CLI
 from mininet.link import TCLink
 
-N_HOSTS = 10
-N_SWITCHES = 5
+N_HOSTS = 12
+N_SWITCHES = 6
 
 LINKS = [
     ["s1", "s2",1,1],

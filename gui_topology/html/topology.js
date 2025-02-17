@@ -8,10 +8,16 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
-document.getElementById('tab1').addEventListener('click', function() {
-    document.getElementById('tab1').classList.add('active-link');
+document.getElementById('tab1').addEventListener('change', function() {
+    // Controlla se la checkbox è selezionata
+    if (this.checked) {
+        // Cambia il colore del label quando la checkbox è selezionata
+        document.querySelector('label[for="tab1"]').style.color = 'red'; // Cambia "red" con il colore che desideri
+    } else {
+        // Ripristina il colore originale quando la checkbox non è selezionata
+        document.querySelector('label[for="tab1"]').style.color = ''; // Ripristina il colore di default
+    }
 });
-
 
 var CONF = {
     image: {

@@ -1,3 +1,14 @@
+document.querySelectorAll('input[name="userType"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+        if (this.value === 'Night mode' && this.checked) {
+            document.body.classList.add('night-mode');
+        } else {
+            document.body.classList.remove('night-mode');
+        }
+    });
+});
+
+
 var CONF = {
     image: {
         width: 50,

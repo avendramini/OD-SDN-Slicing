@@ -15,8 +15,14 @@
     stroke-width: 2px;
 }
 
-.active-link {
-    color: red;
+.link-storeManagement {
+    stroke: blue;
+    stroke-opacity: .6;
+    stroke-width: 2px;
+}
+
+.link-defaultSlice {
+    stroke: #090909;
     stroke-opacity: .6;
     stroke-width: 2px;
 }

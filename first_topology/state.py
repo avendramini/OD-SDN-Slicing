@@ -1,27 +1,232 @@
-from enum import Enum
 
-class State(Enum):
-    STATE_ONE = 1
-    STATE_TWO = 2
-    STATE_THREE = 3
+NUM_SLICES=13
+INCOMPATIBLE_SLICES=[
+    [1,2],[3,4],[10,11],[12,13],[1,4],[1,11],[1,13],[3,11],[3,13]
+]
+
+SLICES_RULES=[
+    # SLICE 1
+    {
+        "0000000000000003": 
+        {
+            "192.168.1.6":2,
+            "192.168.1.7":3
+        }
+    },
+    # SLICE 2
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.1":4,
+            "192.168.1.7":2
+        },
+        "0000000000000003": 
+        {
+            "192.168.1.7":3,
+            "192.168.1.1":1
+        }
+    },
+    # SLICE 3
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.1":4,
+            "192.168.1.9":3,
+            "192.168.1.10":3
+        },
+        "0000000000000004": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.9":2,
+            "192.168.1.10":3
+        },
+        "0000000000000005": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.9":3,
+            "192.168.1.10":1
+        },
+        "0000000000000006": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.9":1,
+            "192.168.1.10":2
+        }
+    },
+    # SLICE 4
+    {
+        "0000000000000006": 
+        {
+            "192.168.1.10":2,
+            "192.168.1.11":3,
+            "192.168.1.12":4
+        }
+    },
+    # SLICE 5
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.1":4,
+            "192.168.1.2":5,
+            "192.168.1.3":6
+        }
+    },
+    # SLICE 6
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.2":5,
+            "192.168.1.3":6,
+            "192.168.1.7":2
+        },
+        "0000000000000003": 
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.7":3
+        }
+    },
+    # SLICE 7
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.2":5,
+            "192.168.1.3":6,
+            "192.168.1.12":3
+        },
+        "0000000000000004": 
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.12":3
+        },
+        "0000000000000006": 
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.12":4
+        }
+    },
+    # SLICE 8
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.2":5,
+            "192.168.1.3":6,
+            "192.168.1.5":1
+        },
+        "0000000000000002":
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.5":3
+        }
+    },
+    # SLICE 9
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.2":5,
+            "192.168.1.3":6,
+            "192.168.1.8":3
+        },
+        "0000000000000004": 
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.8":2
+        },
+        "0000000000000005": 
+        {
+            "192.168.1.2":1,
+            "192.168.1.3":1,
+            "192.168.1.8":2
+        }
+    }, 
+    # SLICE 10
+    {
+        "0000000000000005": 
+        {
+            "192.168.1.8":2,
+            "192.168.1.9":3
+        }
+    }, 
+    # SLICE 11
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.1":4,
+            "192.168.1.8":3
+        },
+        "0000000000000004": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.8":2
+        },
+        "0000000000000005": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.8":2
+        }
+    }, 
+    # SLICE 12
+    {
+        "0000000000000002": 
+        {
+            "192.168.1.4":2,
+            "192.168.1.5":3
+        }
+    }, 
+    # SLICE 13
+    {
+        "0000000000000001": 
+        {
+            "192.168.1.1":4,
+            "192.168.1.5":1
+        },
+        "0000000000000002": 
+        {
+            "192.168.1.1":1,
+            "192.168.1.5":3
+        }
+    } 
+]
 
 class MacToPortMapper:
     def __init__(self):
-        self.state = State.STATE_ONE
+        self.map={}
+        self.active_slice=[0]*13
+        self.adjacency_list = [ [] for _ in range(NUM_SLICES)]
 
-    def set_state(self, state):
-        if isinstance(state, State):
-            self.state = state
-        else:
-            raise ValueError("Invalid state")
+        for pair in INCOMPATIBLE_SLICES:
+            a, b = pair[0] - 1, pair[1] - 1
+            self.adjacency_list[a].append(b)
+            self.adjacency_list[b].append(a)
 
-    def get_mac_to_port_map(self):
-        if self.state == State.STATE_ONE:
-            return {"00:00:00:00:00:01": 1, "00:00:00:00:00:02": 2}
-        elif self.state == State.STATE_TWO:
-            return {"00:00:00:00:00:03": 3, "00:00:00:00:00:04": 4}
-        elif self.state == State.STATE_THREE:
-            return {"00:00:00:00:00:05": 5, "00:00:00:00:00:06": 6}
-        else:
-            return {}
+    def verify_add_compatibility(self, slice_number):
+        for i in self.adjacency_list[slice_number-1]:
+            if self.active_slice[i] == 1:
+                return False
+        return True
+    def add_slice(self, slice_number):
+        if self.verify_add_compatibility(slice_number):
+            self.active_slice[slice_number-1] = 1
+            for x in SLICES_RULES[slice_number-1]:
+                for y in SLICES_RULES[slice_number-1][x]:
+                    if x not in self.map:
+                        self.map[x] = {}
+                    self.map[x][y] = SLICES_RULES[slice_number-1][x][y]
+            return True
+        return False
+    
+    def remove_slice(self,slice_number):
+        self.active_slice[slice_number-1] = 0
+        for x in SLICES_RULES[slice_number-1]:
+            for y in SLICES_RULES[slice_number-1][x]:
+                del self.map[x][y]
+        return True
+    
+    def get_map(self):
+        return self.map
+
 

@@ -8,16 +8,25 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
+function colorSliceLinks(sliceId, color) {
+    elem.link.each(function(d) {
+        if (d.sliceId === sliceId) {
+            d3.select(this).style('stroke', color);
+        }
+    });
+}
+
+
 document.getElementById('tab1').addEventListener('change', function() {
-    // Controlla se la checkbox è selezionata
     if (this.checked) {
-        // Cambia il colore del label quando la checkbox è selezionata
-        document.querySelector('label[for="tab1"]').style.color = 'red'; // Cambia "red" con il colore che desideri
+        document.querySelector('label[for="tab1"]').style.color = 'red'; 
+        colorSliceLinks('storeManagement', 'blue');
+
     } else {
-        // Ripristina il colore originale quando la checkbox non è selezionata
-        document.querySelector('label[for="tab1"]').style.color = ''; // Ripristina il colore di default
+        document.querySelector('label[for="tab1"]').style.color = ''; 
     }
 });
+
 
 var CONF = {
     image: {
@@ -32,12 +41,17 @@ var CONF = {
     }
 };
 
+var sliceIdMapping = {
+    // Aggiungi la mappatura tra i link e gli sliceId
+    'link1': 'storeManagement',
+    'link2': 'defaultSlice',
+    // Aggiungi altre mappature qui
+};
+
 var ws = new WebSocket("ws://" + location.host + "/v1.0/topology/ws");
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-
     var result = rpc[data.method](data.params);
-
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};
     this.send(JSON.stringify(ret));
 }
@@ -64,6 +78,7 @@ var elem = {
         .attr("id", "console")
         .attr("width", CONF.force.width)
 };
+
 function _tick() {
     elem.link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -77,23 +92,17 @@ function _tick() {
         return "translate(" + p.x + "," + p.y + ")";
     });
 }
+
 elem.drag = elem.force.drag().on("dragstart", _dragstart);
 function _dragstart(d) {
     var dpid = dpid_to_int(d.dpid)
-    /*d3.json("/stats/flow/" + dpid, function(e, data) {
-         flows = data[dpid];
-         console.log(flows);
-        elem.console.selectAll("ul").remove();
-        li = elem.console.append("ul")
-            .selectAll("li");
-        li.data(flows).enter().append("li")
-            .text(function (d) { return JSON.stringify(d, null, " "); });
-    });*/
     d3.select(this).classed("fixed", d.fixed = true);
 }
+
 elem.node = elem.svg.selectAll(".node");
 elem.link = elem.svg.selectAll(".link");
 elem.port = elem.svg.selectAll(".port");
+
 elem.update = function () {
     this.force
         .nodes(topo.nodes)
@@ -142,29 +151,36 @@ function is_valid_link(link) {
 var topo = {
     nodes: [],
     links: [],
-    node_index: {}, // dpid -> index of nodes array
+    node_index: {},
+
     initialize: function (data) {
         this.add_nodes(data.switches);
         this.add_links(data.links);
     },
+
     add_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
             this.nodes.push(nodes[i]);
         }
         this.refresh_node_index();
     },
+
     add_links: function (links) {
         for (var i = 0; i < links.length; i++) {
             if (!is_valid_link(links[i])) continue;
-            console.log("add link: " + JSON.stringify(links[i]));
-
+            
             var src_dpid = links[i].src.dpid;
             var dst_dpid = links[i].dst.dpid;
             var src_index = this.node_index[src_dpid];
             var dst_index = this.node_index[dst_dpid];
+
+            // Aggiungi sliceId ai link
+            var sliceId = sliceIdMapping[links[i].id] || 'defaultSlice';
+
             var link = {
                 source: src_index,
                 target: dst_index,
+                sliceId: sliceId,
                 port: {
                     src: links[i].src,
                     dst: links[i].dst
@@ -173,24 +189,23 @@ var topo = {
             this.links.push(link);
         }
     },
+
     delete_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
-            console.log("delete switch: " + JSON.stringify(nodes[i]));
-
-            node_index = this.get_node_index(nodes[i]);
+            var node_index = this.get_node_index(nodes[i]);
             this.nodes.splice(node_index, 1);
         }
         this.refresh_node_index();
     },
+
     delete_links: function (links) {
         for (var i = 0; i < links.length; i++) {
             if (!is_valid_link(links[i])) continue;
-            console.log("delete link: " + JSON.stringify(links[i]));
-
-            link_index = this.get_link_index(links[i]);
+            var link_index = this.get_link_index(links[i]);
             this.links.splice(link_index, 1);
         }
     },
+
     get_node_index: function (node) {
         for (var i = 0; i < this.nodes.length; i++) {
             if (node.dpid == this.nodes[i].dpid) {
@@ -199,27 +214,28 @@ var topo = {
         }
         return null;
     },
+
     get_link_index: function (link) {
         for (var i = 0; i < this.links.length; i++) {
             if (link.src.dpid == this.links[i].port.src.dpid &&
-                    link.src.port_no == this.links[i].port.src.port_no &&
-                    link.dst.dpid == this.links[i].port.dst.dpid &&
-                    link.dst.port_no == this.links[i].port.dst.port_no) {
+                link.src.port_no == this.links[i].port.src.port_no &&
+                link.dst.dpid == this.links[i].port.dst.dpid &&
+                link.dst.port_no == this.links[i].port.dst.port_no) {
                 return i;
             }
         }
         return null;
     },
+
     get_ports: function () {
         var ports = [];
         var pushed = {};
         for (var i = 0; i < this.links.length; i++) {
             function _push(p, dir) {
-                key = p.dpid + ":" + p.port_no;
+                var key = p.dpid + ":" + p.port_no;
                 if (key in pushed) {
                     return 0;
                 }
-
                 pushed[key] = true;
                 p.link_idx = i;
                 p.link_dir = dir;
@@ -231,9 +247,9 @@ var topo = {
 
         return ports;
     },
+
     get_port_point: function (d) {
         var weight = 0.88;
-
         var link = this.links[d.link_idx];
         var x1 = link.source.x;
         var y1 = link.source.y;
@@ -247,44 +263,14 @@ var topo = {
 
         return {x: x, y: y};
     },
+
     refresh_node_index: function(){
         this.node_index = {};
         for (var i = 0; i < this.nodes.length; i++) {
             this.node_index[this.nodes[i].dpid] = i;
         }
     },
-}
-
-var rpc = {
-    event_switch_enter: function (params) {
-        var switches = [];
-        for(var i=0; i < params.length; i++){
-            switches.push({"dpid":params[i].dpid,"ports":params[i].ports});
-        }
-        topo.add_nodes(switches);
-        elem.update();
-        return "";
-    },
-    event_switch_leave: function (params) {
-        var switches = [];
-        for(var i=0; i < params.length; i++){
-            switches.push({"dpid":params[i].dpid,"ports":params[i].ports});
-        }
-        topo.delete_nodes(switches);
-        elem.update();
-        return "";
-    },
-    event_link_add: function (links) {
-        topo.add_links(links);
-        elem.update();
-        return "";
-    },
-    event_link_delete: function (links) {
-        topo.delete_links(links);
-        elem.update();
-        return "";
-    },
-}
+};
 
 function initialize_topology() {
     d3.json("/v1.0/topology/switches", function(error, switches) {
@@ -300,3 +286,7 @@ function main() {
 }
 
 main();
+
+
+
+

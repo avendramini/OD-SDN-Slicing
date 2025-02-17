@@ -15,7 +15,7 @@ var CONF = {
         height: 40
     },
     force: {
-        width: 960,
+        width: 850,
         height: 500,
         dist: 200,
         charge: -600

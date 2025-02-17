@@ -14,7 +14,7 @@ var CONF = {
         height: 40
     },
     force: {
-        width: 960,
+        width: 850,
         height: 500,
         dist: 200,
         charge: -600
@@ -24,7 +24,6 @@ var CONF = {
 var ws = new WebSocket("ws://" + location.host + "/v1.0/topology/ws");
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-
     var result = rpc[data.method](data.params);
 
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};

@@ -1,6 +1,30 @@
-#topology {  
-    border: 1px solid #000000;  
+.node {
 }
+
+.node.fixed {
+    fill: #C0C0C0;
+}
+
+.node text {
+    font-size: 14px;
+}
+
+.link {
+    stroke: #090909;
+    stroke-opacity: .6;
+    stroke-width: 2px;
+}
+
+.port circle {
+    stroke: black;
+    fill: #C5F9F9;
+}
+
+.port text {
+    font-size: 10px;
+}
+
+
 
 body {
     text-align: center;
@@ -52,14 +76,14 @@ h3 {
 .box {
     position: absolute;
     top: 85px;   /* Distance from the top */
-    right: 100px; /* Distance from the right */
+    right: 50px; /* Distance from the right */
 
     background: rgb(228, 242, 237); /* Background color for the box */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for elevation effect */
-    width: 1050px;
-    height: 600px;
+    width: 950px;
+    height: 520px;
 }
 
 .radio-container {

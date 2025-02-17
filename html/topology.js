@@ -8,6 +8,10 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
+document.getElementById('tab1').addEventListener('click', function() {
+    document.getElementById('tab1').classList.add('active-link');
+});
+
 
 var CONF = {
     image: {

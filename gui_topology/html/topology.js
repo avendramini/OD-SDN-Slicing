@@ -8,6 +8,11 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
+document.getElementById('tab1').addEventListener('click', function() {
+    document.getElementById('tab1').classList.add('active-link');
+});
+
+
 var CONF = {
     image: {
         width: 50,
@@ -24,6 +29,7 @@ var CONF = {
 var ws = new WebSocket("ws://" + location.host + "/v1.0/topology/ws");
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
+
     var result = rpc[data.method](data.params);
 
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};
@@ -68,9 +74,9 @@ function _tick() {
 elem.drag = elem.force.drag().on("dragstart", _dragstart);
 function _dragstart(d) {
     var dpid = dpid_to_int(d.dpid)
-   /* d3.json("/stats/flow/" + dpid, function(e, data) {
-        flows = data[dpid];
-        console.log(flows);
+    /*d3.json("/stats/flow/" + dpid, function(e, data) {
+         flows = data[dpid];
+         console.log(flows);
         elem.console.selectAll("ul").remove();
         li = elem.console.append("ul")
             .selectAll("li");
@@ -286,7 +292,5 @@ function initialize_topology() {
 function main() {
     initialize_topology();
 }
-
-
 
 main();

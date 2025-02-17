@@ -15,6 +15,12 @@
     stroke-width: 2px;
 }
 
+.active-link {
+    color: red;
+    stroke-opacity: .6;
+    stroke-width: 2px;
+}
+
 .port circle {
     stroke: black;
     fill: #C5F9F9;
@@ -298,3 +304,5 @@ body.night-mode .sidebar input:checked + .menu-item {
 .sidebar h3:nth-of-type(2) {
     margin-top: 20px; /* Adds space above "QoS:" */
 }
+
+

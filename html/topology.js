@@ -46,7 +46,7 @@ var elem = {
         .charge(CONF.force.charge)
         .linkDistance(CONF.force.dist)
         .on("tick", _tick),
-    svg: d3.select("body").append("svg")
+    svg: d3.select(".box").append("svg")
         .attr("id", "topology")
         .attr("width", CONF.force.width)
         .attr("height", CONF.force.height),

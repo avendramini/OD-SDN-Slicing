@@ -70,15 +70,15 @@ function _tick() {
 elem.drag = elem.force.drag().on("dragstart", _dragstart);
 function _dragstart(d) {
     var dpid = dpid_to_int(d.dpid)
-    d3.json("/stats/flow/" + dpid, function(e, data) {
-        flows = data[dpid];
-        console.log(flows);
+    /*d3.json("/stats/flow/" + dpid, function(e, data) {
+         flows = data[dpid];
+         console.log(flows);
         elem.console.selectAll("ul").remove();
         li = elem.console.append("ul")
             .selectAll("li");
         li.data(flows).enter().append("li")
             .text(function (d) { return JSON.stringify(d, null, " "); });
-    });
+    });*/
     d3.select(this).classed("fixed", d.fixed = true);
 }
 elem.node = elem.svg.selectAll(".node");

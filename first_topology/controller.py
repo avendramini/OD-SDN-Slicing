@@ -12,8 +12,12 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 
 from ryu.base import app_manager
+from ryu.app.wsgi import ControllerBase, WSGIApplication, route
+from webob.static import DirectoryApp
+
 from ryu.controller import ofp_event
 from ryu.controller.handler import CONFIG_DISPATCHER, MAIN_DISPATCHER
 from ryu.controller.handler import set_ev_cls
@@ -23,12 +27,18 @@ from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
 
+PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+print(PATH)
 
 class Controller(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-
+    _CONTEXTS = {
+        'wsgi': WSGIApplication,
+    }
     def __init__(self, *args, **kwargs):
         super(Controller, self).__init__(*args, **kwargs)
+        wsgi = kwargs['wsgi']
+        wsgi.register(ControllerServer)
         self.mac_to_port = {
             "0000000000000001": {
             "192.168.1.1": 4,
@@ -209,3 +219,19 @@ class Controller(app_manager.RyuApp):
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                       in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
+
+class ControllerServer(ControllerBase):
+    def __init__(self, req, link, data, **config):
+        super(ControllerServer, self).__init__(req, link, data, **config)
+        path = "%s/html/" % PATH
+        self.static_app = DirectoryApp(path)
+        
+    @route('topology', '/{filename:[^/]*}')
+    def static_handler(self, req, **kwargs):
+        if kwargs['filename']:
+            req.path_info = kwargs['filename']
+        return self.static_app(req)
+
+app_manager.require_app('ryu.app.rest_topology')
+app_manager.require_app('ryu.app.ws_topology')
+app_manager.require_app('ryu.app.ofctl_rest')

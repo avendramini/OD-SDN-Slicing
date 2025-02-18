@@ -1,5 +1,61 @@
-var slice1LinkIds = [
+var slice1DayLinkIds = [
+    //{ src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice1NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice2DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000004", dst: "0000000000000006" }
+];
+
+var slice3DayLinkIds = [
+    //{ src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice4DayLinkIds = [
+   // { src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice5DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice6DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000006" }
+
+];
+
+var slice7DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" }
+];
+
+var slice8DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" }];
+
+var slice9DayLinkIds = [
+    //{ src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice9NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" }];
+
+var slice10DayLinkIds = [
+   // { src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice10NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" }
+];
+
+var slice11DayLinkIds = [
+   // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
 
@@ -13,32 +69,52 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
-document.getElementById('tab1').addEventListener('change', function() {
-    if (this.checked) {
-        // Rimuovi la colorazione precedente
-        d3.selectAll(".link").classed("slice-1", false);
 
-        // Identifica i link dello Slice 1
-        var slice1Links = topo.links.filter(function(link) {
-            return slice1LinkIds.some(function(id) {
+let dayMode = true;
+
+function aggiornaColorazione() {
+    for (let j = 1; j <= 11; j++) {
+        d3.selectAll(".link").classed(`slice-${j}`, false);
+    }
+
+    for (let i = 1; i <= 13; i++) {
+        var sliceLinkIds = dayMode ? window[`slice${i}DayLinkIds`] : window[`slice${i}NightLinkIds`];
+
+        var sliceLinks = topo.links.filter(function(link) {
+            return sliceLinkIds.some(function(id) {
                 return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
                        (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
             });
         });
 
-        // Applica la classe per colorare i link dello Slice 1
-        slice1Links.forEach(function(link) {
+        sliceLinks.forEach(function(link) {
             d3.selectAll(".link").filter(function(d) {
                 return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                        (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-            }).classed("slice-1", true);
+            }).classed(`slice-${i}`, true);
         });
-    } else {
-        // Rimuovi la colorazione quando `tab1` viene deselezionato
-        d3.selectAll(".link").classed("slice-1", false);
     }
+}
+
+document.getElementById('dayModeBtn').addEventListener('click', function() {
+    dayMode = true;
+    aggiornaColorazione();
+});
+document.getElementById('nightModeBtn').addEventListener('click', function() {
+    dayMode = false;
+    aggiornaColorazione();
 });
 
+
+for (let i = 1; i <= 11; i++) {
+    document.getElementById(`tab${i}`).addEventListener('change', function() {
+        if (this.checked) {
+            aggiornaColorazione();
+        } else {
+            d3.selectAll(".link").classed(`slice-${i}`, false);
+        }
+    });
+}
 
 var CONF = {
     image: {

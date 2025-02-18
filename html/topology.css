@@ -15,11 +15,18 @@
     stroke-width: 2px;
 }
 
-.link.slice-1 {
-    stroke: blue;
-    stroke-opacity: 1;
-    stroke-width: 3px;
-}
+.link.slice-1 { stroke: rgb(140, 45, 240); stroke-opacity: 1; stroke-width: 3px;}
+.link.slice-2 { stroke: rgb(255, 220, 0); stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-3 { stroke: rgb(255, 220, 0); stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-4 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-5 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-6 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-7 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-8 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-9 { stroke: #e82ec0; stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-10 { stroke: rgb(241, 110, 10); stroke-opacity: 1; stroke-width: 3px; }
+.link.slice-11 { stroke: #e52727; stroke-opacity: 1; stroke-width: 3px; }
+
 
 .port circle {
     stroke: black;

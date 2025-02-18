@@ -129,21 +129,29 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 
 for (let i = 1; i <= 11; i++) {
     document.getElementById(`tab${i}`).addEventListener('change', function() {
-        if (this.checked) {
-            // Aggiungi la slice all'array se selezionata
+        if (i === 11 && this.checked) {
+            sliceSelezionate = [];
+            for (let j = 1; j <= 11; j++) {
+                d3.selectAll(".link").classed(`slice-${j}`, false);
+            }
+            console.log("Modalità originale ripristinata");
+        } else if (i !== 11 && this.checked) {
+            // Aggiungo la slice all'array se selezionata
             if (!sliceSelezionate.includes(i)) {
                 sliceSelezionate.push(i);
             }
         } else {
-            // Rimuovi la slice dall'array se deselezionata
+            // Rimuovo la slice dall'array se deselezionata
             sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);
         }
-        aggiornaColorazione();
+        
+        if (i !== 11) {
+            aggiornaColorazione();
+        }
+        
         console.log("Slice selezionate:", sliceSelezionate);
     });
 }
-
-
 
 
 var CONF = {

@@ -1,75 +1,89 @@
-var slice1DayLinkIds = [
+// slice 1
+var slice1DayLinkIds = [ 
     //{ src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 2
 var slice1NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 3
 var slice2DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000004", dst: "0000000000000006" }
 ];
 
+// slice 4
 var slice3DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 5
 var slice4DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 6
 var slice5DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 7
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000006" }
 
 ];
 
+// slice 8
 var slice7DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" }
 ];
 
+// slice 9
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" }];
 
+// slice 10
 var slice9DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 11
 var slice9NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" }];
 
+
+// slice 12
 var slice10DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+// slice 13
 var slice10NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" }
 ];
 
+// RESET
 var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
-let sliceSelezionate = [];
-let dayMode = true;
+let dayMode = true; // stato per la modalità giorno (true) o notte (false)
+let dayCheckboxState = {}; // stato delle checkbox nella modalità giorno
+let nightCheckboxState = {}; // stato delle checkbox nella modalità notte
 
 function aggiornaColorazione() {
     for (let j = 1; j <= 11; j++) {
         d3.selectAll(".link").classed(`slice-${j}`, false);
     }
-    sliceSelezionate.forEach(sliceCorrente => {
-        var sliceLinkIds = dayMode 
-            ? window[`slice${sliceCorrente}DayLinkIds`] 
-            : window[`slice${sliceCorrente}NightLinkIds`];
-        
+
+    for (let i = 1; i <= 11; i++) {
+        var sliceLinkIds = dayMode ? window[`slice${i}DayLinkIds`] : window[`slice${i}NightLinkIds`];
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
@@ -82,70 +96,58 @@ function aggiornaColorazione() {
                 d3.selectAll(".link").filter(function(d) {
                     return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                            (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-                }).classed(`slice-${sliceCorrente}`, true);
-                console.log("Stampa 2");
-                console.log(`slice-${sliceCorrente}`);
+                }).classed(`slice-${i}`, true);
             });
         }
-    });
+    }
 }
 
-document.querySelectorAll('input[name="userType"]').forEach(function (input) {
-    input.addEventListener('change', function () {
+// Gestione del cambio modalità
+document.querySelectorAll('input[name="userType"]').forEach(function(input) {
+    input.addEventListener('change', function() {
         if (this.value === 'Night mode' && this.checked) {
             document.body.classList.add('night-mode');
             dayMode = false;
+
+            ripristinaCheckboxState(nightCheckboxState);
             aggiornaColorazione();
         } else {
             document.body.classList.remove('night-mode');
             dayMode = true;
+
+            ripristinaCheckboxState(dayCheckboxState);
             aggiornaColorazione();
         }
     });
 });
 
-for (let i = 1; i <= 11; i++) {
-    document.getElementById(`tab${i}`).addEventListener('change', function() {
-        if (i === 11 && this.checked) {
-            document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
-                checkbox.checked = false;  
-            });
-
-            sliceSelezionate = [];
-            d3.selectAll(".link").classed(function(d) {
-                return `slice-${d.sliceId || ""}`, false;
-            });
-
-            for (let j = 1; j <= 11; j++) {
-                d3.selectAll(".link").classed(`slice-${j}`, false);
-            }
-
-            document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
-                menuItem.style.backgroundColor = '';  
-            });
-
-            console.log("Modalità originale");
-                
-        } else if (i !== 11 && this.checked) {
-            // Aggiungo la slice all'array se selezionata
-            if (!sliceSelezionate.includes(i)) {
-                sliceSelezionate.push(i);
-            }
-            document.getElementById('tab11').checked = false;
-            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';  
-  
-        } else {
-            // Rimuovo la slice dall'array se deselezionata
-            sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);
-        }
-        
-        if (i !== 11) {
-            aggiornaColorazione();
-        }
-        
-        console.log("Slice selezionate:", sliceSelezionate);
+function salvaCheckboxState(stateObject) {
+    document.querySelectorAll('.checkbox').forEach(function(checkbox) {
+        stateObject[checkbox.id] = checkbox.checked;
     });
 }
+
+function ripristinaCheckboxState(stateObject) {
+    document.querySelectorAll('.checkbox').forEach(function(checkbox) {
+        if (stateObject[checkbox.id] !== undefined) {
+            checkbox.checked = stateObject[checkbox.id];
+        } else {
+            checkbox.checked = false; 
+        }
+    });
+}
+
+document.querySelectorAll('.checkbox').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        if (dayMode) {
+            salvaCheckboxState(dayCheckboxState);
+        } else {
+            salvaCheckboxState(nightCheckboxState);
+        }
+        aggiornaColorazione();
+    });
+});
+
 
 
 var CONF = {

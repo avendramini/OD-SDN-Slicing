@@ -1,3 +1,7 @@
+var slice1LinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" }
+];
+
 
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     input.addEventListener('change', function () {
@@ -10,15 +14,31 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 });
 
 document.getElementById('tab1').addEventListener('change', function() {
-    // Controlla se la checkbox è selezionata
     if (this.checked) {
-        // Cambia il colore del link quando la checkbox è selezionata
-        document.querySelector('label[for="tab1"]').style.color = 'red'; 
+        // Rimuovi la colorazione precedente
+        d3.selectAll(".link").classed("slice-1", false);
+
+        // Identifica i link dello Slice 1
+        var slice1Links = topo.links.filter(function(link) {
+            return slice1LinkIds.some(function(id) {
+                return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
+                       (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
+            });
+        });
+
+        // Applica la classe per colorare i link dello Slice 1
+        slice1Links.forEach(function(link) {
+            d3.selectAll(".link").filter(function(d) {
+                return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
+                       (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
+            }).classed("slice-1", true);
+        });
     } else {
-        // Ripristina il colore originale quando la checkbox non è selezionata
-        document.querySelector('label[for="tab1"]').style.color = '';
+        // Rimuovi la colorazione quando `tab1` viene deselezionato
+        d3.selectAll(".link").classed("slice-1", false);
     }
 });
+
 
 var CONF = {
     image: {

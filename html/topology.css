@@ -15,16 +15,10 @@
     stroke-width: 2px;
 }
 
-.link-storeManagement {
+.link.slice-1 {
     stroke: blue;
-    stroke-opacity: .6;
-    stroke-width: 2px;
-}
-
-.link-defaultSlice {
-    stroke: #090909;
-    stroke-opacity: .6;
-    stroke-width: 2px;
+    stroke-opacity: 1;
+    stroke-width: 3px;
 }
 
 .port circle {

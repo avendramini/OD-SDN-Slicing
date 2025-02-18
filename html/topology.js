@@ -130,11 +130,25 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 for (let i = 1; i <= 11; i++) {
     document.getElementById(`tab${i}`).addEventListener('change', function() {
         if (i === 11 && this.checked) {
+            document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
+                checkbox.checked = false;  
+            });
+
             sliceSelezionate = [];
+            d3.selectAll(".link").classed(function(d) {
+                return `slice-${d.sliceId || ""}`, false;
+            });
+
             for (let j = 1; j <= 11; j++) {
                 d3.selectAll(".link").classed(`slice-${j}`, false);
             }
-            console.log("Modalità originale ripristinata");
+
+            document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
+                menuItem.style.backgroundColor = '';  
+            });
+
+            console.log("Modalità originale");
+                
         } else if (i !== 11 && this.checked) {
             // Aggiungo la slice all'array se selezionata
             if (!sliceSelezionate.includes(i)) {

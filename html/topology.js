@@ -12,29 +12,17 @@ var slice2DayLinkIds = [
     { src: "0000000000000004", dst: "0000000000000006" }
 ];
 
-var slice2NightLinkIds = [
-]
-
 var slice3DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
-];
-
-var slice3NightLinkIds = [
 ];
 
 var slice4DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
-var slice4NightLinkIds = [
-]
-
 var slice5DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
 ];
-
-var slice5NightLinkIds = [
-]
 
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
@@ -42,21 +30,13 @@ var slice6DayLinkIds = [
 
 ];
 
-var slice6NightLinkIds = [
-]
 var slice7DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" }
 ];
 
-var slice7NightLinkIds = [
-]
-
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" }];
-
-var slice8NightLinkIds = [
-]
 
 var slice9DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
@@ -77,9 +57,6 @@ var slice10NightLinkIds = [
 var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
-
-var slice11NightLinkIds = [
-]
 
 let sliceSelezionate = [];
 let dayMode = true;
@@ -155,7 +132,6 @@ for (let i = 1; i <= 11; i++) {
                 sliceSelezionate.push(i);
             }
             document.getElementById('tab11').checked = false;
-//            document.querySelector('#tab11 + .menu-item::before').style.backgroundColor = '';
             document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';  
   
         } else {

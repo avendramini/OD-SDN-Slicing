@@ -154,6 +154,9 @@ for (let i = 1; i <= 11; i++) {
             if (!sliceSelezionate.includes(i)) {
                 sliceSelezionate.push(i);
             }
+            document.getElementById('tab11').checked = false;
+            document.querySelector('#tab11 + .menu-item::before').style.backgroundColor = '';
+  
         } else {
             // Rimuovo la slice dall'array se deselezionata
             sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);

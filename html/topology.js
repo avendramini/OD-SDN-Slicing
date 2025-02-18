@@ -81,17 +81,18 @@ var slice11DayLinkIds = [
 var slice11NightLinkIds = [
 ]
 
-
-
+let sliceSelezionate = [];
 let dayMode = true;
 
 function aggiornaColorazione() {
     for (let j = 1; j <= 11; j++) {
         d3.selectAll(".link").classed(`slice-${j}`, false);
     }
-
-    for (let i = 1; i <= 11; i++) {
-        var sliceLinkIds = dayMode ? window[`slice${i}DayLinkIds`] : window[`slice${i}NightLinkIds`];
+    sliceSelezionate.forEach(sliceCorrente => {
+        var sliceLinkIds = dayMode 
+            ? window[`slice${sliceCorrente}DayLinkIds`] 
+            : window[`slice${sliceCorrente}NightLinkIds`];
+        
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
@@ -104,14 +105,13 @@ function aggiornaColorazione() {
                 d3.selectAll(".link").filter(function(d) {
                     return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                            (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-                }).classed(`slice-${i}`, true);
+                }).classed(`slice-${sliceCorrente}`, true);
                 console.log("Stampa 2");
-                console.log(`slice-${i}`);
+                console.log(`slice-${sliceCorrente}`);
             });
         }
-    }
+    });
 }
-
 
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     input.addEventListener('change', function () {
@@ -130,15 +130,19 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 for (let i = 1; i <= 11; i++) {
     document.getElementById(`tab${i}`).addEventListener('change', function() {
         if (this.checked) {
-            aggiornaColorazione();
-            console.log("Stampa 1");
-            console.log(`slice-${i}`);
-
+            // Aggiungi la slice all'array se selezionata
+            if (!sliceSelezionate.includes(i)) {
+                sliceSelezionate.push(i);
+            }
         } else {
-            d3.selectAll(".link").classed(`slice-${i}`, false);
+            // Rimuovi la slice dall'array se deselezionata
+            sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);
         }
+        aggiornaColorazione();
+        console.log("Slice selezionate:", sliceSelezionate);
     });
 }
+
 
 
 

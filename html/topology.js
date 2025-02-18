@@ -155,7 +155,8 @@ for (let i = 1; i <= 11; i++) {
                 sliceSelezionate.push(i);
             }
             document.getElementById('tab11').checked = false;
-            document.querySelector('#tab11 + .menu-item::before').style.backgroundColor = '';
+//            document.querySelector('#tab11 + .menu-item::before').style.backgroundColor = '';
+            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';  
   
         } else {
             // Rimuovo la slice dall'array se deselezionata

@@ -81,17 +81,18 @@ var slice11DayLinkIds = [
 var slice11NightLinkIds = [
 ]
 
-
-
+let sliceSelezionate = [];
 let dayMode = true;
 
 function aggiornaColorazione() {
     for (let j = 1; j <= 11; j++) {
         d3.selectAll(".link").classed(`slice-${j}`, false);
     }
-
-    for (let i = 1; i <= 11; i++) {
-        var sliceLinkIds = dayMode ? window[`slice${i}DayLinkIds`] : window[`slice${i}NightLinkIds`];
+    sliceSelezionate.forEach(sliceCorrente => {
+        var sliceLinkIds = dayMode 
+            ? window[`slice${sliceCorrente}DayLinkIds`] 
+            : window[`slice${sliceCorrente}NightLinkIds`];
+        
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
@@ -104,13 +105,13 @@ function aggiornaColorazione() {
                 d3.selectAll(".link").filter(function(d) {
                     return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                            (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-                }).classed(`slice-${i}`, true);
-                console.log(`slice-${i}`);
+                }).classed(`slice-${sliceCorrente}`, true);
+                console.log("Stampa 2");
+                console.log(`slice-${sliceCorrente}`);
             });
         }
-    }
+    });
 }
-
 
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     input.addEventListener('change', function () {
@@ -128,17 +129,47 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 
 for (let i = 1; i <= 11; i++) {
     document.getElementById(`tab${i}`).addEventListener('change', function() {
-        if (this.checked) {
-            aggiornaColorazione();
-            printSlice("tab %d", i);
-            console.log(`slice-${i}`);
+        if (i === 11 && this.checked) {
+            document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
+                checkbox.checked = false;  
+            });
 
+            sliceSelezionate = [];
+            d3.selectAll(".link").classed(function(d) {
+                return `slice-${d.sliceId || ""}`, false;
+            });
+
+            for (let j = 1; j <= 11; j++) {
+                d3.selectAll(".link").classed(`slice-${j}`, false);
+            }
+
+            document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
+                menuItem.style.backgroundColor = '';  
+            });
+
+            console.log("Modalità originale");
+                
+        } else if (i !== 11 && this.checked) {
+            // Aggiungo la slice all'array se selezionata
+            if (!sliceSelezionate.includes(i)) {
+                sliceSelezionate.push(i);
+            }
+            document.getElementById('tab11').checked = false;
+//            document.querySelector('#tab11 + .menu-item::before').style.backgroundColor = '';
+            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';  
+  
         } else {
-            d3.selectAll(".link").classed(`slice-${i}`, false);
+            // Rimuovo la slice dall'array se deselezionata
+            sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);
         }
+        
+        if (i !== 11) {
+            aggiornaColorazione();
+        }
+        
+        console.log("Slice selezionate:", sliceSelezionate);
     });
 }
-
 
 
 var CONF = {

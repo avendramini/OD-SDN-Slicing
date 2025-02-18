@@ -230,7 +230,7 @@ h3 {
 
 /* Wi-fi management */
 #tab3:checked + .menu-item::before {
-    background-color: #2e69e8;   
+    background-color: rgb(255, 220, 0);   
 }
 
 /* Administration management */

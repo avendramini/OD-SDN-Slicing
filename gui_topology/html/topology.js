@@ -1,4 +1,3 @@
-
 var slice1DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
 ];
@@ -127,15 +126,103 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
 });
 
 
-for (let i = 1; i <= 11; i++) {
-    document.getElementById(`tab${i}`).addEventListener('change', function() {
-        if (this.checked) {
-            aggiornaColorazione();
-        } else {
-            d3.selectAll(".link").classed(`slice-${i}`, false);
-        }
-    });
-}
+document.getElementById('tab1').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-1`, false);
+    }
+});
+
+
+document.getElementById('tab2').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-2`, false);
+    }
+});
+
+
+document.getElementById('tab3').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-3`, false);
+    }
+});
+
+
+document.getElementById('tab4').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-4`, false);
+    }
+});
+
+
+document.getElementById('tab5').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-5`, false);
+    }
+});
+
+
+document.getElementById('tab6').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-6`, false);
+    }
+});
+
+
+document.getElementById('tab7').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-7`, false);
+    }
+});
+
+
+document.getElementById('tab8').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-8`, false);
+    }
+});
+
+
+document.getElementById('tab9').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-9`, false);
+    }
+});
+
+
+document.getElementById('tab10').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-10`, false);
+    }
+});
+
+
+document.getElementById('tab11').addEventListener('change', function() {
+    if (this.checked) {
+        aggiornaColorazione();
+    } else {
+        d3.selectAll(".link").classed(`slice-11`, false);
+    }
+});
 
 
 

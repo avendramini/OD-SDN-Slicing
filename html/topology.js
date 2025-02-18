@@ -13,17 +13,29 @@ var slice2DayLinkIds = [
     { src: "0000000000000004", dst: "0000000000000006" }
 ];
 
+var slice2NightLinkIds = [
+]
+
 var slice3DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice3NightLinkIds = [
 ];
 
 var slice4DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+var slice4NightLinkIds = [
+]
+
 var slice5DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
 ];
+
+var slice5NightLinkIds = [
+]
 
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
@@ -31,13 +43,21 @@ var slice6DayLinkIds = [
 
 ];
 
+var slice6NightLinkIds = [
+]
 var slice7DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" }
 ];
 
+var slice7NightLinkIds = [
+]
+
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" }];
+
+var slice8NightLinkIds = [
+]
 
 var slice9DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
@@ -59,6 +79,9 @@ var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+var slice11NightLinkIds = [
+]
+
 
 
 let dayMode = true;
@@ -68,22 +91,23 @@ function aggiornaColorazione() {
         d3.selectAll(".link").classed(`slice-${j}`, false);
     }
 
-    for (let i = 1; i <= 13; i++) {
+    for (let i = 1; i <= 11; i++) {
         var sliceLinkIds = dayMode ? window[`slice${i}DayLinkIds`] : window[`slice${i}NightLinkIds`];
-
-        var sliceLinks = topo.links.filter(function(link) {
-            return sliceLinkIds.some(function(id) {
-                return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
-                       (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
+        if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
+            var sliceLinks = topo.links.filter(function(link) {
+                return sliceLinkIds.some(function(id) {
+                    return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
+                           (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
+                });
             });
-        });
-
-        sliceLinks.forEach(function(link) {
-            d3.selectAll(".link").filter(function(d) {
-                return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
-                       (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-            }).classed(`slice-${i}`, true);
-        });
+        
+            sliceLinks.forEach(function(link) {
+                d3.selectAll(".link").filter(function(d) {
+                    return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
+                           (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
+                }).classed(`slice-${i}`, true);
+            });
+        }
     }
 }
 
@@ -112,6 +136,9 @@ for (let i = 1; i <= 11; i++) {
         }
     });
 }
+
+
+
 
 var CONF = {
     image: {

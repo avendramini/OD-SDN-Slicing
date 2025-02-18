@@ -1,3 +1,4 @@
+
 var slice1DayLinkIds = [
     //{ src: "0000000000000001", dst: "0000000000000003" }
 ];
@@ -59,16 +60,6 @@ var slice11DayLinkIds = [
 ];
 
 
-document.querySelectorAll('input[name="userType"]').forEach(function (input) {
-    input.addEventListener('change', function () {
-        if (this.value === 'Night mode' && this.checked) {
-            document.body.classList.add('night-mode');
-        } else {
-            document.body.classList.remove('night-mode');
-        }
-    });
-});
-
 
 let dayMode = true;
 
@@ -96,13 +87,19 @@ function aggiornaColorazione() {
     }
 }
 
-document.getElementById('dayModeBtn').addEventListener('click', function() {
-    dayMode = true;
-    aggiornaColorazione();
-});
-document.getElementById('nightModeBtn').addEventListener('click', function() {
-    dayMode = false;
-    aggiornaColorazione();
+
+document.querySelectorAll('input[name="userType"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+        if (this.value === 'Night mode' && this.checked) {
+            document.body.classList.add('night-mode');
+            dayMode = false;
+            aggiornaColorazione();
+        } else {
+            document.body.classList.remove('night-mode');
+            dayMode = true;
+            aggiornaColorazione();
+        }
+    });
 });
 
 

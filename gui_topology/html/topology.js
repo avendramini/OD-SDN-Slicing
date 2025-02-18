@@ -105,6 +105,7 @@ function aggiornaColorazione() {
                     return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                            (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
                 }).classed(`slice-${i}`, true);
+                print("slice-%d", i)
             });
         }
     }
@@ -125,105 +126,16 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
-
-document.getElementById('tab1').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-1`, false);
-    }
-});
-
-
-document.getElementById('tab2').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-2`, false);
-    }
-});
-
-
-document.getElementById('tab3').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-3`, false);
-    }
-});
-
-
-document.getElementById('tab4').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-4`, false);
-    }
-});
-
-
-document.getElementById('tab5').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-5`, false);
-    }
-});
-
-
-document.getElementById('tab6').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-6`, false);
-    }
-});
-
-
-document.getElementById('tab7').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-7`, false);
-    }
-});
-
-
-document.getElementById('tab8').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-8`, false);
-    }
-});
-
-
-document.getElementById('tab9').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-9`, false);
-    }
-});
-
-
-document.getElementById('tab10').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-10`, false);
-    }
-});
-
-
-document.getElementById('tab11').addEventListener('change', function() {
-    if (this.checked) {
-        aggiornaColorazione();
-    } else {
-        d3.selectAll(".link").classed(`slice-11`, false);
-    }
-});
-
+for (let i = 1; i <= 11; i++) {
+    document.getElementById(`tab${i}`).addEventListener('change', function() {
+        if (this.checked) {
+            aggiornaColorazione();
+            printSlice("tab %d", i);
+        } else {
+            d3.selectAll(".link").classed(`slice-${i}`, false);
+        }
+    });
+}
 
 
 
@@ -508,4 +420,3 @@ function main() {
 }
 
 main();
-

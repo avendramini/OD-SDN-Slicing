@@ -105,7 +105,7 @@ function aggiornaColorazione() {
                     return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
                            (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
                 }).classed(`slice-${i}`, true);
-                print("slice-%d", i)
+                console.log(`slice-${i}`);
             });
         }
     }
@@ -131,6 +131,8 @@ for (let i = 1; i <= 11; i++) {
         if (this.checked) {
             aggiornaColorazione();
             printSlice("tab %d", i);
+            console.log(`slice-${i}`);
+
         } else {
             d3.selectAll(".link").classed(`slice-${i}`, false);
         }

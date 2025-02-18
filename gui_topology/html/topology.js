@@ -73,13 +73,15 @@ var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
-let sliceSelezionate = [];
+let sliceSelezionateDay = [];
+let sliceSelezionateNight = [];
 let dayMode = true;
 
 function aggiornaColorazione() {
     for (let j = 1; j <= 11; j++) {
         d3.selectAll(".link").classed(`slice-${j}`, false);
     }
+    const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
     sliceSelezionate.forEach(sliceCorrente => {
         var sliceLinkIds = dayMode 
             ? window[`slice${sliceCorrente}DayLinkIds`] 
@@ -105,28 +107,56 @@ function aggiornaColorazione() {
     });
 }
 
+function sincronizzaCheckbox() {
+    const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+    
+    for (let i = 1; i <= 11; i++) {
+        const checkbox = document.getElementById(`tab${i}`);
+        if (checkbox) {
+            checkbox.checked = sliceSelezionate.includes(i);
+        }
+    }
+}
+
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     input.addEventListener('change', function () {
         if (this.value === 'Night mode' && this.checked) {
             document.body.classList.add('night-mode');
             dayMode = false;
-            aggiornaColorazione();
+            console.log("Passaggio a Night Mode");
         } else {
             document.body.classList.remove('night-mode');
             dayMode = true;
-            aggiornaColorazione();
+            console.log("Passaggio a Day Mode");
         }
+        
+        // Sincronizzo i checkbox con lo stato corrente
+        sincronizzaCheckbox();
+        
+        // Aggiorno la colorazione in base alla modalità corrente
+        aggiornaColorazione();
+        
+        console.log("sliceSelezionateDay:", sliceSelezionateDay);
+        console.log("sliceSelezionateNight:", sliceSelezionateNight);
     });
 });
 
+
 for (let i = 1; i <= 11; i++) {
     document.getElementById(`tab${i}`).addEventListener('change', function() {
-        if (i === 11 && this.checked) {
+        const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+        
+        if (i === 11 && this.checked) { 
             document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
                 checkbox.checked = false;  
             });
 
-            sliceSelezionate = [];
+            if (dayMode) {
+                sliceSelezionateDay = [];
+            } else {
+                sliceSelezionateNight = [];
+            }
+            
             d3.selectAll(".link").classed(function(d) {
                 return `slice-${d.sliceId || ""}`, false;
             });
@@ -151,17 +181,20 @@ for (let i = 1; i <= 11; i++) {
   
         } else {
             // Rimuovo la slice dall'array se deselezionata
-            sliceSelezionate = sliceSelezionate.filter(slice => slice !== i);
+            const index = sliceSelezionate.indexOf(i);
+            if (index > -1) {
+                sliceSelezionate.splice(index, 1);
+            }
         }
         
         if (i !== 11) {
             aggiornaColorazione();
         }
         
-        console.log("Slice selezionate:", sliceSelezionate);
+        console.log("Slice selezionate Day:", sliceSelezionateDay);
+        console.log("Slice selezionate Night:", sliceSelezionateNight);
     });
 }
-
 
 var CONF = {
     image: {

@@ -1,4 +1,4 @@
-import ProblemConstants as probConst
+from ProblemConstants import ProblemConstants as st
 
 class MacToPortMapper:
     def __init__(self):

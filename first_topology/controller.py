@@ -26,7 +26,7 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
-import ProblemConstants as st
+from ProblemConstants import ProblemConstants as st
 from webob import Response
 from MacToPortMapper import MacToPortMapper
 

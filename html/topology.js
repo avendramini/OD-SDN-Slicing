@@ -191,10 +191,12 @@ for (let i = 1; i <= 11; i++) {
             aggiornaColorazione();
         }
         
-        console.log("Slice selezionate Day:", sliceSelezionateDay);
-        console.log("Slice selezionate Night:", sliceSelezionateNight);
+        console.log("Slice Day:", sliceSelezionateDay);
+        console.log("Slice Night:", sliceSelezionateNight);
     });
 }
+
+// ------------------------------------------------------------------------------------------------
 
 var CONF = {
     image: {

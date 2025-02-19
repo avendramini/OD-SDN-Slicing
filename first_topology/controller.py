@@ -42,94 +42,7 @@ class Controller(app_manager.RyuApp):
         super(Controller, self).__init__(*args, **kwargs)
         wsgi = kwargs['wsgi']
         wsgi.register(ControllerServer)
-        self.mac_to_port = {
-            "0000000000000001": {
-            "192.168.1.1": 4,
-            "192.168.1.2": 5,
-            "192.168.1.3": 6,
-            "192.168.1.4": 1,
-            "192.168.1.5": 1,
-            "192.168.1.6": 2,
-            "192.168.1.7": 2,
-            "192.168.1.8": 3,
-            "192.168.1.9": 3,
-            "192.168.1.10":3,
-            "192.168.1.11":3,
-            "192.168.1.12":3
-
-            },
-            "0000000000000002": {
-            "192.168.1.1": 1,
-            "192.168.1.2": 1,
-            "192.168.1.3": 1,
-            "192.168.1.4": 2,
-            "192.168.1.5": 3,
-            "192.168.1.6": 1,
-            "192.168.1.7": 1,
-            "192.168.1.8": 1,
-            "192.168.1.9": 1,
-            "192.168.1.10": 1,
-            "192.168.1.11": 1,
-            "192.168.1.12": 1
-            },
-            "0000000000000003": {
-            "192.168.1.1": 1,
-            "192.168.1.2": 1,
-            "192.168.1.3": 1,
-            "192.168.1.4": 1,
-            "192.168.1.5": 1,
-            "192.168.1.6": 2,
-            "192.168.1.7": 3,
-            "192.168.1.8": 1,
-            "192.168.1.9": 1,
-            "192.168.1.10": 1,
-            "192.168.1.11": 1,
-            "192.168.1.12": 1
-            },
-            "0000000000000004": {
-            "192.168.1.1": 1,
-            "192.168.1.2": 1,
-            "192.168.1.3": 1,
-            "192.168.1.4": 1,
-            "192.168.1.5": 1,
-            "192.168.1.6": 1,
-            "192.168.1.7": 1,
-            "192.168.1.8": 2,
-            "192.168.1.9": 2,
-            "192.168.1.10": 3,
-            "192.168.1.11": 3,
-            "192.168.1.12": 3
-            },
-            "0000000000000005": {
-            "192.168.1.1": 1,
-            "192.168.1.2": 1,
-            "192.168.1.3": 1,
-            "192.168.1.4": 1,
-            "192.168.1.5": 1,
-            "192.168.1.6": 1,
-            "192.168.1.7": 1,
-            "192.168.1.8": 2,
-            "192.168.1.9": 3,
-            "192.168.1.10": 1,
-            "192.168.1.11": 1,
-            "192.168.1.12": 1
-            },
-            "0000000000000006": {
-            "192.168.1.1": 1,
-            "192.168.1.2": 1,
-            "192.168.1.3": 1,
-            "192.168.1.4": 1,
-            "192.168.1.5": 1,
-            "192.168.1.6": 1,
-            "192.168.1.7": 1,
-            "192.168.1.8": 1,
-            "192.168.1.9": 1,
-            "192.168.1.10": 2,
-            "192.168.1.11": 3,
-            "192.168.1.12": 4
-            }
-        }
-
+        self.mac_to_port = {}
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -224,12 +137,14 @@ class Controller(app_manager.RyuApp):
         datapath.send_msg(out)
 
 class ControllerServer(ControllerBase):
+    DAY=0
+    NIGHT=1
     def __init__(self, req, link, data, **config):
         super(ControllerServer, self).__init__(req, link, data, **config)
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
-        self.Day_MacToPortMapper = MacToPortMapper()
-        self.Night_MacToPortMapper = MacToPortMapper()
+        self.mappers = [MacToPortMapper(), MacToPortMapper()]
+        self.active_mode=self.DAY
         
     @route('topology', '/{filename:[^/]*}')
     def static_handler(self, req, **kwargs):
@@ -237,21 +152,32 @@ class ControllerServer(ControllerBase):
             req.path_info = kwargs['filename']
         return self.static_app(req)
     
+    @route('mode', '/mode/set', methods=['POST'])
+    def set_mode(self, req, **kwargs):
+        try:
+            mode_data = req.json if req.body else {}
+            mode = mode_data.get('mode')
+            if mode not in [self.DAY, self.NIGHT]:
+                return Response(status=400, body="Invalid mode")
+            self.active_mode = mode
+            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
+            return Response(status=200, body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
+        except Exception as e:
+            return Response(status=500, body=str(e))
+    
     @route('slice', '/slice/add', methods=['POST'])
     def add_slice(self, req, **kwargs):
         try:
             slice_data = req.json if req.body else {}
             slice_id = slice_data.get('slice_id')
             mode = slice_data.get('mode')
-            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or (mode!=0 and mode!=1):
-                return Response(status=400, body="Missing slice parameters")
+            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode:
+                return Response(status=400, body="Incorrect parameters")
             
-            # Add the slice to the state
-            if mode:
-                self.Day_MacToPortMapper.add_slice(slice_id)
-            else:
-                self.Night_MacToPortMapper.add_slice(slice_id)
-            return Response(status=200, body="Slice added successfully")
+            if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
+                return Response(status=400, body="Failed to add slice")
+            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
+            return Response(status=200, body={"message": "Slice added successfully", "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
 
@@ -261,18 +187,16 @@ class ControllerServer(ControllerBase):
             slice_data = req.json if req.body else {}
             slice_id = slice_data.get('slice_id')
             mode = slice_data.get('mode')
-            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or (mode!=0 and mode!=1):
-                return Response(status=400, body="Missing slice parameters")
+            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode :
+                return Response(status=400, body="Incorrect parameters")
             
-            # Add the slice to the state
-            if mode:
-                self.Day_MacToPortMapper.remove_slice(slice_id)
-            else:
-                self.Night_MacToPortMapper.remove_slice(slice_id)
-            return Response(status=200, body="Slice removed successfully")
+            if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):
+                return Response(status=400, body="Failed to remove slice")
+            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
+            return Response(status=200, body={"message": "Slice removed successfully", "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
-        
+    
 app_manager.require_app('ryu.app.rest_topology')
 app_manager.require_app('ryu.app.ws_topology')
 app_manager.require_app('ryu.app.ofctl_rest')

@@ -305,6 +305,16 @@ body.night-mode .sidebar input:checked + .menu-item {
     background-color: rgba(133, 130, 132, 0.143);
 }
 
+body.night-mode #tab2,
+body.night-mode #tab3 {
+    display: none;
+}
+
+body.night-mode #tab2 + .menu-item,
+body.night-mode #tab3 + .menu-item {
+    display: none;
+}
+
 .sidebar h3:nth-of-type(2) {
     margin-top: 20px; /* Adds space above "QoS:" */
 }

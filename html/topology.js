@@ -96,6 +96,7 @@ var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+
 let sliceSelezionateDay = [];
 let sliceSelezionateNight = [];
 let dayMode = true;

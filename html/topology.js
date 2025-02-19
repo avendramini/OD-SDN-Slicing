@@ -25,8 +25,16 @@ var slice4DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
+var slice4NightLinkIds = [
+    // { src: "0000000000000001", dst: "0000000000000003" }
+ ];
+ 
 // slice 6
 var slice5DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" }
+];
+
+var slice5NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" }
 ];
 
@@ -37,8 +45,18 @@ var slice6DayLinkIds = [
 
 ];
 
+var slice6NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000006" }
+
+];
+
 // slice 8
 var slice7DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" }
+];
+
+var slice7NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" }
 ];
 
@@ -46,6 +64,11 @@ var slice7DayLinkIds = [
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" }];
+
+var slice8DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" }];
+    
 
 // slice 10
 var slice9DayLinkIds = [

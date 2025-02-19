@@ -1,7 +1,6 @@
 .node.fixed {
     fill: #C0C0C0;
 }
-
 .node text {
     font-size: 14px;
 }
@@ -11,19 +10,6 @@
     stroke-opacity: .6;
     stroke-width: 2px;
 }
-
-.link.slice-1 { stroke: rgb(140, 45, 240); stroke-opacity: 1; stroke-width: 3px;}
-.link.slice-2 { stroke: rgb(255, 220, 0); stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-3 { stroke: rgb(255, 220, 0); stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-4 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-5 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-6 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-7 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-8 { stroke: #2e69e8; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-9 { stroke: #e82ec0; stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-10 { stroke: rgb(241, 110, 10); stroke-opacity: 1; stroke-width: 3px; }
-.link.slice-11 { stroke: #e52727; stroke-opacity: 1; stroke-width: 3px; }
-
 
 .port circle {
     stroke: black;
@@ -215,59 +201,61 @@ h3 {
     margin-left: -2.5px;  
 }
 
+
+
 /* Store management */
 #tab1:checked + .menu-item::before {
-    background-color: rgb(140, 45, 240); 
+    background-color: rgb(0, 102, 204); 
 }
 
 /* Web Server management */
 #tab2:checked + .menu-item::before {
-    background-color: rgb(255, 220, 0);  
+    background-color: rgb(255, 123, 0);  
 }
 
 /* Wi-fi management */
 #tab3:checked + .menu-item::before {
-    background-color: rgb(255, 220, 0);   
+    background-color: rgb(255, 123, 0);   
 }
 
 /* Administration management */
 #tab4:checked + .menu-item::before {
-    background-color:  #2e69e8;  
+    background-color:  rgb(10, 205, 36);  
 }
 
 /* Administrative management of stores */
 #tab5:checked + .menu-item::before {
-    background-color:  #2e69e8;  
+    background-color: rgb(10, 205, 36);  
 }
 
 /* Administrative management of Wi-fi */
 #tab6:checked + .menu-item::before {
-    background-color:  #2e69e8;  
+    background-color: rgb(10, 205, 36);  
 }
 
 /* Administrative management of security */
 #tab7:checked + .menu-item::before {
-    background-color:  #2e69e8;    
+    background-color:  rgb(10, 205, 36);    
 }
 
 /* Administrative management of animals */
 #tab8:checked + .menu-item::before {
-    background-color:  #2e69e8;  
+    background-color:  rgb(10, 205, 36);  
 }
 
 /* Animal management */
 #tab9:checked + .menu-item::before {
-    background-color: #e82ec0;  
+    background-color: rgb(255, 20, 147);  
 }
 
 /* Security management */
 #tab10:checked + .menu-item::before {
-    background-color: rgb(241, 110, 10);  
+    background-color: rgb(0, 189, 189);  
 }
 
 /* RESET */
 #tab11:checked + .menu-item::before {
-    background-color: #e52727;
+    background-color: rgb(233, 7, 7);
 }
 
 /* Night mode */

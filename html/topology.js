@@ -1,3 +1,4 @@
+
 // slice 1
 var slice1DayLinkIds = [ 
     //{ src: "0000000000000001", dst: "0000000000000003" }
@@ -102,11 +103,28 @@ let sliceSelezionateDay = [];
 let sliceSelezionateNight = [];
 let dayMode = true;
 
+const sliceColors = {
+    1: d3.rgb(0, 102, 204),     
+    2: d3.rgb(255, 123, 0),     
+    3: d3.rgb(255, 123, 0),     
+    4: d3.rgb(10, 205, 36),     
+    5: d3.rgb(10, 205, 36),      
+    6: d3.rgb(10, 205, 36),     
+    7: d3.rgb(10, 205, 36),    
+    8: d3.rgb(10, 205, 36),      
+    9: d3.rgb(255, 20, 147),  
+    10: d3.rgb(0, 189, 189),    
+    11: d3.rgb(233, 7, 7) 
+    
+};
+
 function aggiornaColorazione() {
-    for (let j = 1; j <= 11; j++) {
-        d3.selectAll(".link").classed(`slice-${j}`, false);
-    }
+    // Rimuovi tutte le classi di slice e gli stili dai link
+    d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
+
     const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+    const linkColors = {};
+
     sliceSelezionate.forEach(sliceCorrente => {
         var sliceLinkIds = dayMode 
             ? window[`slice${sliceCorrente}DayLinkIds`] 
@@ -119,17 +137,43 @@ function aggiornaColorazione() {
                            (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
                 });
             });
-        
+
             sliceLinks.forEach(function(link) {
-                d3.selectAll(".link").filter(function(d) {
-                    return (d.port.src.dpid === link.port.src.dpid && d.port.dst.dpid === link.port.dst.dpid) ||
-                           (d.port.src.dpid === link.port.dst.dpid && d.port.dst.dpid === link.port.src.dpid);
-                }).classed(`slice-${sliceCorrente}`, true);
-                console.log("Stampa 2");
-                console.log(`slice-${sliceCorrente}`);
+                const linkKey = `${link.port.src.dpid}-${link.port.dst.dpid}`;
+                if (!linkColors[linkKey]) {
+                    linkColors[linkKey] = [];
+                }
+                linkColors[linkKey].push(sliceCorrente);
             });
         }
     });
+
+    Object.keys(linkColors).forEach(linkKey => {
+        const slices = linkColors[linkKey];
+        const color = calculateCombinedColor(slices);
+        d3.selectAll(".link").filter(function(d) {
+            return `${d.port.src.dpid}-${d.port.dst.dpid}` === linkKey ||
+                   `${d.port.dst.dpid}-${d.port.src.dpid}` === linkKey;
+        }).style("stroke", color).style("stroke-width", "3px").style("stroke-opacity", "1");
+    });
+}
+
+function calculateCombinedColor(slices) {
+    const colors = slices.map(slice => sliceColors[slice]);
+
+    const combinedColor = colors.reduce((acc, color) => {
+        acc.r += color.r;
+        acc.g += color.g;
+        acc.b += color.b;
+        return acc;
+    }, { r: 0, g: 0, b: 0 });
+
+    const numColors = colors.length;
+    combinedColor.r = Math.min(Math.round(combinedColor.r / numColors), 255);
+    combinedColor.g = Math.min(Math.round(combinedColor.g / numColors), 255);
+    combinedColor.b = Math.min(Math.round(combinedColor.b / numColors), 255);
+
+    return `rgb(${combinedColor.r}, ${combinedColor.g}, ${combinedColor.b})`;
 }
 
 function sincronizzaCheckbox() {
@@ -182,13 +226,7 @@ for (let i = 1; i <= 11; i++) {
                 sliceSelezionateNight = [];
             }
             
-            d3.selectAll(".link").classed(function(d) {
-                return `slice-${d.sliceId || ""}`, false;
-            });
-
-            for (let j = 1; j <= 11; j++) {
-                d3.selectAll(".link").classed(`slice-${j}`, false);
-            }
+            d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
 
             document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
                 menuItem.style.backgroundColor = '';  
@@ -504,3 +542,4 @@ function main() {
 }
 
 main();
+

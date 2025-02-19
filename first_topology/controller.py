@@ -228,8 +228,8 @@ class ControllerServer(ControllerBase):
         super(ControllerServer, self).__init__(req, link, data, **config)
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
-        self.Day_MacToPortMapper = st.MacToPortMapper()
-        self.Night_MacToPortMapper = st.MacToPortMapper()
+        self.Day_MacToPortMapper = MacToPortMapper()
+        self.Night_MacToPortMapper = MacToPortMapper()
         
     @route('topology', '/{filename:[^/]*}')
     def static_handler(self, req, **kwargs):

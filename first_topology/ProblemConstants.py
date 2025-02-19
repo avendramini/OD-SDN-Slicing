@@ -1,10 +1,11 @@
+class ProblemConstants:
 
-NUM_SLICES=13
-INCOMPATIBLE_SLICES=[
+    NUM_SLICES=13
+    INCOMPATIBLE_SLICES=[
     [1,2],[3,4],[10,11],[12,13],[1,4],[1,11],[1,13],[3,11],[3,13]
-]
+    ]
 
-SLICES_RULES=[
+    SLICES_RULES=[
     # SLICE 1
     {
         "0000000000000003": 
@@ -190,43 +191,5 @@ SLICES_RULES=[
             "192.168.1.5":3
         }
     } 
-]
-
-class MacToPortMapper:
-    def __init__(self):
-        self.map={}
-        self.active_slice=[0]*13
-        self.adjacency_list = [ [] for _ in range(NUM_SLICES)]
-
-        for pair in INCOMPATIBLE_SLICES:
-            a, b = pair[0] - 1, pair[1] - 1
-            self.adjacency_list[a].append(b)
-            self.adjacency_list[b].append(a)
-
-    def verify_add_compatibility(self, slice_number):
-        for i in self.adjacency_list[slice_number-1]:
-            if self.active_slice[i] == 1:
-                return False
-        return True
-    def add_slice(self, slice_number):
-        if self.verify_add_compatibility(slice_number):
-            self.active_slice[slice_number-1] = 1
-            for x in SLICES_RULES[slice_number-1]:
-                for y in SLICES_RULES[slice_number-1][x]:
-                    if x not in self.map:
-                        self.map[x] = {}
-                    self.map[x][y] = SLICES_RULES[slice_number-1][x][y]
-            return True
-        return False
-    
-    def remove_slice(self,slice_number):
-        self.active_slice[slice_number-1] = 0
-        for x in SLICES_RULES[slice_number-1]:
-            for y in SLICES_RULES[slice_number-1][x]:
-                del self.map[x][y]
-        return True
-    
-    def get_map(self):
-        return self.map
-
+    ]
 

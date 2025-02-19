@@ -26,6 +26,8 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
+import ProblemConstants as st
+from webob import Response
 
 PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 print(PATH)
@@ -225,12 +227,50 @@ class ControllerServer(ControllerBase):
         super(ControllerServer, self).__init__(req, link, data, **config)
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
+        self.Day_MacToPortMapper = st.MacToPortMapper()
+        self.Night_MacToPortMapper = st.MacToPortMapper()
         
     @route('topology', '/{filename:[^/]*}')
     def static_handler(self, req, **kwargs):
         if kwargs['filename']:
             req.path_info = kwargs['filename']
         return self.static_app(req)
+    
+    @route('slice', '/slice/add', methods=['POST'])
+    def add_slice(self, req, **kwargs):
+        try:
+            slice_data = req.json if req.body else {}
+            slice_id = slice_data.get('slice_id')
+            mode = slice_data.get('mode')
+            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or (mode!=0 and mode!=1):
+                return Response(status=400, body="Missing slice parameters")
+            
+            # Add the slice to the state
+            if mode:
+                self.Day_MacToPortMapper.add_slice(slice_id)
+            else:
+                self.Night_MacToPortMapper.add_slice(slice_id)
+            return Response(status=200, body="Slice added successfully")
+        except Exception as e:
+            return Response(status=500, body=str(e))
+
+    @route('slice', '/slice/remove', methods=['POST'])
+    def remove_slice(self, req, **kwargs):
+        try:
+            slice_data = req.json if req.body else {}
+            slice_id = slice_data.get('slice_id')
+            mode = slice_data.get('mode')
+            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or (mode!=0 and mode!=1):
+                return Response(status=400, body="Missing slice parameters")
+            
+            # Add the slice to the state
+            if mode:
+                self.Day_MacToPortMapper.remove_slice(slice_id)
+            else:
+                self.Night_MacToPortMapper.remove_slice(slice_id)
+            return Response(status=200, body="Slice removed successfully")
+        except Exception as e:
+            return Response(status=500, body=str(e))
         
 app_manager.require_app('ryu.app.rest_topology')
 app_manager.require_app('ryu.app.ws_topology')

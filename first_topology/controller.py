@@ -196,6 +196,7 @@ class ControllerServer(ControllerBase):
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
             print(mode)
+            print(self.active_mode)
             if mode not in [self.DAY, self.NIGHT] or mode == self.active_mode:
                 print(mode)
                 print([self.DAY,self.NIGHT])

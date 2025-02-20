@@ -182,6 +182,7 @@ class ControllerServer(ControllerBase):
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
         self.mappers = [MacToPortMapper(), MacToPortMapper()]
+        print("init")
         self.active_mode=self.DAY
 
     @route('topology', '/{filename:[^/]*}')

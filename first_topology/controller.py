@@ -204,6 +204,7 @@ class ControllerServer(ControllerBase):
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
             mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
+            print(f"slice_id: {slice_id}, mode: {mode}")
             if not slice_id or slice_id<0 or slice_id>st.NUM_SLICES or not mode or mode!=self.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             

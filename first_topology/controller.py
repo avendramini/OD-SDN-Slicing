@@ -191,7 +191,7 @@ class ControllerServer(ControllerBase):
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
             return Response(status=200, body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
@@ -211,7 +211,7 @@ class ControllerServer(ControllerBase):
             if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
                 return Response(status=400, body="Failed to add slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
             return Response(status=200, body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
@@ -230,7 +230,7 @@ class ControllerServer(ControllerBase):
             if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
             return Response(status=200, body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})

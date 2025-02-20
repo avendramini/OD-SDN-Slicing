@@ -155,23 +155,21 @@ class Controller(app_manager.RyuApp):
         """
         Resetta tutte le tabelle di flusso degli switch connessi
         """
-        for dpid in list(self.mac_to_port.keys()):  # Itera sugli switch conosciuti
-            datapath = self.get_datapath(dpid)  # Ottenere il datapath
-            if datapath:
-                ofproto = datapath.ofproto
-                parser = datapath.ofproto_parser
+        for datapath in self.datapaths.values():  # Itera sugli switch conosciuti
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
 
-                # Crea un messaggio di eliminazione delle regole di flusso
-                match = parser.OFPMatch()  # Nessun match = cancella tutte le regole
-                mod = parser.OFPFlowMod(
-                    datapath=datapath, 
-                    command=ofproto.OFPFC_DELETE,  # Comando di eliminazione
-                    out_port=ofproto.OFPP_ANY,  # Cancella per tutte le porte
-                    out_group=ofproto.OFPG_ANY,  # Cancella per tutti i gruppi
-                    match=match
-                )
-                datapath.send_msg(mod)  # Invia il messaggio allo switch
-                self.logger.info(f"Reset delle tabelle di flusso per lo switch {dpid}")
+            # Crea un messaggio di eliminazione delle regole di flusso
+            match = parser.OFPMatch()  # Nessun match = cancella tutte le regole
+            mod = parser.OFPFlowMod(
+                datapath=datapath, 
+                command=ofproto.OFPFC_DELETE,  # Comando di eliminazione
+                out_port=ofproto.OFPP_ANY,  # Cancella per tutte le porte
+                out_group=ofproto.OFPG_ANY,  # Cancella per tutti i gruppi
+                match=match
+            )
+            datapath.send_msg(mod)  # Invia il messaggio allo switch
+            self.logger.info(f"Reset delle tabelle di flusso per lo switch {datapath.id}")
 
 class ControllerState:
     DAY = 0

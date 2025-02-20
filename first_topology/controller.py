@@ -41,9 +41,10 @@ class Controller(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(Controller, self).__init__(*args, **kwargs)
         wsgi = kwargs['wsgi']
+        self.state = ControllerState()
         wsgi.register(ControllerServer, {"controller_instance": self})
         self.mac_to_port = {}
-        self.datapaths={}
+        self.datapaths = {}
 
     @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
     def _state_change_handler(self, ev):
@@ -172,18 +173,22 @@ class Controller(app_manager.RyuApp):
                 datapath.send_msg(mod)  # Invia il messaggio allo switch
                 self.logger.info(f"Reset delle tabelle di flusso per lo switch {dpid}")
 
-class ControllerServer(ControllerBase):
-    DAY=0
-    NIGHT=1
+class ControllerState:
+    DAY = 0
+    NIGHT = 1
 
+    def __init__(self):
+        self.mappers = [MacToPortMapper(), MacToPortMapper()]
+        self.active_mode = self.DAY
+
+class ControllerServer(ControllerBase):
     def __init__(self, req, link, data, **config):
         super(ControllerServer, self).__init__(req, link, data, **config)
         self.controller_instance = data["controller_instance"]
+        self.state = self.controller_instance.state
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
-        self.mappers = [MacToPortMapper(), MacToPortMapper()]
         print("init")
-        self.active_mode=self.DAY
 
     @route('topology', '/{filename:[^/]*}')
     def static_handler(self, req, **kwargs):
@@ -196,17 +201,17 @@ class ControllerServer(ControllerBase):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
-            print(f"Modalità attuale: {self.active_mode}")
+            print(f"Modalità attuale: {self.state.active_mode}")
             print(f"Modalità richiesta{mode}")
-            if mode not in [self.DAY, self.NIGHT]:
+            if mode not in [self.state.DAY, self.state.NIGHT]:
                 return Response(status=400, body="Invalid mode")
-            self.active_mode = mode
-            self.controller_instance.logger.info("New active_mode: %d", self.active_mode)
-            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
+            self.state.active_mode = mode
+            self.controller_instance.logger.info("New active_mode: %d", self.state.active_mode)
+            active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
+            self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
             self.controller_instance.reset_switches()
-            print(f"Modalità modificata: {self.active_mode}")
-            return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
+            print(f"Modalità modificata: {self.state.active_mode}")
+            return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
     
@@ -215,17 +220,17 @@ class ControllerServer(ControllerBase):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
-            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.active_mode
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.state.active_mode
             print(f"slice_id: {slice_id}, mode: {mode}")
-            if not slice_id or slice_id > st.NUM_SLICES or mode != self.active_mode:
+            if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             
-            if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
+            if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 1 or not self.state.mappers[self.state.active_mode].add_slice(slice_id):
                 return Response(status=400, body="Failed to add slice")
-            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
+            active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
+            self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
 
-            return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
+            return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
 
@@ -234,28 +239,29 @@ class ControllerServer(ControllerBase):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
-            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.active_mode
-            if not slice_id or slice_id>st.NUM_SLICES or mode!=self.active_mode :
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.state.active_mode
+            if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             
-            if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):
+            if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 0 or not self.state.mappers[self.state.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
-            active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
+            active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
+            self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
 
-            return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})
+            return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
+
     @route('reset', '/reset/map', methods=['POST'])
     def reset_map(self, req):
         try:
             reset_data = req.json if req.body else {}
             mode = int(reset_data.get('mode')) if reset_data.get('mode') else None
-            if mode not in [self.DAY, self.NIGHT] or mode != self.active_mode:
+            if mode not in [self.state.DAY, self.state.NIGHT] or mode != self.state.active_mode:
                 return Response(status=400, body="Invalid mode")
             
-            self.mappers[mode].reset_map()
-            self.controller_instance.mac_to_port = self.mappers[mode].map
+            self.state.mappers[mode].reset_map()
+            self.controller_instance.mac_to_port = self.state.mappers[mode].map
             self.controller_instance.reset_switches()
             
             return Response(status=200, json_body={"message": "Map reset successfully", "mode": mode})

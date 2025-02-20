@@ -153,7 +153,7 @@ class Controller(app_manager.RyuApp):
     
     def reset_switches(self):
         """
-        Resetta tutte le tabelle di flusso degli switch connessi
+        Resetta tutte le tabelle di flusso degli switch connessi e reinizializza la rete
         """
         for datapath in self.datapaths.values():  # Itera sugli switch conosciuti
             ofproto = datapath.ofproto
@@ -170,6 +170,12 @@ class Controller(app_manager.RyuApp):
             )
             datapath.send_msg(mod)  # Invia il messaggio allo switch
             self.logger.info(f"Reset delle tabelle di flusso per lo switch {datapath.id}")
+
+            # Reinstall table-miss flow entry
+            match = parser.OFPMatch()
+            actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+                                              ofproto.OFPCML_NO_BUFFER)]
+            self.add_flow(datapath, 0, match, actions)
 
 class ControllerState:
     DAY = 0

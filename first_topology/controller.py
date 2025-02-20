@@ -187,7 +187,7 @@ class ControllerServer(ControllerBase):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
-            if mode not in [self.DAY, self.NIGHT]:
+            if mode not in [self.DAY, self.NIGHT] or mode == self.active_mode:
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]

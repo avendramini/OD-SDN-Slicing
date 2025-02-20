@@ -137,7 +137,7 @@ class Controller(app_manager.RyuApp):
                       in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
     def reset_switches(self):
-        for datapath in self.controller_instance.datapaths.values():
+        for datapath in self.datapaths.values():
             ofproto = datapath.ofproto
             parser = datapath.ofproto_parser
 
@@ -162,7 +162,7 @@ class Controller(app_manager.RyuApp):
             # Reinstall table-miss flow entry
             match = parser.OFPMatch()
             actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
-            self.controller_instance.add_flow(datapath, 0, match, actions)
+            self.add_flow(datapath, 0, match, actions)
 
 class ControllerServer(ControllerBase):
     DAY=0

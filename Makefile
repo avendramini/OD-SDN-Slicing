@@ -7,7 +7,4 @@ run-topology:
 
 run-controller:
 	@echo "Running controller..."
-	@ryu-manager first_topology/controller.py
-run-gui:
-	@echo "Running GUI..."
-	@ryu-manager first_topology/controller.py ./externals/ryu/ryu/app/gui_topology/gui_topology.py	
+	@ryu-manager first_topology/controller.py --observe-links

@@ -183,7 +183,7 @@ class ControllerServer(ControllerBase):
         return self.static_app(req)
     
     @route('mode', '/mode/set', methods=['POST'])
-    def set_mode(self, req, **kwargs):
+    def set_mode(self, req):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
@@ -194,12 +194,12 @@ class ControllerServer(ControllerBase):
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
-            return Response(status=200, body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
+            return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
     
     @route('slice', '/slice/add', methods=['POST'])
-    def add_slice(self, req, **kwargs):
+    def add_slice(self, req):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
@@ -214,12 +214,12 @@ class ControllerServer(ControllerBase):
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
-            return Response(status=200, body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
+            return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
 
     @route('slice', '/slice/remove', methods=['POST'])
-    def remove_slice(self, req, **kwargs):
+    def remove_slice(self, req):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
@@ -233,7 +233,7 @@ class ControllerServer(ControllerBase):
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             #reset switch
             #self.controller_instance.reset_switches()
-            return Response(status=200, body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})
+            return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
     

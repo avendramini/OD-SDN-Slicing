@@ -43,7 +43,7 @@ class Controller(app_manager.RyuApp):
         wsgi = kwargs['wsgi']
         wsgi.register(ControllerServer, {"controller_instance": self})
         self.mac_to_port = {}
-        self.datapath={}
+        self.datapaths={}
 
     @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
     def _state_change_handler(self, ev):

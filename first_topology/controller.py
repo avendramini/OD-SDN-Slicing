@@ -117,7 +117,8 @@ class Controller(app_manager.RyuApp):
             out_port = self.mac_to_port[dpid][dst_ip]
             #print(out_port)
         else:
-            out_port = ofproto.OFPP_FLOOD
+            #out_port = ofproto.OFPP_FLOOD
+            return
 
         actions = [parser.OFPActionOutput(out_port)]
 
@@ -185,7 +186,7 @@ class ControllerServer(ControllerBase):
     def set_mode(self, req, **kwargs):
         try:
             mode_data = req.json if req.body else {}
-            mode = mode_data.get('mode')
+            mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
             if mode not in [self.DAY, self.NIGHT]:
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
@@ -201,8 +202,8 @@ class ControllerServer(ControllerBase):
     def add_slice(self, req, **kwargs):
         try:
             slice_data = req.json if req.body else {}
-            slice_id = slice_data.get('slice_id')
-            mode = slice_data.get('mode')
+            slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
             if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             
@@ -220,8 +221,8 @@ class ControllerServer(ControllerBase):
     def remove_slice(self, req, **kwargs):
         try:
             slice_data = req.json if req.body else {}
-            slice_id = slice_data.get('slice_id')
-            mode = slice_data.get('mode')
+            slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
             if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode :
                 return Response(status=400, body="Incorrect parameters")
             

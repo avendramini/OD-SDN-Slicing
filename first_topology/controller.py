@@ -195,8 +195,8 @@ class ControllerServer(ControllerBase):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
-            print(self.active_mode)
-            print(mode)
+            print(f"Modalità attuale: {self.active_mode}")
+            print(f"Modalità richiesta{mode}")
             if mode not in [self.DAY, self.NIGHT]:
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
@@ -204,6 +204,7 @@ class ControllerServer(ControllerBase):
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             self.controller_instance.reset_switches()
+            print(f"Modalità modificata: {self.active_mode}")
             return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -213,9 +214,9 @@ class ControllerServer(ControllerBase):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
-            mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.active_mode
             print(f"slice_id: {slice_id}, mode: {mode}")
-            if not slice_id or slice_id > st.NUM_SLICES or mode is None or mode != self.active_mode:
+            if not slice_id or slice_id > st.NUM_SLICES or mode != self.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             
             if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
@@ -232,8 +233,8 @@ class ControllerServer(ControllerBase):
         try:
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
-            mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
-            if not slice_id or slice_id>st.NUM_SLICES or mode==None or mode!=self.active_mode :
+            mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.active_mode
+            if not slice_id or slice_id>st.NUM_SLICES or mode!=self.active_mode :
                 return Response(status=400, body="Incorrect parameters")
             
             if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):

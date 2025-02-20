@@ -43,6 +43,18 @@ class Controller(app_manager.RyuApp):
         wsgi = kwargs['wsgi']
         wsgi.register(ControllerServer, {"controller_instance": self})
         self.mac_to_port = {}
+        self.datapath={}
+
+    @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
+    def _state_change_handler(self, ev):
+        datapath = ev.datapath
+        if ev.state == MAIN_DISPATCHER:
+            self.datapaths[datapath.id] = datapath
+        elif ev.state == ofproto_v1_3.OFPCR_ROLE_NOCHANGE:
+            self.datapaths.pop(datapath.id, None)
+
+    def get_datapath(self, dpid):
+        return self.datapaths.get(int(dpid))
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -136,33 +148,29 @@ class Controller(app_manager.RyuApp):
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                       in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
+
+    
     def reset_switches(self):
-        for datapath in self.datapaths.values():
-            ofproto = datapath.ofproto
-            parser = datapath.ofproto_parser
+        """
+        Resetta tutte le tabelle di flusso degli switch connessi
+        """
+        for dpid in list(self.mac_to_port.keys()):  # Itera sugli switch conosciuti
+            datapath = self.get_datapath(dpid)  # Ottenere il datapath
+            if datapath:
+                ofproto = datapath.ofproto
+                parser = datapath.ofproto_parser
 
-            # Remove all flows
-            empty_match = parser.OFPMatch()
-            instructions = []
-            flow_mod = parser.OFPFlowMod(datapath=datapath, command=ofproto.OFPFC_DELETE, 
-                         out_port=ofproto.OFPP_ANY, out_group=ofproto.OFPG_ANY, 
-                         match=empty_match, instructions=instructions)
-            datapath.send_msg(flow_mod)
-
-            # Remove all groups
-            group_mod = parser.OFPGroupMod(datapath=datapath, command=ofproto.OFPGC_DELETE, 
-                           group_id=ofproto.OFPG_ALL)
-            datapath.send_msg(group_mod)
-
-            # Remove all meters
-            meter_mod = parser.OFPMeterMod(datapath=datapath, command=ofproto.OFPMC_DELETE, 
-                           meter_id=ofproto.OFPM_ALL)
-            datapath.send_msg(meter_mod)
-
-            # Reinstall table-miss flow entry
-            match = parser.OFPMatch()
-            actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
-            self.add_flow(datapath, 0, match, actions)
+                # Crea un messaggio di eliminazione delle regole di flusso
+                match = parser.OFPMatch()  # Nessun match = cancella tutte le regole
+                mod = parser.OFPFlowMod(
+                    datapath=datapath, 
+                    command=ofproto.OFPFC_DELETE,  # Comando di eliminazione
+                    out_port=ofproto.OFPP_ANY,  # Cancella per tutte le porte
+                    out_group=ofproto.OFPG_ANY,  # Cancella per tutti i gruppi
+                    match=match
+                )
+                datapath.send_msg(mod)  # Invia il messaggio allo switch
+                self.logger.info(f"Reset delle tabelle di flusso per lo switch {dpid}")
 
 class ControllerServer(ControllerBase):
     DAY=0

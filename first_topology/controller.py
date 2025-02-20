@@ -195,8 +195,8 @@ class ControllerServer(ControllerBase):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
-            if not hasattr(self, 'active_mode'):
-                return Response(status=400, body="active_mode not set")
+            print(self.active_mode)
+            print(mode)
             if mode not in [self.DAY, self.NIGHT] or mode == self.active_mode:
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode

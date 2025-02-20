@@ -204,7 +204,7 @@ class ControllerServer(ControllerBase):
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
             mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
-            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode:
+            if not slice_id or slice_id<0 or slice_id>st.NUM_SLICES or not mode or mode!=self.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             
             if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
@@ -223,7 +223,7 @@ class ControllerServer(ControllerBase):
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
             mode = int(slice_data.get('mode')) if slice_data.get('mode') else None
-            if not slice_id or slice_id<0 or slice_id>st.N_SLICES or not mode or mode!=self.active_mode :
+            if not slice_id or slice_id<0 or slice_id>st.NUM_SLICES or not mode or mode!=self.active_mode :
                 return Response(status=400, body="Incorrect parameters")
             
             if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):

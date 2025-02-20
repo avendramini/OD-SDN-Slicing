@@ -192,8 +192,7 @@ class ControllerServer(ControllerBase):
             self.active_mode = mode
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
-            #reset switch
-            #self.controller_instance.reset_switches()
+            self.controller_instance.reset_switches()
             return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -212,8 +211,7 @@ class ControllerServer(ControllerBase):
                 return Response(status=400, body="Failed to add slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
-            #reset switch
-            #self.controller_instance.reset_switches()
+
             return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -231,12 +229,25 @@ class ControllerServer(ControllerBase):
                 return Response(status=400, body="Failed to remove slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
-            #reset switch
-            #self.controller_instance.reset_switches()
+
             return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
-    
+    @route('reset', '/reset/map', methods=['POST'])
+    def reset_map(self, req):
+        try:
+            reset_data = req.json if req.body else {}
+            mode = int(reset_data.get('mode')) if reset_data.get('mode') else None
+            if mode not in [self.DAY, self.NIGHT] or mode != self.active_mode:
+                return Response(status=400, body="Invalid mode")
+            
+            self.mappers[mode].reset_map()
+            self.controller_instance.mac_to_port = self.mappers[mode].map
+            self.controller_instance.reset_switches()
+            
+            return Response(status=200, json_body={"message": "Map reset successfully", "mode": mode})
+        except Exception as e:
+            return Response(status=500, body=str(e))
 app_manager.require_app('ryu.app.rest_topology')
 app_manager.require_app('ryu.app.ws_topology')
 app_manager.require_app('ryu.app.ofctl_rest')

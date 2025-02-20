@@ -34,6 +34,8 @@ class MacToPortMapper:
             for y in st.SLICES_RULES[slice_number - 1][x]:
                 del self.map[x][y]
         return True
-
+    def reset_map(self):
+        self.map.clear()
+        self.active_slice = [0] * 13
     def get_map(self):
         return self.map

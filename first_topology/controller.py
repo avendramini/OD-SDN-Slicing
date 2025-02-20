@@ -41,7 +41,7 @@ class Controller(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(Controller, self).__init__(*args, **kwargs)
         wsgi = kwargs['wsgi']
-        wsgi.register(ControllerServer)
+        wsgi.register(ControllerServer, {"controller_instance": self})
         self.mac_to_port = {}
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -135,17 +135,46 @@ class Controller(app_manager.RyuApp):
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                       in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
+    def reset_switches(self):
+        for datapath in self.controller_instance.datapaths.values():
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
+
+            # Remove all flows
+            empty_match = parser.OFPMatch()
+            instructions = []
+            flow_mod = parser.OFPFlowMod(datapath=datapath, command=ofproto.OFPFC_DELETE, 
+                         out_port=ofproto.OFPP_ANY, out_group=ofproto.OFPG_ANY, 
+                         match=empty_match, instructions=instructions)
+            datapath.send_msg(flow_mod)
+
+            # Remove all groups
+            group_mod = parser.OFPGroupMod(datapath=datapath, command=ofproto.OFPGC_DELETE, 
+                           group_id=ofproto.OFPG_ALL)
+            datapath.send_msg(group_mod)
+
+            # Remove all meters
+            meter_mod = parser.OFPMeterMod(datapath=datapath, command=ofproto.OFPMC_DELETE, 
+                           meter_id=ofproto.OFPM_ALL)
+            datapath.send_msg(meter_mod)
+
+            # Reinstall table-miss flow entry
+            match = parser.OFPMatch()
+            actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
+            self.controller_instance.add_flow(datapath, 0, match, actions)
 
 class ControllerServer(ControllerBase):
     DAY=0
     NIGHT=1
+
     def __init__(self, req, link, data, **config):
         super(ControllerServer, self).__init__(req, link, data, **config)
+        self.controller_instance = data["controller_instance"]
         path = "%s/html/" % PATH
         self.static_app = DirectoryApp(path)
         self.mappers = [MacToPortMapper(), MacToPortMapper()]
         self.active_mode=self.DAY
-        
+
     @route('topology', '/{filename:[^/]*}')
     def static_handler(self, req, **kwargs):
         if kwargs['filename']:
@@ -161,6 +190,9 @@ class ControllerServer(ControllerBase):
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            #reset switch
+            #self.controller_instance.reset_switches()
             return Response(status=200, body={"message": "Mode set successfully", "active_mode": self.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -177,7 +209,10 @@ class ControllerServer(ControllerBase):
             if  self.mappers[self.active_mode].active_slice[slice_id-1]==1 or not self.mappers[self.active_mode].add_slice(slice_id):
                 return Response(status=400, body="Failed to add slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            return Response(status=200, body={"message": "Slice added successfully", "active_slices": active_slices})
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            #reset switch
+            #self.controller_instance.reset_switches()
+            return Response(status=200, body={"message": "Slice added successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
 
@@ -193,7 +228,10 @@ class ControllerServer(ControllerBase):
             if self.mappers[self.active_mode].active_slice[slice_id-1]==0 or not self.mappers[self.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
-            return Response(status=200, body={"message": "Slice removed successfully", "active_slices": active_slices})
+            self.controller_instance.mac_to_port=self.mappers[self.active_mode].mac_to_port
+            #reset switch
+            #self.controller_instance.reset_switches()
+            return Response(status=200, body={"message": "Slice removed successfully", "active_mode": self.active_mode,"active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
     

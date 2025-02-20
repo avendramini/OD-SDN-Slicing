@@ -197,9 +197,10 @@ class ControllerServer(ControllerBase):
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
             print(self.active_mode)
             print(mode)
-            if mode not in [self.DAY, self.NIGHT] or mode == self.active_mode:
+            if mode not in [self.DAY, self.NIGHT]:
                 return Response(status=400, body="Invalid mode")
             self.active_mode = mode
+            self.controller_instance.logger.info("New active_mode: %d", self.active_mode)
             active_slices = [i+1 for i, active in enumerate(self.mappers[self.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port=self.mappers[self.active_mode].map
             self.controller_instance.reset_switches()

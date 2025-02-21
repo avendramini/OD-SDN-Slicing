@@ -596,7 +596,7 @@ var rpc = {
         for(var i=0; i < params.length; i++){
             switches.push({"dpid":params[i].dpid,"ports":params[i].ports});
         }
-        topo.add_nodes(switches);
+        topo.add_switch_nodes(switches);
         elem.update();
         return "";
     },
@@ -610,7 +610,7 @@ var rpc = {
         return "";
     },
     event_link_add: function (links) {
-        topo.add_links(links);
+        topo.add_switch_links(links);
         elem.update();
         return "";
     },

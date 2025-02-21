@@ -1,96 +1,139 @@
-
+const MAC_MASK = 256;
 // slice 1
 var slice1DayLinkIds = [ 
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000003", dst: (6+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
 ];
 
 // slice 2
 var slice1NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
 ];
 
 // slice 3
 var slice2DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000004", dst: "0000000000000006" }
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
 ];
 
 // slice 4
 var slice3DayLinkIds = [
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (11+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 // slice 5
 var slice4DayLinkIds = [
-   // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
 ];
 
 
 var slice4NightLinkIds = [
-    // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
  ];
  
 // slice 6
 var slice5DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
 ];
 
 var slice5NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
 ];
 
 // slice 7
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" }
-
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 var slice6NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" }
-
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 // slice 8
 var slice7DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 var slice7NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 // slice 9
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
 
 var slice8NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
     
 
 // slice 10
 var slice9DayLinkIds = [
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
 ];
 
 // slice 11
 var slice9NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
 
 
 // slice 12
 var slice10DayLinkIds = [
-   // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000002", dst: (4+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 // slice 13
 var slice10NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
 ];
 
 // RESET
@@ -133,8 +176,10 @@ function aggiornaColorazione() {
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
-                    return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
-                           (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
+                    console.log(link);
+                    console.log(id);
+                    return (link.port.src.dpid == id.src && link.port.dst.dpid == id.dst) ||
+                           (link.port.src.dpid == id.dst && link.port.dst.dpid == id.src);
                 });
             });
 
@@ -259,6 +304,11 @@ for (let i = 1; i <= 11; i++) {
     });
 }
 
+function macToDecimal(mac) {
+    return parseInt(mac.replace(/:/g, ''), 16);
+}
+
+
 // ------------------------------------------------------------------------------------------------
 
 var CONF = {
@@ -277,7 +327,6 @@ var CONF = {
 var ws = new WebSocket("ws://" + location.host + "/v1.0/topology/ws");
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-
     var result = rpc[data.method](data.params);
 
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};
@@ -366,7 +415,7 @@ elem.update = function () {
         .attr("dx", -CONF.image.width/2)
         .attr("dy", CONF.image.height-10)
         .text(function(d) { 
-            return d.type === "switch" ? "dpid: " + trim_zero(d.dpid) : "host: " + d.dpid; 
+            return d.type === "switch" ? "dpid: " + trim_zero(d.dpid) : "host: " + (d.dpid - MAC_MASK); 
         });
     
 
@@ -396,6 +445,8 @@ var topo = {
         this.add_host_nodes(data.hosts);
         this.add_switch_links(data.links);
         this.add_host_links(data.hosts);
+        console.log(this.nodes);
+        console.log(this.links);
     },
     add_switch_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
@@ -414,7 +465,7 @@ var topo = {
                 continue;
             }
     
-            var host_mac = host.mac;
+            var host_mac = macToDecimal(host.mac);
             var switch_dpid = host.port.dpid;
             var switch_port = host.port.port_no;
     
@@ -466,7 +517,7 @@ var topo = {
                 continue;
             }
     
-            var host_mac = host.mac;  // Host identifier (MAC)
+            var host_mac = macToDecimal(host.mac);  // Host identifier (MAC)
             var switch_dpid = host.port.dpid;  // Switch DPID
             var switch_port = host.port.port_no;  // Switch port number
             var switch_hw_addr = host.port.hw_addr;  // Switch port MAC
@@ -481,20 +532,20 @@ var topo = {
             var switch_index = this.node_index[switch_dpid];
     
             var link = {
-                source: host_index,
-                target: switch_index,
+                source: switch_index,
+                target: host_index,
                 port: {
                     src: {
-                        dpid: host_mac,  // Host MAC as identifier
-                        port_no: "host",  // No specific port number
-                        hw_addr: host_mac,  // Host MAC address
-                        name: "host-" + host_mac
-                    },
-                    dst: {
                         dpid: switch_dpid,
                         port_no: switch_port,
                         hw_addr: switch_hw_addr,
                         name: switch_name
+                    },
+                    dst: {
+                        dpid: host_mac,  // Host MAC as identifier
+                        port_no: "host",  // No specific port number
+                        hw_addr: host_mac,  // Host MAC address
+                        name: "host-" + host_mac
                     }
                 }
             };
@@ -619,6 +670,12 @@ var rpc = {
         elem.update();
         return "";
     },
+    event_host_add: function (hosts){
+        topo.add_host_nodes(hosts);
+        topo.add_host_links(hosts);
+        elem.update();
+        return "";
+    }
 }
 
 function initialize_topology() {

@@ -268,8 +268,8 @@ var CONF = {
     },
     force: {
         width: 850,
-        height: 500,
-        dist: 200,
+        height: 550,
+        dist: 80,
         charge: -600
     }
 };
@@ -305,6 +305,7 @@ var elem = {
     console: d3.select("body").append("div")
         .attr("id", "console")
         .attr("width", CONF.force.width)
+        .attr("height", CONF.force.height),
 };
 function _tick() {
     elem.link.attr("x1", function(d) { return d.source.x; })
@@ -350,11 +351,13 @@ elem.update = function () {
     this.node = this.node.data(topo.nodes);
     this.node.exit().remove();
     var nodeEnter = this.node.enter().append("g")
-        .attr("class", "node")
+        .attr("class", function(d) { return "node " + d.type; })
         .on("dblclick", function(d) { d3.select(this).classed("fixed", d.fixed = false); })
         .call(this.drag);
     nodeEnter.append("image")
-        .attr("xlink:href", "./router.svg")
+        .attr("xlink:href", function(d) { 
+            return d.type === "switch" ? "./switch.svg" : "./host.svg"; 
+        })
         .attr("x", -CONF.image.width/2)
         .attr("y", -CONF.image.height/2)
         .attr("width", CONF.image.width)
@@ -362,7 +365,10 @@ elem.update = function () {
     nodeEnter.append("text")
         .attr("dx", -CONF.image.width/2)
         .attr("dy", CONF.image.height-10)
-        .text(function(d) { return "dpid: " + trim_zero(d.dpid); });
+        .text(function(d) { 
+            return d.type === "switch" ? "dpid: " + trim_zero(d.dpid) : "host: " + d.dpid; 
+        });
+    
 
     var ports = topo.get_ports();
     this.port.remove();
@@ -386,16 +392,52 @@ var topo = {
     links: [],
     node_index: {}, // dpid -> index of nodes array
     initialize: function (data) {
-        this.add_nodes(data.switches);
-        this.add_links(data.links);
+        this.add_switch_nodes(data.switches);
+        this.add_host_nodes(data.hosts);
+        this.add_switch_links(data.links);
+        this.add_host_links(data.hosts);
     },
-    add_nodes: function (nodes) {
+    add_switch_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
+            nodes[i].type = "switch";
             this.nodes.push(nodes[i]);
         }
         this.refresh_node_index();
+        console.log(this.nodes);
     },
-    add_links: function (links) {
+    add_host_nodes: function (hosts) {
+        for (var i = 0; i < hosts.length; i++) {
+            var host = hosts[i];
+    
+            if (!host.port || !host.port.dpid) {
+                console.warn("Host " + host.mac + " has no attached switch!");
+                continue;
+            }
+    
+            var host_mac = host.mac;
+            var switch_dpid = host.port.dpid;
+            var switch_port = host.port.port_no;
+    
+            var host_index = this.nodes.length;  // Assign next available index
+    
+            var host_node = {
+                dpid: host_mac,  // Use MAC as identifier (since hosts lack DPIDs)
+                index: host_index,
+                type: "host",
+                port: {
+                    dpid: switch_dpid,
+                    port_no: switch_port,
+                    hw_addr: host.port.hw_addr,
+                    name: host.port.name
+                }
+            };
+    
+            console.log("add host node: " + JSON.stringify(host_node));
+            this.nodes.push(host_node);
+            this.node_index[host_mac] = host_index;  // Store index for linking
+        }
+    },    
+    add_switch_links: function (links) {
         for (var i = 0; i < links.length; i++) {
             if (!is_valid_link(links[i])) continue;
             console.log("add link: " + JSON.stringify(links[i]));
@@ -414,7 +456,54 @@ var topo = {
             }
             this.links.push(link);
         }
-    },
+    }, 
+    add_host_links: function (hosts) {
+        for (var i = 0; i < hosts.length; i++) {
+            var host = hosts[i];
+    
+            if (!host.port || !host.port.dpid) {
+                console.warn("Host " + host.mac + " has no attached switch!");
+                continue;
+            }
+    
+            var host_mac = host.mac;  // Host identifier (MAC)
+            var switch_dpid = host.port.dpid;  // Switch DPID
+            var switch_port = host.port.port_no;  // Switch port number
+            var switch_hw_addr = host.port.hw_addr;  // Switch port MAC
+            var switch_name = host.port.name;  // Switch interface name
+    
+            if (!(switch_dpid in this.node_index) || !(host_mac in this.node_index)) {
+                console.warn("Host or switch missing from node_index: " + host_mac);
+                continue;
+            }
+    
+            var host_index = this.node_index[host_mac];
+            var switch_index = this.node_index[switch_dpid];
+    
+            var link = {
+                source: host_index,
+                target: switch_index,
+                port: {
+                    src: {
+                        dpid: host_mac,  // Host MAC as identifier
+                        port_no: "host",  // No specific port number
+                        hw_addr: host_mac,  // Host MAC address
+                        name: "host-" + host_mac
+                    },
+                    dst: {
+                        dpid: switch_dpid,
+                        port_no: switch_port,
+                        hw_addr: switch_hw_addr,
+                        name: switch_name
+                    }
+                }
+            };
+    
+            console.log("add link: " + JSON.stringify(link));
+            this.links.push(link);
+        }
+    }
+    ,       
     delete_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
             console.log("delete switch: " + JSON.stringify(nodes[i]));
@@ -467,8 +556,12 @@ var topo = {
                 p.link_dir = dir;
                 return ports.push(p);
             }
-            _push(this.links[i].port.src, "source");
-            _push(this.links[i].port.dst, "target");
+            if(this.links[i].port.src.port_no != "host"){
+                _push(this.links[i].port.src, "source");
+            }
+            if(this.links[i].port.dst.port_no != "host"){
+                _push(this.links[i].port.dst, "target");
+            }
         }
 
         return ports;
@@ -529,10 +622,12 @@ var rpc = {
 }
 
 function initialize_topology() {
-    d3.json("/v1.0/topology/switches", function(error, switches) {
-        d3.json("/v1.0/topology/links", function(error, links) {
-            topo.initialize({switches: switches, links: links});
-            elem.update();
+    d3.json("/v1.0/topology/hosts", function(error, hosts){
+        d3.json("/v1.0/topology/switches", function(error, switches) {
+            d3.json("/v1.0/topology/links", function(error, links) {
+                topo.initialize({switches: switches, links: links, hosts: hosts});
+                elem.update();
+            });
         });
     });
 }

@@ -1,96 +1,139 @@
-
+const MAC_MASK = 256;
 // slice 1
 var slice1DayLinkIds = [ 
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000003", dst: (6+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
 ];
 
 // slice 2
 var slice1NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
 ];
 
 // slice 3
 var slice2DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000004", dst: "0000000000000006" }
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
 ];
 
 // slice 4
 var slice3DayLinkIds = [
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (11+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 // slice 5
 var slice4DayLinkIds = [
-   // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
 ];
 
 
 var slice4NightLinkIds = [
-    // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
  ];
  
 // slice 6
 var slice5DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
 ];
 
 var slice5NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
 ];
 
 // slice 7
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" }
-
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 var slice6NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" }
-
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 // slice 8
 var slice7DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 var slice7NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 // slice 9
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
 
 var slice8NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
     
 
 // slice 10
 var slice9DayLinkIds = [
-    //{ src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
 ];
 
 // slice 11
 var slice9NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" }];
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+];
 
 
 // slice 12
 var slice10DayLinkIds = [
-   // { src: "0000000000000001", dst: "0000000000000003" }
+    { src: "0000000000000002", dst: (4+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 // slice 13
 var slice10NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" }
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
 ];
 
 // RESET
@@ -118,8 +161,47 @@ const sliceColors = {
     
 };
 
+
+const sliceMap = [
+    { checkboxId: 1, slices: [{ slice: 1, mode: 'day' }, { slice: 2, mode: 'night' }] },
+    { checkboxId: 2, slices: [{ slice: 3, mode: 'day' }] },
+    { checkboxId: 3, slices: [{ slice: 4, mode: 'day' }] },
+    { checkboxId: 4, slices: [{ slice: 5, mode: 'day' }, { slice: 5, mode: 'night' }] },
+    { checkboxId: 5, slices: [{ slice: 6, mode: 'day' }, { slice: 6, mode: 'night' }] },
+    { checkboxId: 6, slices: [{ slice: 7, mode: 'day' }, { slice: 7, mode: 'night' }] },
+    { checkboxId: 7, slices: [{ slice: 8, mode: 'day' }, { slice: 8, mode: 'night' }] },
+    { checkboxId: 8, slices: [{ slice: 9, mode: 'day' }, { slice: 9, mode: 'night' }] },
+    { checkboxId: 9, slices: [{ slice: 10, mode: 'day' }, { slice: 11, mode: 'night' }] },
+    { checkboxId: 10, slices: [{ slice: 12, mode: 'day' }, { slice: 13, mode: 'night' }] },
+    { checkboxId: 11, slices: [] },
+];
+
+async function callApi(endpoint, method, bodyData = null) {
+    try {
+        const response = await fetch(endpoint, {
+            method: method.toUpperCase(), 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: bodyData ? JSON.stringify(bodyData) : null
+            
+        });
+        
+
+        if (!response.ok) {
+            throw new Error(`Errore: ${response.status} - ${await response.text()}`);
+        }
+
+        const data = await response.json();
+        console.log(`Risposta da ${endpoint}:`, data);
+        return data; 
+    } catch (error) {
+        console.error('Errore API:', error);
+        return null;
+    }
+}
+
 function aggiornaColorazione() {
-    // Rimuovi tutte le classi di slice e gli stili dai link
     d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
 
     const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
@@ -133,8 +215,10 @@ function aggiornaColorazione() {
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
-                    return (link.port.src.dpid === id.src && link.port.dst.dpid === id.dst) ||
-                           (link.port.src.dpid === id.dst && link.port.dst.dpid === id.src);
+                    console.log(link);
+                    console.log(id);
+                    return (link.port.src.dpid == id.src && link.port.dst.dpid == id.dst) ||
+                           (link.port.src.dpid == id.dst && link.port.dst.dpid == id.src);
                 });
             });
 
@@ -152,8 +236,8 @@ function aggiornaColorazione() {
         const slices = linkColors[linkKey];
         const color = calculateCombinedColor(slices);
         d3.selectAll(".link").filter(function(d) {
-            return `${d.port.src.dpid}-${d.port.dst.dpid}` === linkKey ||
-                   `${d.port.dst.dpid}-${d.port.src.dpid}` === linkKey;
+            return `${d.port.src.dpid}-${d.port.dst.dpid}` == linkKey ||
+                   `${d.port.dst.dpid}-${d.port.src.dpid}` == linkKey;
         }).style("stroke", color).style("stroke-width", "3px").style("stroke-opacity", "1");
     });
 }
@@ -176,31 +260,34 @@ function calculateCombinedColor(slices) {
     return `rgb(${combinedColor.r}, ${combinedColor.g}, ${combinedColor.b})`;
 }
 
-function sincronizzaCheckbox() {
+function sincronizeCheckbox() {
     const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
     
-    for (let i = 1; i <= 11; i++) {
-        const checkbox = document.getElementById(`tab${i}`);
+    sliceMap.forEach((item) => {
+        const checkbox = document.getElementById(`tab${item.checkboxId}`);
         if (checkbox) {
-            checkbox.checked = sliceSelezionate.includes(i);
+            checkbox.checked = item.slices.some(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night') && sliceSelezionate.includes(sliceItem.slice));
         }
-    }
+    });
 }
 
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     input.addEventListener('change', function () {
-        if (this.value === 'Night mode' && this.checked) {
+        if (this.value == 'Night mode' && this.checked) {
             document.body.classList.add('night-mode');
             dayMode = false;
             console.log("Passaggio a Night Mode");
+            callApi('/mode/set', 'POST', { mode: "1" });
+
         } else {
             document.body.classList.remove('night-mode');
             dayMode = true;
             console.log("Passaggio a Day Mode");
+            callApi('/mode/set', 'POST', { mode: "0" });  
         }
         
         // Sincronizzo i checkbox con lo stato corrente
-        sincronizzaCheckbox();
+        sincronizeCheckbox();
         
         // Aggiorno la colorazione in base alla modalità corrente
         aggiornaColorazione();
@@ -210,54 +297,80 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
-
-for (let i = 1; i <= 11; i++) {
-    document.getElementById(`tab${i}`).addEventListener('change', function() {
+// Gestione degli eventi di selezione per ogni checkbox
+sliceMap.forEach((item) => {
+    document.getElementById(`tab${item.checkboxId}`).addEventListener('change', function() {
         const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
-        
-        if (i === 11 && this.checked) { 
+
+        if (item.checkboxId == 11 && this.checked) {
             document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
-                checkbox.checked = false;  
+                checkbox.checked = false;
             });
 
             if (dayMode) {
                 sliceSelezionateDay = [];
+                callApi('/reset/map', 'POST', { mode: "0" });
             } else {
                 sliceSelezionateNight = [];
+                callApi('/reset/map', 'POST', { mode: "1" });
             }
-            
-            d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
 
+            // Resetta le connessioni e la colorazione degli elementi
+            d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
             document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
                 menuItem.style.backgroundColor = '';  
             });
 
-            console.log("Modalità originale");
-                
-        } else if (i !== 11 && this.checked) {
-            // Aggiungo la slice all'array se selezionata
-            if (!sliceSelezionate.includes(i)) {
-                sliceSelezionate.push(i);
+            console.log("Modalità RESET attivata");
+
+        } else if (this.checked) {
+            const sliceToAdd = item.slices.find(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night'));
+
+            if (sliceToAdd && !sliceSelezionate.includes(sliceToAdd.slice)) {
+                sliceSelezionate.push(sliceToAdd.slice);
+
+                if (dayMode) { 
+                    console.log("Aggiungo slice day mode", String(sliceToAdd.slice));
+                    callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "0" });
+                } else {
+                    console.log("Aggiungo slice night mode", String(sliceToAdd.slice));
+                    callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "1" });
+                }
             }
+
             document.getElementById('tab11').checked = false;
-            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';  
-  
+            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';
+
         } else {
-            // Rimuovo la slice dall'array se deselezionata
-            const index = sliceSelezionate.indexOf(i);
-            if (index > -1) {
-                sliceSelezionate.splice(index, 1);
-            }
+            console.log("Rimuovo slice");
+            item.slices.forEach((sliceItem) => {
+                const index = sliceSelezionate.indexOf(sliceItem.slice);
+                if (index > -1) {
+                    sliceSelezionate.splice(index, 1);
+                }
+
+                if (dayMode) { 
+                    callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "0" });
+                    console.log(sliceItem.slice)
+                } else {
+                    callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "1" });
+                    console.log(sliceItem.slice)
+                }
+            });
         }
-        
-        if (i !== 11) {
-            aggiornaColorazione();
-        }
-        
+
+        aggiornaColorazione();
+
         console.log("Slice Day:", sliceSelezionateDay);
         console.log("Slice Night:", sliceSelezionateNight);
     });
+});
+
+
+function macToDecimal(mac) {
+    return parseInt(mac.replace(/:/g, ''), 16);
 }
+
 
 // ------------------------------------------------------------------------------------------------
 
@@ -268,8 +381,8 @@ var CONF = {
     },
     force: {
         width: 850,
-        height: 500,
-        dist: 200,
+        height: 550,
+        dist: 80,
         charge: -600
     }
 };
@@ -277,7 +390,6 @@ var CONF = {
 var ws = new WebSocket("ws://" + location.host + "/v1.0/topology/ws");
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-
     var result = rpc[data.method](data.params);
 
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};
@@ -305,6 +417,7 @@ var elem = {
     console: d3.select("body").append("div")
         .attr("id", "console")
         .attr("width", CONF.force.width)
+        .attr("height", CONF.force.height),
 };
 function _tick() {
     elem.link.attr("x1", function(d) { return d.source.x; })
@@ -350,11 +463,13 @@ elem.update = function () {
     this.node = this.node.data(topo.nodes);
     this.node.exit().remove();
     var nodeEnter = this.node.enter().append("g")
-        .attr("class", "node")
+        .attr("class", function(d) { return "node " + d.type; })
         .on("dblclick", function(d) { d3.select(this).classed("fixed", d.fixed = false); })
         .call(this.drag);
     nodeEnter.append("image")
-        .attr("xlink:href", "./router.svg")
+        .attr("xlink:href", function(d) { 
+            return d.type == "switch" ? "./switch.svg" : "./host.svg"; 
+        })
         .attr("x", -CONF.image.width/2)
         .attr("y", -CONF.image.height/2)
         .attr("width", CONF.image.width)
@@ -362,7 +477,10 @@ elem.update = function () {
     nodeEnter.append("text")
         .attr("dx", -CONF.image.width/2)
         .attr("dy", CONF.image.height-10)
-        .text(function(d) { return "dpid: " + trim_zero(d.dpid); });
+        .text(function(d) { 
+            return d.type == "switch" ? "dpid: " + trim_zero(d.dpid) : "host: " + (d.dpid - MAC_MASK); 
+        });
+    
 
     var ports = topo.get_ports();
     this.port.remove();
@@ -386,16 +504,54 @@ var topo = {
     links: [],
     node_index: {}, // dpid -> index of nodes array
     initialize: function (data) {
-        this.add_nodes(data.switches);
-        this.add_links(data.links);
+        this.add_switch_nodes(data.switches);
+        this.add_host_nodes(data.hosts);
+        this.add_switch_links(data.links);
+        this.add_host_links(data.hosts);
+        console.log(this.nodes);
+        console.log(this.links);
     },
-    add_nodes: function (nodes) {
+    add_switch_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
+            nodes[i].type = "switch";
             this.nodes.push(nodes[i]);
         }
         this.refresh_node_index();
+        console.log(this.nodes);
     },
-    add_links: function (links) {
+    add_host_nodes: function (hosts) {
+        for (var i = 0; i < hosts.length; i++) {
+            var host = hosts[i];
+    
+            if (!host.port || !host.port.dpid) {
+                console.warn("Host " + host.mac + " has no attached switch!");
+                continue;
+            }
+    
+            var host_mac = macToDecimal(host.mac);
+            var switch_dpid = host.port.dpid;
+            var switch_port = host.port.port_no;
+    
+            var host_index = this.nodes.length;  // Assign next available index
+    
+            var host_node = {
+                dpid: host_mac,  // Use MAC as identifier (since hosts lack DPIDs)
+                index: host_index,
+                type: "host",
+                port: {
+                    dpid: switch_dpid,
+                    port_no: switch_port,
+                    hw_addr: host.port.hw_addr,
+                    name: host.port.name
+                }
+            };
+    
+            console.log("add host node: " + JSON.stringify(host_node));
+            this.nodes.push(host_node);
+            this.node_index[host_mac] = host_index;  // Store index for linking
+        }
+    },    
+    add_switch_links: function (links) {
         for (var i = 0; i < links.length; i++) {
             if (!is_valid_link(links[i])) continue;
             console.log("add link: " + JSON.stringify(links[i]));
@@ -414,7 +570,54 @@ var topo = {
             }
             this.links.push(link);
         }
-    },
+    }, 
+    add_host_links: function (hosts) {
+        for (var i = 0; i < hosts.length; i++) {
+            var host = hosts[i];
+    
+            if (!host.port || !host.port.dpid) {
+                console.warn("Host " + host.mac + " has no attached switch!");
+                continue;
+            }
+    
+            var host_mac = macToDecimal(host.mac);  // Host identifier (MAC)
+            var switch_dpid = host.port.dpid;  // Switch DPID
+            var switch_port = host.port.port_no;  // Switch port number
+            var switch_hw_addr = host.port.hw_addr;  // Switch port MAC
+            var switch_name = host.port.name;  // Switch interface name
+    
+            if (!(switch_dpid in this.node_index) || !(host_mac in this.node_index)) {
+                console.warn("Host or switch missing from node_index: " + host_mac);
+                continue;
+            }
+    
+            var host_index = this.node_index[host_mac];
+            var switch_index = this.node_index[switch_dpid];
+    
+            var link = {
+                source: switch_index,
+                target: host_index,
+                port: {
+                    src: {
+                        dpid: switch_dpid,
+                        port_no: switch_port,
+                        hw_addr: switch_hw_addr,
+                        name: switch_name
+                    },
+                    dst: {
+                        dpid: host_mac,  // Host MAC as identifier
+                        port_no: "host",  // No specific port number
+                        hw_addr: host_mac,  // Host MAC address
+                        name: "host-" + host_mac
+                    }
+                }
+            };
+    
+            console.log("add link: " + JSON.stringify(link));
+            this.links.push(link);
+        }
+    }
+    ,       
     delete_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
             console.log("delete switch: " + JSON.stringify(nodes[i]));
@@ -467,8 +670,12 @@ var topo = {
                 p.link_dir = dir;
                 return ports.push(p);
             }
-            _push(this.links[i].port.src, "source");
-            _push(this.links[i].port.dst, "target");
+            if(this.links[i].port.src.port_no != "host"){
+                _push(this.links[i].port.src, "source");
+            }
+            if(this.links[i].port.dst.port_no != "host"){
+                _push(this.links[i].port.dst, "target");
+            }
         }
 
         return ports;
@@ -503,7 +710,7 @@ var rpc = {
         for(var i=0; i < params.length; i++){
             switches.push({"dpid":params[i].dpid,"ports":params[i].ports});
         }
-        topo.add_nodes(switches);
+        topo.add_switch_nodes(switches);
         elem.update();
         return "";
     },
@@ -517,7 +724,7 @@ var rpc = {
         return "";
     },
     event_link_add: function (links) {
-        topo.add_links(links);
+        topo.add_switch_links(links);
         elem.update();
         return "";
     },
@@ -526,13 +733,21 @@ var rpc = {
         elem.update();
         return "";
     },
+    event_host_add: function (hosts){
+        topo.add_host_nodes(hosts);
+        topo.add_host_links(hosts);
+        elem.update();
+        return "";
+    }
 }
 
 function initialize_topology() {
-    d3.json("/v1.0/topology/switches", function(error, switches) {
-        d3.json("/v1.0/topology/links", function(error, links) {
-            topo.initialize({switches: switches, links: links});
-            elem.update();
+    d3.json("/v1.0/topology/hosts", function(error, hosts){
+        d3.json("/v1.0/topology/switches", function(error, switches) {
+            d3.json("/v1.0/topology/links", function(error, links) {
+                topo.initialize({switches: switches, links: links, hosts: hosts});
+                elem.update();
+            });
         });
     });
 }

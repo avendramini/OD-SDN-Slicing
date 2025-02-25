@@ -250,14 +250,12 @@ class ControllerServer(ControllerBase):
             print(f"Remove slice slice_id: {slice_id}, mode: {mode}")
             if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
-            print("Non sono crashato0")
+            print("Ok:",self.state.mappers[self.state.active_mode].remove_slice(slice_id))
             if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 0 or not self.state.mappers[self.state.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
-            print("Non sono crashato1")
+            
             active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
-            print("Non sono crashato2")
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
-            print("Non sono crashato3")
             return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))

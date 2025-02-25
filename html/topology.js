@@ -328,12 +328,14 @@ sliceMap.forEach((item) => {
             const sliceToAdd = item.slices.find(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night'));
 
             if (sliceToAdd && !sliceSelezionate.includes(sliceToAdd.slice)) {
-                sliceSelezionate.push(sliceToAdd.slice);
+                
 
                 if (dayMode) { 
+                    sliceSelezionateDay.push(sliceToAdd.slice);
                     console.log("Aggiungo slice day mode", String(sliceToAdd.slice));
                     callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "0" });
                 } else {
+                    sliceSelezionateNight.push(sliceToAdd.slice);
                     console.log("Aggiungo slice night mode", String(sliceToAdd.slice));
                     callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "1" });
                 }
@@ -345,11 +347,13 @@ sliceMap.forEach((item) => {
         } else {
             console.log("Rimuovo slice");
             item.slices.forEach((sliceItem) => {
-                if (sliceItem.mode==dayMode)
-                {
+                if (sliceItem.mode == (dayMode ? 'day' : 'night')) {
                     const index = sliceSelezionate.indexOf(sliceItem.slice);
                     if (index > -1) {
-                        sliceSelezionate.splice(index, 1);
+                        if(dayMode)
+                            sliceSelezionateDay.splice(index, 1);
+                        else
+                            sliceSelezionateNight.splice(index, 1);
                     }
 
                     if (dayMode) { 

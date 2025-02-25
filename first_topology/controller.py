@@ -260,7 +260,7 @@ class ControllerServer(ControllerBase):
             return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             #self.controller_instance.logger.error("Error removing slice: %s", traceback.format_exc())
-            self.controller_instance.logger.error(self.mappers[self.state.active_mode].map)
+            self.controller_instance.logger.error(self.state.mappers[self.state.active_mode].map)
             return Response(status=500, body=str(e))
 
     @route('reset', '/reset/map', methods=['POST'])

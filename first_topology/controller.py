@@ -29,6 +29,7 @@ from ryu.lib.packet import ipv4
 from ProblemConstants import ProblemConstants as st
 from webob import Response
 from MacToPortMapper import MacToPortMapper
+import traceback
 
 PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 print(PATH)
@@ -250,7 +251,7 @@ class ControllerServer(ControllerBase):
             print(f"Remove slice slice_id: {slice_id}, mode: {mode}")
             if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
-            print("Ok:",self.state.mappers[self.state.active_mode].remove_slice(slice_id))
+            
             if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 0 or not self.state.mappers[self.state.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
             
@@ -258,6 +259,7 @@ class ControllerServer(ControllerBase):
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
             return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
+            self.controller_instance.logger.error("Error removing slice: %s", traceback.format_exc())
             return Response(status=500, body=str(e))
 
     @route('reset', '/reset/map', methods=['POST'])

@@ -33,6 +33,11 @@ class MacToPortMapper:
         for x in st.SLICES_RULES[slice_number - 1]:
             for y in st.SLICES_RULES[slice_number - 1][x]:
                 del self.map[x][y]
+                if len(self.map[x]) == 0:
+                    del self.map[x]
+        for i in range(len(self.active_slice)):
+            if self.active_slice[i] == 1:
+                self.add_slice(i + 1)
         return True
     def reset_map(self):
         self.map.clear()

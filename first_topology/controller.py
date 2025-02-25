@@ -250,7 +250,7 @@ class ControllerServer(ControllerBase):
             print(f"Remove slice slice_id: {slice_id}, mode: {mode}")
             if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
-            
+            print("Non sono crashato0")
             if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 0 or not self.state.mappers[self.state.active_mode].remove_slice(slice_id):
                 return Response(status=400, body="Failed to remove slice")
             print("Non sono crashato1")

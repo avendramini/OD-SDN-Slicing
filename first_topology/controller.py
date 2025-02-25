@@ -241,9 +241,11 @@ class ControllerServer(ControllerBase):
     @route('slice', '/slice/remove', methods=['POST'])
     def remove_slice(self, req):
         try:
+            
             slice_data = req.json if req.body else {}
             slice_id = int(slice_data.get('slice_id')) if slice_data.get('slice_id') else None
             mode = int(slice_data.get('mode')) if slice_data.get('mode') else self.state.active_mode
+            print(f"Remove slice slice_id: {slice_id}, mode: {mode}")
             if not slice_id or slice_id > st.NUM_SLICES or mode != self.state.active_mode:
                 return Response(status=400, body="Incorrect parameters")
             

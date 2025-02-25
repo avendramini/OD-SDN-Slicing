@@ -178,6 +178,7 @@ const sliceMap = [
 
 async function callApi(endpoint, method, bodyData = null) {
     try {
+        console.log(`Calling API: ${endpoint} with method: ${method} and body:`, bodyData);
         const response = await fetch(endpoint, {
             method: method.toUpperCase(), 
             headers: {

@@ -345,17 +345,20 @@ sliceMap.forEach((item) => {
         } else {
             console.log("Rimuovo slice");
             item.slices.forEach((sliceItem) => {
-                const index = sliceSelezionate.indexOf(sliceItem.slice);
-                if (index > -1) {
-                    sliceSelezionate.splice(index, 1);
-                }
+                if (sliceItem.mode==dayMode)
+                {
+                    const index = sliceSelezionate.indexOf(sliceItem.slice);
+                    if (index > -1) {
+                        sliceSelezionate.splice(index, 1);
+                    }
 
-                if (dayMode) { 
-                    callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "0" });
-                    console.log(sliceItem.slice)
-                } else {
-                    callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "1" });
-                    console.log(sliceItem.slice)
+                    if (dayMode) { 
+                        callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "0" });
+                        console.log(sliceItem.slice)
+                    } else {
+                        callApi('/slice/remove', 'POST', { slice_id: String(sliceItem.slice), mode: "1" });
+                        console.log(sliceItem.slice)
+                    }
                 }
             });
         }

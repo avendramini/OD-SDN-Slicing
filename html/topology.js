@@ -344,11 +344,6 @@ sliceMap.forEach((item) => {
             document.getElementById('tab11').checked = false;
             document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';
 
-            // Debug: Print related links, switches, and hosts
-            console.log("Related Links:", topo.links);
-            console.log("Related Switches:", topo.nodes.filter(node => node.type === "switch"));
-            console.log("Related Hosts:", topo.nodes.filter(node => node.type === "host"));
-
         } else {
             console.log("Rimuovo slice");
             item.slices.forEach((sliceItem) => {

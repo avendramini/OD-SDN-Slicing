@@ -1,4 +1,5 @@
 const MAC_MASK = 256;
+
 // slice 1
 var slice1DayLinkIds = [ 
     { src: "0000000000000003", dst: (6+MAC_MASK).toString() },
@@ -6,14 +7,14 @@ var slice1DayLinkIds = [
 ];
 
 // slice 2
-var slice1NightLinkIds = [
+var slice2NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
     { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
     { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
 ];
 
 // slice 3
-var slice2DayLinkIds = [
+var slice3DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000004", dst: "0000000000000006" },
@@ -23,35 +24,35 @@ var slice2DayLinkIds = [
 ];
 
 // slice 4
-var slice3DayLinkIds = [
+var slice4DayLinkIds = [
     { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
     { src: "0000000000000006", dst: (11+MAC_MASK).toString() },
     { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
 // slice 5
-var slice4DayLinkIds = [
+var slice5DayLinkIds = [
     { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
 ];
 
 
-var slice4NightLinkIds = [
+var slice5NightLinkIds = [
     { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
  ];
  
 // slice 6
-var slice5DayLinkIds = [
+var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
     { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
 ];
 
-var slice5NightLinkIds = [
+var slice6NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
@@ -59,7 +60,7 @@ var slice5NightLinkIds = [
 ];
 
 // slice 7
-var slice6DayLinkIds = [
+var slice7DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000006" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
@@ -67,7 +68,7 @@ var slice6DayLinkIds = [
     { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
 ];
 
-var slice6NightLinkIds = [
+var slice7NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000006" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
@@ -76,14 +77,14 @@ var slice6NightLinkIds = [
 ];
 
 // slice 8
-var slice7DayLinkIds = [
+var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
     { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
-var slice7NightLinkIds = [
+var slice8NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
@@ -91,7 +92,7 @@ var slice7NightLinkIds = [
 ];
 
 // slice 9
-var slice8DayLinkIds = [
+var slice9DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
@@ -99,7 +100,7 @@ var slice8DayLinkIds = [
     { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
 ];
 
-var slice8NightLinkIds = [
+var slice9NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
@@ -109,13 +110,13 @@ var slice8NightLinkIds = [
     
 
 // slice 10
-var slice9DayLinkIds = [
+var slice10DayLinkIds = [
     { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
     { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
 ];
 
 // slice 11
-var slice9NightLinkIds = [
+var slice11NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
@@ -124,42 +125,46 @@ var slice9NightLinkIds = [
 
 
 // slice 12
-var slice10DayLinkIds = [
+var slice12DayLinkIds = [
     { src: "0000000000000002", dst: (4+MAC_MASK).toString() },
     { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
 ];
 
 // slice 13
-var slice10NightLinkIds = [
+var slice13NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
     { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
     { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
 ];
 
+/*
 // RESET
 var slice11DayLinkIds = [
    // { src: "0000000000000001", dst: "0000000000000003" }
 ];
-
+*/
 
 let sliceSelezionateDay = [];
 let sliceSelezionateNight = [];
 let dayMode = true;
 
 const sliceColors = {
-    1: d3.rgb(0, 102, 204),     
-    2: d3.rgb(255, 123, 0),     
+    1: d3.rgb(0, 102, 204),   
+    2: d3.rgb(0, 102, 204),       
     3: d3.rgb(255, 123, 0),     
-    4: d3.rgb(10, 205, 36),     
-    5: d3.rgb(10, 205, 36),      
-    6: d3.rgb(10, 205, 36),     
-    7: d3.rgb(10, 205, 36),    
-    8: d3.rgb(10, 205, 36),      
-    9: d3.rgb(255, 20, 147),  
-    10: d3.rgb(0, 189, 189),    
-    11: d3.rgb(233, 7, 7) 
-    
+    4: d3.rgb(255, 123, 0),     
+    5: d3.rgb(10, 205, 36),     
+    6: d3.rgb(10, 205, 36),      
+    7: d3.rgb(10, 205, 36),     
+    8: d3.rgb(10, 205, 36),    
+    9: d3.rgb(10, 205, 36),      
+    10: d3.rgb(255, 20, 147),  
+    11: d3.rgb(255, 20, 147),  
+    12: d3.rgb(0, 189, 189),    
+    13: d3.rgb(0, 189, 189),    
+    14: d3.rgb(233, 7, 7) 
 };
+
 
 
 const sliceMap = [

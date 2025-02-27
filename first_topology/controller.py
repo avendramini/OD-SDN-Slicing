@@ -236,6 +236,7 @@ class ControllerServer(ControllerBase):
             active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
             print("Non sono crashato2")
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
+            self.controller_instance.reset_switches()
             print("Non sono crashato3")
             return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
@@ -257,6 +258,7 @@ class ControllerServer(ControllerBase):
             
             active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
+            self.controller_instance.reset_switches()
             return Response(status=200, json_body={"message": "Slice removed successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             #self.controller_instance.logger.error("Error removing slice: %s", traceback.format_exc())

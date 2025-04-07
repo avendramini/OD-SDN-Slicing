@@ -29,7 +29,6 @@
             <span>Night mode</span>
         </label>
     </div>
-   <!-- <img src="topology.png" alt="Topology" class="topology" style="width: 100%; height: 100%; object-fit: contain;">-->
 </div>
 
 <div class="sidebar">
@@ -70,9 +69,18 @@
  
 
     <h3>QoS:</h3>
+    <input type="text" id="setQoS" name="QoS"><br>
+    <button onclick="setQoS()">SET_QOS</button>
+    <input type="text" id="getQoS" name="QoS"><br>
+    <button onclick="getQoS()">GET_QOS</button>    
+    <input type="text" id="deleteQoS" name="QoS"><br>
+    <button onclick="deleteQoS()">DELETE_QOS</button>    
+    <input type="text" id="setQueue" name="QoS"><br>
+    <button onclick="setQoSQueue()">SET_QUEUE</button>
+    <input type="text" id="getQueue" name="QoS"><br>
+    <button onclick="getQoSQueue()">GET_QUEUE</button>
 
 </div>
-
 <script src="./topology.js" charset="utf-8"></script>
 </body>
 </html>

@@ -754,6 +754,40 @@ var rpc = {
     }
 }
 
+// QoS
+
+function setQoS(){
+    req = {"match": {"eth_type": 2048, "nw_dst": "192.168.1.1", "ip_proto": 17, "tp_dst": 80}, "actions": {"queue": "1"}};
+    res = callApi('/qos/rules/0000000000000001', 'POST', req);
+    console.log(res);
+}
+
+function getQoS(){
+    res = callApi('/qos/rules/0000000000000001', 'GET');
+    console.log(res);
+}
+
+function deleteQoS(){
+    req = {"qos_id": "all"};
+    res = callApi('/qos/rules/0000000000000001', 'DELETE', req);
+    console.log(res);
+}
+
+function setQoSQueue(){
+    req = {"port_name": "s1-eth1", "type": "linux-htb", "max-rate": 1000000, "queues": [{"max_rate": 1000000, "min_rate": 500000}]};
+    res = callApi('/qos/queue/0000000000000001', 'POST', req);
+    console.log(res);
+}
+
+function getQoSQueue(){
+    res = callApi('/qos/queue/0000000000000001', 'GET');
+    console.log(res);
+}
+
+function setOVSDBAddress(){
+    
+}
+
 function initialize_topology() {
     d3.json("/v1.0/topology/hosts", function(error, hosts){
         d3.json("/v1.0/topology/switches", function(error, switches) {

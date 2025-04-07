@@ -29,7 +29,15 @@ from ryu.lib.packet import ipv4
 from ProblemConstants import ProblemConstants as st
 from webob import Response
 from MacToPortMapper import MacToPortMapper
-import traceback
+from ryu.controller import dpset
+from ryu.ofproto import ofproto_v1_0
+from ryu.ofproto import ofproto_v1_2
+from ryu.ofproto import ofproto_v1_3
+from ryu.ofproto import ofproto_v1_3_parser
+from ryu.controller import conf_switch
+from ryu.app.rest_qos import QoSController
+from ryu.app import conf_switch_key as cs_key
+
 
 PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 print(PATH)
@@ -37,6 +45,7 @@ print(PATH)
 class Controller(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
     _CONTEXTS = {
+        'dpset': dpset.DPSet,
         'wsgi': WSGIApplication,
     }
     def __init__(self, *args, **kwargs):
@@ -46,6 +55,14 @@ class Controller(app_manager.RyuApp):
         wsgi.register(ControllerServer, {"controller_instance": self})
         self.mac_to_port = {}
         self.datapaths = {}
+        QoSController.set_logger(self.logger)
+        dpset = kwargs['dpset']
+        self.waiters = {}
+        data = {}
+        data['dpset'] = dpset
+        data['waiters'] = self.waiters
+        wsgi.registory['QoSController'] = data
+        wsgi.register(QoSController, data)
 
     @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
     def _state_change_handler(self, ev):
@@ -178,6 +195,70 @@ class Controller(app_manager.RyuApp):
                                               ofproto.OFPCML_NO_BUFFER)]
             self.add_flow(datapath, 0, match, actions)
 
+    def stats_reply_handler(self, ev):
+        msg = ev.msg
+        dp = msg.datapath
+
+        if dp.id not in self.waiters:
+            return
+        if msg.xid not in self.waiters[dp.id]:
+            return
+        lock, msgs = self.waiters[dp.id][msg.xid]
+        msgs.append(msg)
+
+        flags = 0
+        if dp.ofproto.OFP_VERSION == ofproto_v1_0.OFP_VERSION or \
+                dp.ofproto.OFP_VERSION == ofproto_v1_2.OFP_VERSION:
+            flags = dp.ofproto.OFPSF_REPLY_MORE
+        elif dp.ofproto.OFP_VERSION == ofproto_v1_3.OFP_VERSION:
+            flags = dp.ofproto.OFPMPF_REPLY_MORE
+
+        if msg.flags & flags:
+            return
+        del self.waiters[dp.id][msg.xid]
+        lock.set()
+
+    @set_ev_cls(conf_switch.EventConfSwitchSet)
+    def conf_switch_set_handler(self, ev):
+        if ev.key == cs_key.OVSDB_ADDR:
+            QoSController.set_ovsdb_addr(ev.dpid, ev.value)
+        else:
+            QoSController._LOGGER.debug("unknown event: %s", ev)
+
+    @set_ev_cls(conf_switch.EventConfSwitchDel)
+    def conf_switch_del_handler(self, ev):
+        if ev.key == cs_key.OVSDB_ADDR:
+            QoSController.delete_ovsdb_addr(ev.dpid)
+        else:
+            QoSController._LOGGER.debug("unknown event: %s", ev)
+
+    @set_ev_cls(dpset.EventDP, dpset.DPSET_EV_DISPATCHER)
+    def handler_datapath(self, ev):
+        if ev.enter:
+            QoSController.regist_ofs(ev.dp, self.CONF)
+        else:
+            QoSController.unregist_ofs(ev.dp)
+
+    # for OpenFlow version1.0
+    @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
+    def stats_reply_handler_v1_0(self, ev):
+        self.stats_reply_handler(ev)
+
+    # for OpenFlow version1.2 or later
+    @set_ev_cls(ofp_event.EventOFPStatsReply, MAIN_DISPATCHER)
+    def stats_reply_handler_v1_2(self, ev):
+        self.stats_reply_handler(ev)
+
+    # for OpenFlow version1.2 or later
+    @set_ev_cls(ofp_event.EventOFPQueueStatsReply, MAIN_DISPATCHER)
+    def queue_stats_reply_handler_v1_2(self, ev):
+        self.stats_reply_handler(ev)
+
+    # for OpenFlow version1.2 or later
+    @set_ev_cls(ofp_event.EventOFPMeterStatsReply, MAIN_DISPATCHER)
+    def meter_stats_reply_handler_v1_2(self, ev):
+        self.stats_reply_handler(ev)
+
 class ControllerState:
     DAY = 0
     NIGHT = 1
@@ -280,6 +361,8 @@ class ControllerServer(ControllerBase):
             return Response(status=200, json_body={"message": "Map reset successfully", "mode": mode})
         except Exception as e:
             return Response(status=500, body=str(e))
+
 app_manager.require_app('ryu.app.rest_topology')
+app_manager.require_app('ryu.app.rest_conf_switch')
 app_manager.require_app('ryu.app.ws_topology')
 app_manager.require_app('ryu.app.ofctl_rest')

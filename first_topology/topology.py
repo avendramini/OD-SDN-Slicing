@@ -6,6 +6,8 @@ from mininet.node import OVSKernelSwitch, RemoteController
 from mininet.cli import CLI
 from mininet.link import TCLink
 
+import os 
+
 N_HOSTS = 12
 N_SWITCHES = 6
 
@@ -51,6 +53,12 @@ class Topology(Topo):
         for link in HOST_LINKS:
             self.addLink(link[0], link[1], port1=link[2], port2=link[3])
 
+def setOpenFlow13(net):
+    for i in range(1, N_SWITCHES + 1):
+        switch = f"s{i}"
+        os.system(f"ovs-vsctl set bridge {switch} protocols=OpenFlow13")
+        print(f"Set OpenFlow 1.3 for {switch}")
+
 if __name__ == "__main__":
     topo = Topology()
     net = Mininet(
@@ -66,5 +74,8 @@ if __name__ == "__main__":
 
     net.build()
     net.start()
+
+    setOpenFlow13(net)
+
     CLI(net)
     net.stop()

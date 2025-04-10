@@ -144,8 +144,8 @@ var slice11DayLinkIds = [
 ];
 */
 
-let sliceSelezionateDay = [];
-let sliceSelezionateNight = [];
+let selectedSlicesDay = [];
+let selectedSlicesNight = [];
 let dayMode = true;
 
 const sliceColors = {
@@ -194,34 +194,34 @@ async function callApi(endpoint, method, bodyData = null) {
         });      
 
         if (!response.ok) {
-            throw new Error(`Errore: ${response.status} - ${await response.text()}`);
+            throw new Error(`Error: ${response.status} - ${await response.text()}`);
         }
 
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
             const data = await response.json();
-            console.log(`Risposta da ${endpoint}:`, data);
+            console.log(`Response from ${endpoint}:`, data);
             return data;
         } else {
             console.log(`No JSON body returned from ${endpoint}`);
             return null;
         }
     } catch (error) {
-        console.error('Errore API:', error);
+        console.error('Error API:', error);
         return null;
     }
 }
 
-function aggiornaColorazione() {
+function updateColors() {
     d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
 
-    const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+    const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
     const linkColors = {};
 
-    sliceSelezionate.forEach(sliceCorrente => {
+    selectedSlices.forEach(currentSlice => {
         var sliceLinkIds = dayMode 
-            ? window[`slice${sliceCorrente}DayLinkIds`] 
-            : window[`slice${sliceCorrente}NightLinkIds`];
+            ? window[`slice${currentSlice}DayLinkIds`] 
+            : window[`slice${currentSlice}NightLinkIds`];
         
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
@@ -238,7 +238,7 @@ function aggiornaColorazione() {
                 if (!linkColors[linkKey]) {
                     linkColors[linkKey] = [];
                 }
-                linkColors[linkKey].push(sliceCorrente);
+                linkColors[linkKey].push(currentSlice);
             });
         }
     });
@@ -272,12 +272,12 @@ function calculateCombinedColor(slices) {
 }
 
 function sincronizeCheckbox() {
-    const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+    const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
     
     sliceMap.forEach((item) => {
         const checkbox = document.getElementById(`tab${item.checkboxId}`);
         if (checkbox) {
-            checkbox.checked = item.slices.some(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night') && sliceSelezionate.includes(sliceItem.slice));
+            checkbox.checked = item.slices.some(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night') && selectedSlices.includes(sliceItem.slice));
         }
     });
 }
@@ -287,13 +287,13 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
         if (this.value == 'Night mode' && this.checked) {
             document.body.classList.add('night-mode');
             dayMode = false;
-            console.log("Passaggio a Night Mode");
+            console.log("Switching to Night Mode");
             callApi('/mode/set', 'POST', { mode: "1" });
 
         } else {
             document.body.classList.remove('night-mode');
             dayMode = true;
-            console.log("Passaggio a Day Mode");
+            console.log("Switching to Day Mode");
             callApi('/mode/set', 'POST', { mode: "0" });  
         }
         
@@ -301,17 +301,17 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
         sincronizeCheckbox();
         
         // Aggiorno la colorazione in base alla modalità corrente
-        aggiornaColorazione();
+        updateColors();
         
-        console.log("sliceSelezionateDay:", sliceSelezionateDay);
-        console.log("sliceSelezionateNight:", sliceSelezionateNight);
+        console.log("selectedSlicesDay:", selectedSlicesDay);
+        console.log("selectedSlicesNight:", selectedSlicesNight);
     });
 });
 
 // Gestione degli eventi di selezione per ogni checkbox
 sliceMap.forEach((item) => {
     document.getElementById(`tab${item.checkboxId}`).addEventListener('change', function() {
-        const sliceSelezionate = dayMode ? sliceSelezionateDay : sliceSelezionateNight;
+        const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
 
         if (item.checkboxId == 11 && this.checked) {
             document.querySelectorAll('.sidebar input[type="checkbox"]:not(#tab11)').forEach(function (checkbox) {
@@ -319,10 +319,10 @@ sliceMap.forEach((item) => {
             });
 
             if (dayMode) {
-                sliceSelezionateDay = [];
+                selectedSlicesDay = [];
                 callApi('/reset/map', 'POST', { mode: "0" });
             } else {
-                sliceSelezionateNight = [];
+                selectedSlicesNight = [];
                 callApi('/reset/map', 'POST', { mode: "1" });
             }
 
@@ -332,21 +332,21 @@ sliceMap.forEach((item) => {
                 menuItem.style.backgroundColor = '';  
             });
 
-            console.log("Modalità RESET attivata");
+            console.log("RESET Mode activated");
 
         } else if (this.checked) {
             const sliceToAdd = item.slices.find(sliceItem => sliceItem.mode == (dayMode ? 'day' : 'night'));
 
-            if (sliceToAdd && !sliceSelezionate.includes(sliceToAdd.slice)) {
+            if (sliceToAdd && !selectedSlices.includes(sliceToAdd.slice)) {
                 
 
                 if (dayMode) { 
-                    sliceSelezionateDay.push(sliceToAdd.slice);
-                    console.log("Aggiungo slice day mode", String(sliceToAdd.slice));
+                    selectedSlicesDay.push(sliceToAdd.slice);
+                    console.log("Add slice day mode", String(sliceToAdd.slice));
                     callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "0" });
                 } else {
-                    sliceSelezionateNight.push(sliceToAdd.slice);
-                    console.log("Aggiungo slice night mode", String(sliceToAdd.slice));
+                    selectedSlicesNight.push(sliceToAdd.slice);
+                    console.log("Add slice night mode", String(sliceToAdd.slice));
                     callApi('/slice/add', 'POST', { slice_id: String(sliceToAdd.slice), mode: "1" });
                 }
             }
@@ -355,15 +355,15 @@ sliceMap.forEach((item) => {
             document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';
 
         } else {
-            console.log("Rimuovo slice");
+            console.log("Remove slice");
             item.slices.forEach((sliceItem) => {
                 if (sliceItem.mode == (dayMode ? 'day' : 'night')) {
-                    const index = sliceSelezionate.indexOf(sliceItem.slice);
+                    const index = selectedSlices.indexOf(sliceItem.slice);
                     if (index > -1) {
                         if(dayMode)
-                            sliceSelezionateDay.splice(index, 1);
+                            selectedSlicesDay.splice(index, 1);
                         else
-                            sliceSelezionateNight.splice(index, 1);
+                            selectedSlicesNight.splice(index, 1);
                     }
 
                     if (dayMode) { 
@@ -377,10 +377,10 @@ sliceMap.forEach((item) => {
             });
         }
 
-        aggiornaColorazione();
+        updateColors();
 
-        console.log("Slice Day:", sliceSelezionateDay);
-        console.log("Slice Night:", sliceSelezionateNight);
+        console.log("Slice Day:", selectedSlicesDay);
+        console.log("Slice Night:", selectedSlicesNight);
     });
 });
 

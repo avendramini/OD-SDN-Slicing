@@ -191,16 +191,21 @@ async function callApi(endpoint, method, bodyData = null) {
             },
             body: bodyData ? JSON.stringify(bodyData) : null
             
-        });
-        
+        });      
 
         if (!response.ok) {
             throw new Error(`Errore: ${response.status} - ${await response.text()}`);
         }
 
-        const data = await response.json();
-        console.log(`Risposta da ${endpoint}:`, data);
-        return data; 
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log(`Risposta da ${endpoint}:`, data);
+            return data;
+        } else {
+            console.log(`No JSON body returned from ${endpoint}`);
+            return null;
+        }
     } catch (error) {
         console.error('Errore API:', error);
         return null;
@@ -446,19 +451,7 @@ function _tick() {
     });
 }
 elem.drag = elem.force.drag().on("dragstart", _dragstart);
-function _dragstart(d) {
-    var dpid = dpid_to_int(d.dpid)
-    /*d3.json("/stats/flow/" + dpid, function(e, data) {
-         flows = data[dpid];
-         console.log(flows);
-        elem.console.selectAll("ul").remove();
-        li = elem.console.append("ul")
-            .selectAll("li");
-        li.data(flows).enter().append("li")
-            .text(function (d) { return JSON.stringify(d, null, " "); });
-    });*/
-    d3.select(this).classed("fixed", d.fixed = true);
-}
+function _dragstart(d) {}
 elem.node = elem.svg.selectAll(".node");
 elem.link = elem.svg.selectAll(".link");
 elem.port = elem.svg.selectAll(".port");
@@ -774,7 +767,7 @@ function deleteQoS(){
 }
 
 function setQoSQueue(){
-    req = {"port_name": "s1-eth1", "type": "linux-htb", "max-rate": 1000000, "queues": [{"max_rate": 1000000, "min_rate": 500000}]};
+    req = {"port_name": "s1-eth1", "type": "linux-htb", "max_rate": "1000000", "queues":[{"max_rate": "1000000"}, {"min_rate": "200000"}, {"min_rate": "500000"}]};
     res = callApi('/qos/queue/0000000000000001', 'POST', req);
     console.log(res);
 }
@@ -784,8 +777,13 @@ function getQoSQueue(){
     console.log(res);
 }
 
-function setOVSDBAddress(){
-    
+function setOVSDBAddress(switches){
+    switches.forEach(switch_ => {
+        switch_id = switch_.dpid;
+        req = "tcp:127.0.0.1:6632";
+        res = callApi('/v1.0/conf/switches/' + switch_id + '/ovsdb_addr', 'PUT', req);
+        console.log(res);
+    });
 }
 
 function initialize_topology() {
@@ -794,6 +792,7 @@ function initialize_topology() {
             d3.json("/v1.0/topology/links", function(error, links) {
                 topo.initialize({switches: switches, links: links, hosts: hosts});
                 elem.update();
+                setOVSDBAddress(switches);
             });
         });
     });

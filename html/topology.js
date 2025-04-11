@@ -749,32 +749,141 @@ var rpc = {
 
 // QoS
 
-function setQoS(){
-    req = {"match": {"eth_type": 2048, "nw_dst": "192.168.1.1", "ip_proto": 17, "tp_dst": 80}, "actions": {"queue": "1"}};
-    res = callApi('/qos/rules/0000000000000001', 'POST', req);
+/**
+ * Installs a QoS rule on the specified switch to direct matching traffic to a given queue.
+ *
+ * Example usage:
+ * setQoS('0000000000000001', 1, 1, 'IPv4', '192.168.1.1', 'UDP', 80, 1);
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
+ * @param {number} priority - The priority of the rule (higher numbers indicate higher priority).
+ * @param {number} in_port - The input port number on the switch to match.
+ * @param {string} dl_type - The data link type (usually 'IPv4' or '0x0800' for IPv4 traffic).
+ * @param {string} nw_dst - The destination IP address to match (e.g., '192.168.1.1').
+ * @param {string} nw_proto - The network protocol to match (e.g., 'TCP' or 'UDP').
+ * @param {number} tp_dst - The destination transport-layer port (e.g., 80 for HTTP).
+ * @param {number} queue_id - The ID of the queue to direct matching traffic to.
+ *
+ * @returns {Object} The response object from the QoS rule API call.
+ *
+ * This function creates a flow rule that matches the specified traffic characteristics and assigns
+ * matching packets to a specified QoS queue on the switch.
+ */
+
+function setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id){
+    req = {
+        "priority": priority,
+        "match": {
+            "in_port": in_port,
+            "dl_type": dl_type, 
+            "nw_dst": nw_dst, 
+            "nw_proto": nw_proto, 
+            "tp_dst": tp_dst
+        }, 
+        "actions": {
+            "queue": queue_id
+        }
+    };
+    res = callApi('/qos/rules/' + dpid, 'POST', req);
     console.log(res);
+    return res;
 }
 
-function getQoS(){
-    res = callApi('/qos/rules/0000000000000001', 'GET');
+/**
+ * Retrieves the list of QoS rules currently installed on the specified switch.
+ *
+ * Example usage:
+ * getQoS('0000000000000001');
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
+ *
+ * @returns {Object} The response object containing the list of QoS rules.
+ *
+ * This function sends a GET request to the `/qos/rules/<dpid>` API endpoint to fetch
+ * all configured QoS rules for the given switch.
+ */
+
+function getQoS(dpid){
+    res = callApi('/qos/rules/' + dpid, 'GET');
     console.log(res);
+    return res;
 }
 
-function deleteQoS(){
-    req = {"qos_id": "all"};
-    res = callApi('/qos/rules/0000000000000001', 'DELETE', req);
+/**
+ * Deletes a specific QoS rule or all QoS rules from the specified switch.
+ *
+ * Example usage:
+ * deleteQoS('0000000000000001', 3);        // Deletes the QoS rule with ID 3
+ * deleteQoS('0000000000000001', 'all');    // Deletes all QoS rules on the switch
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
+ * @param {number|string} qos_id - The ID of the QoS rule to delete, or the string "all" to delete all rules.
+ *
+ * @returns {Object} The response object from the delete operation.
+ *
+ * This function sends a DELETE request to the `/qos/rules/<dpid>` API endpoint to remove
+ * a specific QoS rule or clear all rules from the given switch.
+ */
+
+function deleteQoS(dpid, qos_id){
+    req = {"qos_id": qos_id};
+    res = callApi('/qos/rules/' + dpid, 'DELETE', req);
     console.log(res);
+    return res;
 }
 
-function setQoSQueue(){
-    req = {"port_name": "s1-eth1", "type": "linux-htb", "max_rate": "1000000", "queues":[{"max_rate": "1000000"}, {"min_rate": "200000"}, {"min_rate": "500000"}]};
-    res = callApi('/qos/queue/0000000000000001', 'POST', req);
+/**
+ * Configures QoS (Quality of Service) queues on a specific switch port.
+ *
+ * Example usage:
+ * setQoSQueue("0000000000000001", "s1-eth1", "linux-htb", "1000000", [
+ *   {"max_rate": "1000000", "min_rate": "200000"},
+ *   {"min_rate": "500000"}
+ * ]);
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., "0000000000000001").
+ * @param {string} port_name - The name of the switch port to configure (e.g., "s1-eth1").
+ * @param {string} type - The QoS type (typically "linux-htb").
+ * @param {string} max_rate - The maximum rate for the port in bits per second (e.g., "1000000").
+ * @param {Array<Object>} queues - An array of queue objects, each defining:
+ *   - `min_rate` (required): The guaranteed minimum rate for the queue.
+ *   - `max_rate` (optional): The maximum allowed rate for the queue.
+ *
+ * @returns {Object} The response object from the QoS API call.
+ *
+ * This function sends a POST request to the `/qos/queue/<dpid>` API endpoint with the specified QoS configuration.
+ */
+
+function setQoSQueue(dpid, port_name, type, max_rate, queues){
+    req = {
+        "port_name": port_name, 
+        "type": type, 
+        "max_rate": max_rate, 
+        "queues": queues
+    };
+    res = callApi('/qos/queue/' + dpid, 'POST', req);
     console.log(res);
+    return res;
 }
 
-function getQoSQueue(){
-    res = callApi('/qos/queue/0000000000000001', 'GET');
+/**
+ * Retrieves the QoS queue configuration for the specified switch.
+ *
+ * Example usage:
+ * getQoSQueue('0000000000000001');
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
+ *
+ * @returns {Object} The response object containing the queue configuration.
+ *
+ * This function sends a GET request to the `/qos/queue/<dpid>` API endpoint to
+ * fetch the QoS queues configured on the given switch.
+ */
+
+function getQoSQueue(dpid){
+    res = callApi('/qos/queue/' + dpid, 'GET');
     console.log(res);
+    return res;
 }
 
 function setOVSDBAddress(switches){

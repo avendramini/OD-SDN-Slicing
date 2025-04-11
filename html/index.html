@@ -70,15 +70,15 @@
 
     <h3>QoS:</h3>
     <input type="text" id="setQoS" name="QoS"><br>
-    <button onclick="setQoS()">SET_QOS</button>
+    <button onclick="setQoS('0000000000000001', 1, 1, 'IPv4', '192.168.1.1', 'UDP', 80, 1)">SET_QOS</button>
     <input type="text" id="getQoS" name="QoS"><br>
-    <button onclick="getQoS()">GET_QOS</button>    
+    <button onclick="getQoS('0000000000000001')">GET_QOS</button>    
     <input type="text" id="deleteQoS" name="QoS"><br>
-    <button onclick="deleteQoS()">DELETE_QOS</button>    
+    <button onclick="deleteQoS('0000000000000001', 'all')">DELETE_QOS</button>    
     <input type="text" id="setQueue" name="QoS"><br>
-    <button onclick="setQoSQueue()">SET_QUEUE</button>
+    <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
     <input type="text" id="getQueue" name="QoS"><br>
-    <button onclick="getQoSQueue()">GET_QUEUE</button>
+    <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
 
 </div>
 <script src="./topology.js" charset="utf-8"></script>

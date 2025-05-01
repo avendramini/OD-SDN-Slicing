@@ -418,6 +418,12 @@ function trim_zero(obj) {
     return String(obj).replace(/^0+/, "");
 }
 
+function add_zeros(input) {
+    const match = input.match(/\d+$/);
+    const number = match ? match[0] : "0";
+    return number.padStart(16, '0');
+}
+
 function dpid_to_int(dpid) {
     return Number("0x" + dpid);
 }
@@ -902,10 +908,118 @@ function initialize_topology() {
                 topo.initialize({switches: switches, links: links, hosts: hosts});
                 elem.update();
                 setOVSDBAddress(switches);
+                const select = document.getElementById("switchSelect");
+                switches.forEach(sw => {
+                    const opt = document.createElement("option");
+                    opt.value = sw.dpid;
+                    opt.innerText = "s" + trim_zero(sw.dpid);
+                    select.appendChild(opt);
+                });
+                loadQoSRules();
             });
         });
     });
 }
+
+function parseQoSResponse(response) {
+    const parsedRules = [];
+
+    response.forEach(entry => {
+        const switchId = entry.switch_id;
+        const results = entry.command_result;
+
+        results.forEach(result => {
+            const qosEntries = result.qos;
+
+            qosEntries.forEach(rule => {
+                parsedRules.push({
+                    switch_id: switchId,
+                    qos_id: rule.qos_id || "",
+                    priority: rule.priority || "",
+                    in_port: rule.in_port || "",
+                    eth_type: rule.dl_type || "",
+                    nw_dst: rule.nw_dst || "",
+                    ip_proto: rule.nw_proto || "",
+                    tp_dst: rule.tp_dst || "",
+                    queue_id: rule.qos_id || ""
+                });
+            });
+        });
+    });
+
+    return parsedRules;
+}
+
+
+async function loadQoSRules() {
+    const sw = document.getElementById("switchSelect").value;
+    try {
+        const response = await getQoS(sw);  
+        const data = parseQoSResponse(response);
+        console.log(data);
+        const thead = document.getElementById("qosTable").querySelector("thead");
+        const tbody = document.getElementById("qosTable").querySelector("tbody");
+        if(data.length == 0){
+            thead.innerHTML = ` <th colspan="7">No QoS rules found</th>`;
+            tbody.innerHTML = "";
+            return;
+        }
+        thead.innerHTML = ` <th>qos_id</th>
+                            <th>priority</th>
+                            <th>in_port</th>
+                            <th>eth_type</th>
+                            <th>nw_dst</th>
+                            <th>ip_proto</th>
+                            <th>tp_dst</th>
+                            <th>queue_id</th>`;
+
+        tbody.innerHTML = "";
+
+        data.forEach(rule => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${rule.qos_id}</td>
+                <td>${rule.priority}</td>
+                <td>${rule.in_port}</td>
+                <td>${rule.eth_type}</td>
+                <td>${rule.nw_dst}</td>
+                <td>${rule.ip_proto}</td>
+                <td>${rule.tp_dst}</td>
+                <td>${rule.queue_id}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Failed to load QoS rules:", error);
+    }
+}
+
+async function setQoSRule() {
+    const sw = document.getElementById("switchSelect").value;
+
+    const dl_type = document.getElementById("eth_type").value;
+    const nw_proto = document.getElementById("ip_proto").value;
+
+    const nw_dst = document.getElementById("nw_dst").value;
+    const tp_dst = parseInt(document.getElementById("tp_dst").value);
+    const queue_id = parseInt(document.getElementById("queue_id").value);
+    const in_port = parseInt(document.getElementById("in_port").value);
+    const priority = parseInt(document.getElementById("priority").value);
+
+    try {
+        const res = await setQoS(sw, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id);
+        console.log(res);
+        if (res == null) {
+            throw new Error("No response from server");
+        }
+        alert("Rule set!");
+        loadQoSRules(); 
+    } catch (error) {
+        alert("Failed to set rule: " + error);
+        console.error(error);
+    }
+}
+
 
 function main() {
     initialize_topology();

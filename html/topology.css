@@ -307,4 +307,6 @@ body.night-mode #tab3 + .menu-item {
     margin-top: 20px; /* Adds space above "QoS:" */
 }
 
-
+.qos-form input {
+    display: inline-block;
+}

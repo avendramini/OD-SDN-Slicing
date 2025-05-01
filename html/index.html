@@ -69,16 +69,59 @@
  
 
     <h3>QoS:</h3>
-    <input type="text" id="setQoS" name="QoS"><br>
+    <input type="submit" id="setQoS" name="QoS"><br>
     <button onclick="setQoS('0000000000000001', 1, 1, 'IPv4', '192.168.1.1', 'UDP', 80, 1)">SET_QOS</button>
-    <input type="text" id="getQoS" name="QoS"><br>
+    <input type="submit" id="getQoS" name="QoS"><br>
     <button onclick="getQoS('0000000000000001')">GET_QOS</button>    
-    <input type="text" id="deleteQoS" name="QoS"><br>
+    <input type="submit" id="deleteQoS" name="QoS"><br>
     <button onclick="deleteQoS('0000000000000001', 'all')">DELETE_QOS</button>    
-    <input type="text" id="setQueue" name="QoS"><br>
+    <input type="submit" id="setQueue" name="QoS"><br>
     <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
-    <input type="text" id="getQueue" name="QoS"><br>
+    <input type="submit" id="getQueue" name="QoS"><br>
     <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
+
+    <h2>QoS Configuration Panel</h2>
+
+    <label for="switchSelect">Select Switch:</label>
+    <select id="switchSelect" onchange="loadQoSRules()"></select>
+
+    <h3>QoS Rules</h3>
+    <table id="qosTable">
+        <thead>
+            <tr>
+                <th>priority</th><th>in_port</th><th>eth_type</th><th>nw_dst</th><th>ip_proto</th><th>tp_dst</th><th>queue_id</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h3>Add QoS Rule</h3>
+    <form id="qosForm" class="qos-form" onsubmit="event.preventDefault(); setQoSRule();">
+        <label>priority:</label>
+        <input type="text" id="priority" placeholder="1"><br>
+        <label>in_port:</label>
+        <input type="text" id="in_port" placeholder="1"><br>
+        <label>eth_type:</label>
+        <select id="eth_type" name="ethTypeList" form="qosForm">
+            <option value="IPv4">IPv4</option>
+            <option value="IPv6">IPv6</option>
+        </select><br>
+        <label>nw_dst:</label>
+        <input type="text" id="nw_dst" placeholder="10.0.0.2"><br>
+
+        <label>ip_proto:</label>
+        <select id="ip_proto" name="ipProtoList" form="qosForm">
+            <option value="TCP">TCP</option>
+            <option value="UDP">UDP</option>
+        </select><br>
+        <label>tp_dst:</label>
+        <input type="number" id="tp_dst" placeholder="5001"><br>
+
+        <label>queue_id:</label>
+        <input type="number" id="queue_id" placeholder="1"><br>
+
+        <button type="submit">Set Rule</button>
+    </form>
 
 </div>
 <script src="./topology.js" charset="utf-8"></script>

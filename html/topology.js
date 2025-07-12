@@ -271,6 +271,130 @@ function calculateCombinedColor(slices) {
     return `rgb(${combinedColor.r}, ${combinedColor.g}, ${combinedColor.b})`;
 }
 
+// Funzione per caricare lo stato di entrambe le modalità all'avvio
+async function loadAllSlicesState() {
+    try {
+        console.log("Caricamento stato slice per entrambe le modalità...");
+        
+        // Carica stato modalità giorno
+        const currentMode = dayMode;
+        
+        // Forza temporaneamente modalità giorno nel backend per ottenere gli slice
+        await callApi('/mode/set', 'POST', { mode: "0" });
+        const dayResponse = await callApi('/slices/status', 'GET');
+        if (dayResponse && dayResponse.active_slices) {
+            selectedSlicesDay = [...dayResponse.active_slices];
+            console.log("Slice giorno caricati:", selectedSlicesDay);
+        }
+        
+        // Carica stato modalità notte
+        await callApi('/mode/set', 'POST', { mode: "1" });
+        const nightResponse = await callApi('/slices/status', 'GET');
+        if (nightResponse && nightResponse.active_slices) {
+            selectedSlicesNight = [...nightResponse.active_slices];
+            console.log("Slice notte caricati:", selectedSlicesNight);
+        }
+        
+        // Ripristina la modalità originale
+        const targetMode = currentMode ? "0" : "1";
+        await callApi('/mode/set', 'POST', { mode: targetMode });
+        
+        // Aggiorna l'interfaccia
+        syncCheckboxesWithState();
+        updateColors();
+        
+        console.log("Stato completo caricato:");
+        console.log("selectedSlicesDay:", selectedSlicesDay);
+        console.log("selectedSlicesNight:", selectedSlicesNight);
+        
+    } catch (error) {
+        console.error("Errore nel caricamento completo dello stato slice:", error);
+    }
+}
+
+// Funzione per caricare lo stato degli slice dal backend
+async function loadSliceState(skipModeUpdate = false) {
+    try {
+        console.log("Caricamento stato slice dal backend...");
+        const response = await callApi('/slices/status', 'GET');
+        
+        if (response && response.active_slices) {
+            console.log("Stato slice ricevuto:", response);
+            
+            // Imposta la modalità corrente solo se non è stato specificato di saltare l'aggiornamento
+            if (!skipModeUpdate) {
+                const isNightMode = response.mode === 'NIGHT';
+                dayMode = !isNightMode;
+                
+                // Aggiorna i radio button per la modalità
+                const dayRadio = document.querySelector('input[value="Day mode"]');
+                const nightRadio = document.querySelector('input[value="Night mode"]');
+                
+                if (isNightMode) {
+                    nightRadio.checked = true;
+                    dayRadio.checked = false;
+                    document.body.classList.add('night-mode');
+                } else {
+                    dayRadio.checked = true;
+                    nightRadio.checked = false;
+                    document.body.classList.remove('night-mode');
+                }
+            }
+            
+            // Aggiorna gli array degli slice attivi per la modalità corrente del backend
+            const isCurrentlyNightMode = response.mode === 'NIGHT';
+            if (isCurrentlyNightMode) {
+                selectedSlicesNight = [...response.active_slices];
+                console.log("Slice attivi in modalità notte:", selectedSlicesNight);
+                
+                // Se siamo in modalità notte nel frontend, aggiorna i colori
+                if (!dayMode) {
+                    syncCheckboxesWithState();
+                    updateColors();
+                }
+            } else {
+                selectedSlicesDay = [...response.active_slices];
+                console.log("Slice attivi in modalità giorno:", selectedSlicesDay);
+                
+                // Se siamo in modalità giorno nel frontend, aggiorna i colori
+                if (dayMode) {
+                    syncCheckboxesWithState();
+                    updateColors();
+                }
+            }
+            
+            console.log("Stato slice sincronizzato con successo!");
+            console.log("selectedSlicesDay:", selectedSlicesDay);
+            console.log("selectedSlicesNight:", selectedSlicesNight);
+        } else {
+            console.warn("Nessun dato slice ricevuto dal backend");
+        }
+    } catch (error) {
+        console.error("Errore nel caricamento dello stato slice:", error);
+    }
+}
+
+// Funzione per sincronizzare i checkbox con lo stato degli slice
+function syncCheckboxesWithState() {
+    const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
+    console.log(`Sincronizzazione checkbox per modalità ${dayMode ? 'Day' : 'Night'}:`, selectedSlices);
+    
+    sliceMap.forEach((item) => {
+        const checkbox = document.getElementById(`tab${item.checkboxId}`);
+        if (checkbox && item.checkboxId !== 11) { // Escludi il checkbox RESET
+            // Verifica se almeno uno degli slice dell'item è attivo nella modalità corrente
+            const isActive = item.slices.some(sliceItem => {
+                const modeMatches = sliceItem.mode === (dayMode ? 'day' : 'night');
+                const sliceIsSelected = selectedSlices.includes(sliceItem.slice);
+                return modeMatches && sliceIsSelected;
+            });
+            
+            checkbox.checked = isActive;
+            console.log(`Checkbox ${item.checkboxId}: ${isActive ? 'attivo' : 'inattivo'}`);
+        }
+    });
+}
+
 function sincronizeCheckbox() {
     const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
     
@@ -283,25 +407,25 @@ function sincronizeCheckbox() {
 }
 
 document.querySelectorAll('input[name="userType"]').forEach(function (input) {
-    input.addEventListener('change', function () {
+    input.addEventListener('change', async function () {
         if (this.value == 'Night mode' && this.checked) {
             document.body.classList.add('night-mode');
             dayMode = false;
             console.log("Switching to Night Mode");
-            callApi('/mode/set', 'POST', { mode: "1" });
+            await callApi('/mode/set', 'POST', { mode: "1" });
+            
+            // Ricarica lo stato degli slice dal backend dopo il cambio modalità
+            await loadSliceState(true);
 
         } else {
             document.body.classList.remove('night-mode');
             dayMode = true;
             console.log("Switching to Day Mode");
-            callApi('/mode/set', 'POST', { mode: "0" });  
+            await callApi('/mode/set', 'POST', { mode: "0" });
+            
+            // Ricarica lo stato degli slice dal backend dopo il cambio modalità
+            await loadSliceState(true);
         }
-        
-        // Sincronizzo i checkbox con lo stato corrente
-        sincronizeCheckbox();
-        
-        // Aggiorno la colorazione in base alla modalità corrente
-        updateColors();
         
         console.log("selectedSlicesDay:", selectedSlicesDay);
         console.log("selectedSlicesNight:", selectedSlicesNight);
@@ -750,6 +874,46 @@ var rpc = {
         topo.add_host_links(hosts);
         elem.update();
         return "";
+    },
+    event_slice_update: function (params) {
+        // Gestisce aggiornamenti degli slice in tempo reale
+        console.log("Slice update event:", params);
+        if (params && params.active_slices) {
+            const isNightMode = params.mode === 'NIGHT';
+            if (isNightMode) {
+                selectedSlicesNight = [...params.active_slices];
+            } else {
+                selectedSlicesDay = [...params.active_slices];
+            }
+            syncCheckboxesWithState();
+            updateColors();
+        }
+        return "";
+    },
+    event_mode_change: function (params) {
+        // Gestisce cambi di modalità in tempo reale
+        console.log("Mode change event:", params);
+        if (params && params.mode !== undefined) {
+            const isNightMode = params.mode === 'NIGHT';
+            dayMode = !isNightMode;
+            
+            const dayRadio = document.querySelector('input[value="Day mode"]');
+            const nightRadio = document.querySelector('input[value="Night mode"]');
+            
+            if (isNightMode) {
+                nightRadio.checked = true;
+                dayRadio.checked = false;
+                document.body.classList.add('night-mode');
+            } else {
+                dayRadio.checked = true;
+                nightRadio.checked = false;
+                document.body.classList.remove('night-mode');
+            }
+            
+            syncCheckboxesWithState();
+            updateColors();
+        }
+        return "";
     }
 }
 
@@ -916,6 +1080,9 @@ function initialize_topology() {
                     select.appendChild(opt);
                 });
                 loadQoSRules();
+                
+                // Carica lo stato degli slice dal backend all'avvio
+                loadSliceState();
             });
         });
     });

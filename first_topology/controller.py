@@ -346,6 +346,18 @@ class ControllerServer(ControllerBase):
             self.controller_instance.logger.error(self.state.mappers[self.state.active_mode].map)
             return Response(status=500, body=str(e))
 
+    @route('slices', '/slices/status', methods=['GET'])
+    def get_slices_status(self, req):
+        try:
+            mode = self.state.active_mode
+            mapper = self.state.mappers[mode]
+            status = mapper.get_active_slices_status()
+            status['mode'] = 'DAY' if mode == self.state.DAY else 'NIGHT'
+            
+            return Response(status=200, json_body=status)
+        except Exception as e:
+            return Response(status=500, body=str(e))
+
     @route('reset', '/reset/map', methods=['POST'])
     def reset_map(self, req):
         try:

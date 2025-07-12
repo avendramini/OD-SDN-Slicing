@@ -1,149 +1,5 @@
 const MAC_MASK = 256;
 
-// slice 1
-var slice1DayLinkIds = [ 
-    { src: "0000000000000003", dst: "262" },  // host 6 (6+256=262)
-    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
-];
-
-// slice 2
-var slice2NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
-];
-
-// slice 3
-var slice3DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
-    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
-];
-
-// slice 4
-var slice4DayLinkIds = [
-    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
-    { src: "0000000000000006", dst: "267" },  // host 11 (11+256=267)
-    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
-];
-
-// slice 5
-var slice5DayLinkIds = [
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-];
-
-
-var slice5NightLinkIds = [
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
- ];
- 
-// slice 6
-var slice6DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
-];
-
-var slice6NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
-];
-
-// slice 7
-var slice7DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
-];
-
-var slice7NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
-];
-
-// slice 8
-var slice8DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
-];
-
-var slice8NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
-];
-
-// slice 9
-var slice9DayLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
-];
-
-var slice9NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
-    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
-    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
-];
-    
-
-// slice 10
-var slice10DayLinkIds = [
-    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
-    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
-];
-
-// slice 11
-var slice11NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000004" },
-    { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
-];
-
-
-// slice 12
-var slice12DayLinkIds = [
-    { src: "0000000000000002", dst: "260" },  // host 4 (4+256=260)
-    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
-];
-
-// slice 13
-var slice13NightLinkIds = [
-    { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
-    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
-];
-
-/*
-// RESET
-var slice11DayLinkIds = [
-   // { src: "0000000000000001", dst: "0000000000000003" }
-];
-*/
-
 let selectedSlicesDay = [];
 let selectedSlicesNight = [];
 let dayMode = true;
@@ -194,7 +50,29 @@ async function callApi(endpoint, method, bodyData = null) {
         });      
 
         if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${await response.text()}`);
+            const errorText = await response.text();
+            
+            // Check for QoS KeyError 35020 and auto-clear if detected
+            if (response.status === 500 && (errorText.includes('KeyError: 35020') || errorText.includes('KeyError: 35020'))) {
+                console.log("Detected KeyError 35020 in API response - auto-clearing QoS rules...");
+                
+                // Only auto-clear for QoS-related endpoints to avoid infinite loops
+                if (endpoint.includes('/qos/')) {
+                    try {
+                        // Clear all QoS rules automatically
+                        const clearResult = await window.clearAllQoSRules();
+                        if (clearResult) {
+                            console.log("QoS rules cleared successfully due to KeyError 35020");
+                            // Return null to indicate the error was handled
+                            return null;
+                        }
+                    } catch (clearError) {
+                        console.error("Failed to auto-clear QoS rules:", clearError);
+                    }
+                }
+            }
+            
+            throw new Error(`Error: ${response.status} - ${errorText}`);
         }
 
         const contentType = response.headers.get("content-type");
@@ -1140,19 +1018,42 @@ function initialize_topology_traditional() {
  */
 
 function setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id){
+    // Validate input parameters
+    if (!dpid || dpid === "") {
+        console.error("Invalid dpid:", dpid);
+        return Promise.resolve(null);
+    }
+    
+    if (priority === null || priority === undefined || isNaN(priority)) {
+        console.error("Invalid priority:", priority);
+        return Promise.resolve(null);
+    }
+    
+    if (in_port === null || in_port === undefined || isNaN(in_port)) {
+        console.error("Invalid in_port:", in_port);
+        return Promise.resolve(null);
+    }
+    
+    if (queue_id === null || queue_id === undefined || isNaN(queue_id)) {
+        console.error("Invalid queue_id:", queue_id);
+        return Promise.resolve(null);
+    }
+
     req = {
-        "priority": priority,
+        "priority": parseInt(priority),
         "match": {
-            "in_port": in_port,
-            "dl_type": dl_type, 
-            "nw_dst": nw_dst, 
-            "nw_proto": nw_proto, 
-            "tp_dst": tp_dst
+            "in_port": parseInt(in_port),
+            "dl_type": dl_type || "IPv4", 
+            "nw_dst": nw_dst || "", 
+            "nw_proto": nw_proto || "", 
+            "tp_dst": tp_dst ? parseInt(tp_dst) : ""
         }, 
         "actions": {
-            "queue": queue_id
+            "queue": parseInt(queue_id)
         }
     };
+    
+    console.log("setQoS request:", req);
     res = callApi('/qos/rules/' + dpid, 'POST', req);
     console.log(res);
     return res;
@@ -1285,7 +1186,7 @@ function initialize_topology() {
 /**
  * Carica le configurazioni aggiuntive dopo che la topologia è stata caricata
  */
-function loadAdditionalConfigurations(switches = null) {
+async function loadAdditionalConfigurations(switches = null) {
     try {
         // Configura OVSDB se abbiamo gli switch
         if (switches && Array.isArray(switches)) {
@@ -1300,15 +1201,22 @@ function loadAdditionalConfigurations(switches = null) {
             }
         }
         
-        // Carica QoS rules
-        loadQoSRules();
+        // Carica QoS rules con auto-recovery
+        try {
+            await loadQoSRules();
+        } catch (qosError) {
+            console.warn("QoS rules loading failed, continuing with slice loading:", qosError);
+        }
         
         // Carica stato slice e applica i colori
-        loadSliceState().then(() => {
+        try {
+            await loadSliceState();
             // Dopo aver caricato lo stato degli slice, applica i colori
             console.log("Applying colors after topology and slice state loaded...");
             updateColors();
-        });
+        } catch (sliceError) {
+            console.error("Failed to load slice state:", sliceError);
+        }
         
         console.log("Additional configurations loaded successfully");
     } catch (error) {
@@ -1342,25 +1250,50 @@ function updateSwitchSelector(switches) {
 function parseQoSResponse(response) {
     const parsedRules = [];
 
+    // Check if response is valid and is an array
+    if (!response || !Array.isArray(response)) {
+        console.warn("Invalid QoS response format:", response);
+        return parsedRules;
+    }
+
     response.forEach(entry => {
+        if (!entry || !entry.switch_id || !entry.command_result) {
+            console.warn("Invalid QoS entry format:", entry);
+            return;
+        }
+        
         const switchId = entry.switch_id;
         const results = entry.command_result;
 
+        if (!Array.isArray(results)) {
+            console.warn("Invalid command_result format for switch", switchId, ":", results);
+            return;
+        }
+
         results.forEach(result => {
+            if (!result || !result.qos || !Array.isArray(result.qos)) {
+                console.warn("Invalid QoS result format:", result);
+                return;
+            }
+            
             const qosEntries = result.qos;
 
             qosEntries.forEach(rule => {
-                parsedRules.push({
-                    switch_id: switchId,
-                    qos_id: rule.qos_id || "",
-                    priority: rule.priority || "",
-                    in_port: rule.in_port || "",
-                    eth_type: rule.dl_type || "",
-                    nw_dst: rule.nw_dst || "",
-                    ip_proto: rule.nw_proto || "",
-                    tp_dst: rule.tp_dst || "",
-                    queue_id: rule.qos_id || ""
-                });
+                try {
+                    parsedRules.push({
+                        switch_id: switchId,
+                        qos_id: rule.qos_id || "",
+                        priority: rule.priority || "",
+                        in_port: rule.in_port || "",
+                        eth_type: rule.dl_type || "",
+                        nw_dst: rule.nw_dst || "",
+                        ip_proto: rule.nw_proto || "",
+                        tp_dst: rule.tp_dst || "",
+                        queue_id: rule.qos_id || ""
+                    });
+                } catch (error) {
+                    console.warn("Error parsing QoS rule:", rule, error);
+                }
             });
         });
     });
@@ -1372,7 +1305,18 @@ function parseQoSResponse(response) {
 async function loadQoSRules() {
     const sw = document.getElementById("switchSelect").value;
     try {
-        const response = await getQoS(sw);  
+        const response = await getQoS(sw);
+        
+        // Check if the response is valid before processing
+        if (!response) {
+            console.warn("No response received from QoS API");
+            const thead = document.getElementById("qosTable").querySelector("thead");
+            const tbody = document.getElementById("qosTable").querySelector("tbody");
+            thead.innerHTML = ` <th colspan="7">Error loading QoS rules</th>`;
+            tbody.innerHTML = "";
+            return;
+        }
+        
         const data = parseQoSResponse(response);
         console.log(data);
         const thead = document.getElementById("qosTable").querySelector("thead");
@@ -1409,6 +1353,30 @@ async function loadQoSRules() {
         });
     } catch (error) {
         console.error("Failed to load QoS rules:", error);
+        
+        // Check if this is the KeyError 35020 and auto-clear problematic rules
+        if (error.toString().includes('KeyError: 35020') || error.toString().includes('500')) {
+            console.log("Detected QoS KeyError 35020 - automatically clearing problematic rules...");
+            try {
+                const clearResult = await window.clearAllQoSRules();
+                if (clearResult) {
+                    console.log("QoS rules cleared successfully. Retrying loadQoSRules...");
+                    // Retry loading QoS rules after clearing
+                    setTimeout(() => {
+                        loadQoSRules();
+                    }, 1000);
+                    return;
+                }
+            } catch (clearError) {
+                console.error("Failed to auto-clear QoS rules:", clearError);
+            }
+        }
+        
+        // Update the table to show error state
+        const thead = document.getElementById("qosTable").querySelector("thead");
+        const tbody = document.getElementById("qosTable").querySelector("tbody");
+        thead.innerHTML = ` <th colspan="7">Error loading QoS rules - Check console for details</th>`;
+        tbody.innerHTML = "";
     }
 }
 
@@ -1419,14 +1387,61 @@ async function setQoSRule() {
     const nw_proto = document.getElementById("ip_proto").value;
 
     const nw_dst = document.getElementById("nw_dst").value;
-    const tp_dst = parseInt(document.getElementById("tp_dst").value);
-    const queue_id = parseInt(document.getElementById("queue_id").value);
-    const in_port = parseInt(document.getElementById("in_port").value);
-    const priority = parseInt(document.getElementById("priority").value);
+    const tp_dst_str = document.getElementById("tp_dst").value;
+    const queue_id_str = document.getElementById("queue_id").value;
+    const in_port_str = document.getElementById("in_port").value;
+    const priority_str = document.getElementById("priority").value;
+
+    // Validate required fields
+    if (!sw || sw === "") {
+        alert("Please select a switch");
+        return;
+    }
+    
+    if (!priority_str || priority_str === "") {
+        alert("Priority is required");
+        return;
+    }
+    
+    if (!in_port_str || in_port_str === "") {
+        alert("Input port is required");
+        return;
+    }
+    
+    if (!queue_id_str || queue_id_str === "") {
+        alert("Queue ID is required");
+        return;
+    }
+
+    // Convert to numbers
+    const tp_dst = tp_dst_str ? parseInt(tp_dst_str) : null;
+    const queue_id = parseInt(queue_id_str);
+    const in_port = parseInt(in_port_str);
+    const priority = parseInt(priority_str);
+
+    // Validate numeric conversions
+    if (isNaN(priority)) {
+        alert("Priority must be a valid number");
+        return;
+    }
+    
+    if (isNaN(in_port)) {
+        alert("Input port must be a valid number");
+        return;
+    }
+    
+    if (isNaN(queue_id)) {
+        alert("Queue ID must be a valid number");
+        return;
+    }
+
+    console.log("Setting QoS rule with:", {
+        sw, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id
+    });
 
     try {
         const res = await setQoS(sw, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id);
-        console.log(res);
+        console.log("setQoS result:", res);
         if (res == null) {
             throw new Error("No response from server");
         }
@@ -1453,6 +1468,62 @@ function main() {
     window.updateColors = updateColors;
     window.loadSliceState = loadSliceState;
     window.syncCheckboxesWithState = syncCheckboxesWithState;
+    
+    // Esponi le funzioni QoS per debugging
+    window.deleteQoS = deleteQoS;
+    window.getQoS = getQoS;
+    window.setQoS = setQoS;
+    window.loadQoSRules = loadQoSRules;
+    
+    // Helper function to clear all QoS rules from all switches
+    window.clearAllQoSRules = async function() {
+        console.log("Clearing all QoS rules from all switches...");
+        
+        // Get all switch DPIDs from the topology
+        const switches = topo.nodes.filter(node => node.type === 'switch');
+        
+        if (switches.length === 0) {
+            console.warn("No switches found in topology. Make sure topology is loaded first.");
+            return false;
+        }
+        
+        let successCount = 0;
+        let errorCount = 0;
+        
+        for (const switchNode of switches) {
+            try {
+                console.log(`Clearing QoS rules for switch: ${switchNode.dpid}`);
+                const result = await deleteQoS(switchNode.dpid, 'all');
+                if (result !== null) {
+                    successCount++;
+                    console.log(`✓ Successfully cleared QoS rules for switch ${switchNode.dpid}`);
+                } else {
+                    errorCount++;
+                    console.warn(`✗ Failed to clear QoS rules for switch ${switchNode.dpid}`);
+                }
+            } catch (error) {
+                errorCount++;
+                console.error(`✗ Error clearing QoS rules for switch ${switchNode.dpid}:`, error);
+            }
+            
+            // Small delay between requests to avoid overwhelming the controller
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        console.log(`QoS clearing completed: ${successCount} successful, ${errorCount} failed`);
+        
+        // Reload QoS rules after clearing
+        if (successCount > 0) {
+            try {
+                await loadQoSRules();
+                console.log("QoS rules table refreshed");
+            } catch (error) {
+                console.error("Error reloading QoS rules after clearing:", error);
+            }
+        }
+        
+        return successCount > 0;
+    };
     
     // Funzione di utilità per forzare l'aggiornamento completo
     window.forceRefreshSlices = async function() {
@@ -1481,6 +1552,13 @@ function main() {
     console.log("- window.updateSwitchSelector(): Update switch selector dropdown");
     console.log("- window.updateColors(): Force update link colors");
     console.log("- window.forceRefreshSlices(): Force refresh slice state and colors");
+    console.log("QoS functions exposed globally:");
+    console.log("- window.deleteQoS(dpid, qos_id): Delete specific QoS rule or 'all'");
+    console.log("- window.getQoS(dpid): Get QoS rules for switch");
+    console.log("- window.setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id): Add QoS rule");
+    console.log("- window.loadQoSRules(): Reload QoS rules table");
+    console.log("- window.clearAllQoSRules(): Clear all QoS rules from all switches");
+    console.log("To fix the current QoS error, try: window.clearAllQoSRules()");
 }
 
 main();

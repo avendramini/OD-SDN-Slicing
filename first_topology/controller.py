@@ -61,7 +61,7 @@ class Controller(app_manager.RyuApp):
         data = {}
         data['dpset'] = dpset
         data['waiters'] = self.waiters
-        wsgi.registory['QoSController'] = data
+        #wsgi.registory['QoSController'] = data
         wsgi.register(QoSController, data)
 
     @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
@@ -221,6 +221,7 @@ class Controller(app_manager.RyuApp):
     @set_ev_cls(conf_switch.EventConfSwitchSet)
     def conf_switch_set_handler(self, ev):
         if ev.key == cs_key.OVSDB_ADDR:
+            return
             QoSController.set_ovsdb_addr(ev.dpid, ev.value)
         else:
             QoSController._LOGGER.debug("unknown event: %s", ev)
@@ -373,6 +374,175 @@ class ControllerServer(ControllerBase):
             return Response(status=200, json_body={"message": "Map reset successfully", "mode": mode})
         except Exception as e:
             return Response(status=500, body=str(e))
+
+    @route('topology', '/topology/send', methods=['POST'])
+    def send_complete_topology(self, req):
+        """
+        Restituisce la topologia completa con host hardcodati
+        """
+        try:
+            # Dati mock per switches (evita chiamate HTTP ricorsive)
+            switches = [
+                {"dpid": "0000000000000001", "ports": []},
+                {"dpid": "0000000000000002", "ports": []},
+                {"dpid": "0000000000000003", "ports": []},
+                {"dpid": "0000000000000004", "ports": []},
+                {"dpid": "0000000000000005", "ports": []},
+                {"dpid": "0000000000000006", "ports": []}
+            ]
+            
+            # Dati mock per links (evita chiamate HTTP ricorsive)
+            links = [
+                {"src": {"dpid": "0000000000000001", "port_no": "00000001"}, 
+                 "dst": {"dpid": "0000000000000004", "port_no": "00000001"}},
+                {"src": {"dpid": "0000000000000001", "port_no": "00000002"}, 
+                 "dst": {"dpid": "0000000000000002", "port_no": "00000001"}},
+                {"src": {"dpid": "0000000000000001", "port_no": "00000003"}, 
+                 "dst": {"dpid": "0000000000000003", "port_no": "00000001"}},
+                {"src": {"dpid": "0000000000000004", "port_no": "00000002"}, 
+                 "dst": {"dpid": "0000000000000005", "port_no": "00000001"}},
+                {"src": {"dpid": "0000000000000004", "port_no": "00000003"}, 
+                 "dst": {"dpid": "0000000000000006", "port_no": "00000001"}}
+            ]
+            
+            # Host hardcodati basati su topology.py
+            hosts = [
+                {
+                    "mac": "00:00:00:00:01:01",
+                    "ipv4": ["192.168.1.1"],
+                    "port": {
+                        "dpid": "0000000000000001",  # s1
+                        "port_no": "00000004",       # porta 4
+                        "hw_addr": "00:00:00:00:01:01",
+                        "name": "s1-eth4"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:02", 
+                    "ipv4": ["192.168.1.2"],
+                    "port": {
+                        "dpid": "0000000000000001",  # s1
+                        "port_no": "00000005",       # porta 5
+                        "hw_addr": "00:00:00:00:01:02",
+                        "name": "s1-eth5"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:03",
+                    "ipv4": ["192.168.1.3"], 
+                    "port": {
+                        "dpid": "0000000000000001",  # s1
+                        "port_no": "00000006",       # porta 6
+                        "hw_addr": "00:00:00:00:01:03",
+                        "name": "s1-eth6"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:04",
+                    "ipv4": ["192.168.1.4"],
+                    "port": {
+                        "dpid": "0000000000000002",  # s2
+                        "port_no": "00000002",       # porta 2
+                        "hw_addr": "00:00:00:00:01:04",
+                        "name": "s2-eth2"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:05",
+                    "ipv4": ["192.168.1.5"],
+                    "port": {
+                        "dpid": "0000000000000002",  # s2
+                        "port_no": "00000003",       # porta 3
+                        "hw_addr": "00:00:00:00:01:05",
+                        "name": "s2-eth3"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:06",
+                    "ipv4": ["192.168.1.6"],
+                    "port": {
+                        "dpid": "0000000000000003",  # s3
+                        "port_no": "00000002",       # porta 2
+                        "hw_addr": "00:00:00:00:01:06",
+                        "name": "s3-eth2"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:07",
+                    "ipv4": ["192.168.1.7"],
+                    "port": {
+                        "dpid": "0000000000000003",  # s3
+                        "port_no": "00000003",       # porta 3
+                        "hw_addr": "00:00:00:00:01:07",
+                        "name": "s3-eth3"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:08",
+                    "ipv4": ["192.168.1.8"],
+                    "port": {
+                        "dpid": "0000000000000005",  # s5
+                        "port_no": "00000002",       # porta 2
+                        "hw_addr": "00:00:00:00:01:08",
+                        "name": "s5-eth2"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:09",
+                    "ipv4": ["192.168.1.9"],
+                    "port": {
+                        "dpid": "0000000000000005",  # s5
+                        "port_no": "00000003",       # porta 3
+                        "hw_addr": "00:00:00:00:01:09",
+                        "name": "s5-eth3"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:0a",
+                    "ipv4": ["192.168.1.10"],
+                    "port": {
+                        "dpid": "0000000000000006",  # s6
+                        "port_no": "00000002",       # porta 2
+                        "hw_addr": "00:00:00:00:01:0a",
+                        "name": "s6-eth2"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:0b",
+                    "ipv4": ["192.168.1.11"],
+                    "port": {
+                        "dpid": "0000000000000006",  # s6
+                        "port_no": "00000003",       # porta 3
+                        "hw_addr": "00:00:00:00:01:0b",
+                        "name": "s6-eth3"
+                    }
+                },
+                {
+                    "mac": "00:00:00:00:01:0c",
+                    "ipv4": ["192.168.1.12"],
+                    "port": {
+                        "dpid": "0000000000000006",  # s6
+                        "port_no": "00000004",       # porta 4
+                        "hw_addr": "00:00:00:00:01:0c",
+                        "name": "s6-eth4"
+                    }
+                }
+            ]
+            
+            # Creazione della risposta completa
+            complete_data = {
+                "switches": switches,
+                "links": links,
+                "hosts": hosts,
+                "timestamp": __import__('time').time()
+            }
+            
+            self.controller_instance.logger.info(f"Complete topology sent directly via HTTP with {len(hosts)} hosts")
+            return Response(status=200, json_body=complete_data)
+            
+        except Exception as e:
+            self.controller_instance.logger.error(f"Error sending complete topology: {str(e)}")
+            return Response(status=500, body=f"Error sending topology: {str(e)}")
 
 app_manager.require_app('ryu.app.rest_topology')
 app_manager.require_app('ryu.app.rest_conf_switch')

@@ -2,15 +2,15 @@ const MAC_MASK = 256;
 
 // slice 1
 var slice1DayLinkIds = [ 
-    { src: "0000000000000003", dst: (6+MAC_MASK).toString() },
-    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
+    { src: "0000000000000003", dst: "262" },  // host 6 (6+256=262)
+    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
 ];
 
 // slice 2
 var slice2NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
-    { src: "0000000000000003", dst: (7+MAC_MASK).toString() }
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
 ];
 
 // slice 3
@@ -18,123 +18,123 @@ var slice3DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
     { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
-    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
-    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
+    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
 ];
 
 // slice 4
 var slice4DayLinkIds = [
-    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
-    { src: "0000000000000006", dst: (11+MAC_MASK).toString() },
-    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
+    { src: "0000000000000006", dst: "267" },  // host 11 (11+256=267)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
 ];
 
 // slice 5
 var slice5DayLinkIds = [
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
 ];
 
 
 var slice5NightLinkIds = [
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
  ];
  
 // slice 6
 var slice6DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
 ];
 
 var slice6NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000003" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
 ];
 
 // slice 7
 var slice7DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
 ];
 
 var slice7NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000006" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
 ];
 
 // slice 8
 var slice8DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
 ];
 
 var slice8NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
 ];
 
 // slice 9
 var slice9DayLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
 ];
 
 var slice9NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
-    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
 ];
     
 
 // slice 10
 var slice10DayLinkIds = [
-    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
-    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
+    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
 ];
 
 // slice 11
 var slice11NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000004" },
     { src: "0000000000000004", dst: "0000000000000005" },
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
-    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
 ];
 
 
 // slice 12
 var slice12DayLinkIds = [
-    { src: "0000000000000002", dst: (4+MAC_MASK).toString() },
-    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: "260" },  // host 4 (4+256=260)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
 ];
 
 // slice 13
 var slice13NightLinkIds = [
     { src: "0000000000000001", dst: "0000000000000002" },
-    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
-    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
 ];
 
 /*
@@ -213,25 +213,41 @@ async function callApi(endpoint, method, bodyData = null) {
 }
 
 function updateColors() {
+    console.log("=== updateColors called ===");
+    console.log("Selected slices:", dayMode ? selectedSlicesDay : selectedSlicesNight, "dayMode:", dayMode);
+    
     d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
 
     const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
     const linkColors = {};
+    let totalMatches = 0;
 
     selectedSlices.forEach(currentSlice => {
         var sliceLinkIds = dayMode 
             ? window[`slice${currentSlice}DayLinkIds`] 
             : window[`slice${currentSlice}NightLinkIds`];
         
+        console.log(`Processing slice ${currentSlice}, found ${sliceLinkIds ? sliceLinkIds.length : 0} link definitions`);
+        
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
-                    console.log(link);
-                    console.log(id);
-                    return (link.port.src.dpid == id.src && link.port.dst.dpid == id.dst) ||
-                           (link.port.src.dpid == id.dst && link.port.dst.dpid == id.src);
+                    // Converte i DPID in string per confronto consistente
+                    var linkSrcStr = String(link.port.src.dpid);
+                    var linkDstStr = String(link.port.dst.dpid);
+                    var sliceSrcStr = String(id.src);
+                    var sliceDstStr = String(id.dst);
+                    
+                    // Verifica entrambe le direzioni del link
+                    var forward = (linkSrcStr === sliceSrcStr && linkDstStr === sliceDstStr);
+                    var reverse = (linkSrcStr === sliceDstStr && linkDstStr === sliceSrcStr);
+                    
+                    return forward || reverse;
                 });
             });
+
+            console.log(`Slice ${currentSlice} matched ${sliceLinks.length} links`);
+            totalMatches += sliceLinks.length;
 
             sliceLinks.forEach(function(link) {
                 const linkKey = `${link.port.src.dpid}-${link.port.dst.dpid}`;
@@ -243,14 +259,19 @@ function updateColors() {
         }
     });
 
+    console.log(`Total matches: ${totalMatches}, colored links: ${Object.keys(linkColors).length}`);
+
     Object.keys(linkColors).forEach(linkKey => {
         const slices = linkColors[linkKey];
         const color = calculateCombinedColor(slices);
+        console.log(`Applying color ${color} to link ${linkKey} for slices ${slices}`);
         d3.selectAll(".link").filter(function(d) {
             return `${d.port.src.dpid}-${d.port.dst.dpid}` == linkKey ||
                    `${d.port.dst.dpid}-${d.port.src.dpid}` == linkKey;
         }).style("stroke", color).style("stroke-width", "3px").style("stroke-opacity", "1");
     });
+    
+    console.log("=== updateColors completed ===");
 }
 
 function calculateCombinedColor(slices) {
@@ -347,7 +368,7 @@ async function loadSliceState(skipModeUpdate = false) {
                 selectedSlicesNight = [...response.active_slices];
                 console.log("Slice attivi in modalità notte:", selectedSlicesNight);
                 
-                // Se siamo in modalità notte nel frontend, aggiorna i colori
+                // Se siamo in modalità notte nel frontend, aggiorna i checkbox e colori
                 if (!dayMode) {
                     syncCheckboxesWithState();
                     updateColors();
@@ -356,7 +377,7 @@ async function loadSliceState(skipModeUpdate = false) {
                 selectedSlicesDay = [...response.active_slices];
                 console.log("Slice attivi in modalità giorno:", selectedSlicesDay);
                 
-                // Se siamo in modalità giorno nel frontend, aggiorna i colori
+                // Se siamo in modalità giorno nel frontend, aggiorna i checkbox e colori
                 if (dayMode) {
                     syncCheckboxesWithState();
                     updateColors();
@@ -366,11 +387,15 @@ async function loadSliceState(skipModeUpdate = false) {
             console.log("Stato slice sincronizzato con successo!");
             console.log("selectedSlicesDay:", selectedSlicesDay);
             console.log("selectedSlicesNight:", selectedSlicesNight);
+            
+            return true; // Restituisce true per indicare successo
         } else {
             console.warn("Nessun dato slice ricevuto dal backend");
+            return false;
         }
     } catch (error) {
         console.error("Errore nel caricamento dello stato slice:", error);
+        return false;
     }
 }
 
@@ -452,7 +477,7 @@ sliceMap.forEach((item) => {
 
             // Resetta le connessioni e la colorazione degli elementi
             d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
-            document.querySelectorAll('.sidebar .menu-item').forEach(function (menuItem) {
+            document.querySelectorAll('.sidebar .menu-item, .sidebar .menu-button').forEach(function (menuItem) {
                 menuItem.style.backgroundColor = '';  
             });
 
@@ -476,7 +501,10 @@ sliceMap.forEach((item) => {
             }
 
             document.getElementById('tab11').checked = false;
-            document.querySelector('#tab11 + .menu-item').style.backgroundColor = '';
+            const resetButton = document.querySelector('#tab11 + .menu-button');
+            if (resetButton) {
+                resetButton.style.backgroundColor = '';
+            }
 
         } else {
             console.log("Remove slice");
@@ -536,6 +564,39 @@ ws.onmessage = function(event) {
 
     var ret = {"id": data.id, "jsonrpc": "2.0", "result": result};
     this.send(JSON.stringify(ret));
+}
+
+ws.onopen = function(event) {
+    console.log("WebSocket connection opened");
+}
+
+ws.onclose = function(event) {
+    console.log("WebSocket connection closed");
+}
+
+ws.onerror = function(event) {
+    console.error("WebSocket error:", event);
+}
+
+/**
+ * Invia una richiesta per la topologia completa tramite WebSocket
+ * Questa è un'alternativa alla richiesta HTTP
+ */
+function requestTopologyViaWebSocket() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        const request = {
+            "id": Date.now(),
+            "jsonrpc": "2.0",
+            "method": "request_complete_topology",
+            "params": {}
+        };
+        ws.send(JSON.stringify(request));
+        console.log("Topology request sent via WebSocket");
+        return true;
+    } else {
+        console.warn("WebSocket is not open, cannot send topology request");
+        return false;
+    }
 }
 
 function trim_zero(obj) {
@@ -914,10 +975,148 @@ var rpc = {
             updateColors();
         }
         return "";
+    },
+    event_topology_complete: function (params) {
+        // Gestisce il caricamento della topologia completa
+        console.log("Complete topology received:", params);
+        if (params && params.switches && params.links && params.hosts) {
+            console.log(`Processing topology: ${params.switches.length} switches, ${params.links.length} links, ${params.hosts.length} hosts`);
+            
+            // Reinizializza la topologia con i nuovi dati
+            topo.initialize({
+                switches: params.switches, 
+                links: params.links, 
+                hosts: params.hosts
+            });
+            elem.update();
+            
+            // Carica le configurazioni aggiuntive
+            loadAdditionalConfigurations(params.switches);
+            
+            console.log("Topology updated successfully from complete data");
+        } else {
+            console.warn("Invalid topology data received:", params);
+        }
+        return "";
     }
 }
 
 // QoS
+
+/**
+ * Richiede al controller di inviare la topologia completa
+ * Approccio semplificato che riceve i dati direttamente via HTTP
+ */
+async function requestCompleteTopology() {
+    try {
+        console.log("Requesting complete topology...");
+        const response = await callApi('/topology/send', 'POST');
+        
+        if (response && response.switches && response.links && response.hosts) {
+            console.log("Complete topology received directly via HTTP:", response);
+            console.log(`Processing topology: ${response.switches.length} switches, ${response.links.length} links, ${response.hosts.length} hosts`);
+            
+            // Processa i dati direttamente
+            topo.initialize({
+                switches: response.switches, 
+                links: response.links, 
+                hosts: response.hosts
+            });
+            elem.update();
+            
+            // Carica le configurazioni aggiuntive
+            loadAdditionalConfigurations(response.switches);
+            
+            // Applica i colori degli slice attivi dopo un breve delay per assicurarsi che tutto sia caricato
+            setTimeout(() => {
+                console.log("Applying slice colors after topology load...");
+                updateColors();
+            }, 500);
+            
+            console.log("Topology updated successfully from HTTP response");
+            return response;
+        } else {
+            throw new Error("Invalid topology data received");
+        }
+    } catch (error) {
+        console.error("Error requesting complete topology:", error);
+        return null;
+    }
+}
+
+/**
+ * Richiede direttamente la topologia tramite WebSocket senza passare per HTTP
+ * Invia un messaggio RPC custom al controller
+ */
+function requestTopologyViaWebSocket() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        const request = {
+            "id": Date.now(),
+            "jsonrpc": "2.0",
+            "method": "request_complete_topology",
+            "params": {}
+        };
+        ws.send(JSON.stringify(request));
+        console.log("Topology request sent via WebSocket RPC");
+        return true;
+    } else {
+        console.warn("WebSocket is not open, using HTTP fallback");
+        return requestCompleteTopology();
+    }
+}
+
+/**
+ * Recarica la topologia utilizzando il metodo WebSocket RPC
+ * Con fallback al metodo tradizionale se necessario
+ */
+async function reloadTopology() {
+    try {
+        console.log("Reloading topology...");
+        
+        // Prova prima con WebSocket diretto se disponibile
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            const wsResult = requestTopologyViaWebSocket();
+            if (wsResult) {
+                console.log("Topology reload requested via WebSocket");
+                return true;
+            }
+        }
+        
+        // Altrimenti usa il metodo HTTP che triggera il WebSocket
+        const httpResult = await requestCompleteTopology();
+        
+        if (httpResult) {
+            console.log("Topology reload requested via HTTP->WebSocket");
+            return true;
+        } else {
+            // Fallback finale al metodo tradizionale
+            console.log("Falling back to traditional topology loading...");
+            initialize_topology_traditional();
+            return true;
+        }
+    } catch (error) {
+        console.error("Error reloading topology:", error);
+        return false;
+    }
+}
+
+/**
+ * Caricamento tradizionale della topologia (metodo originale)
+ * Mantenuto come fallback
+ */
+function initialize_topology_traditional() {
+    console.log("Using traditional topology loading method");
+    d3.json("/v1.0/topology/hosts", function(error, hosts){
+        d3.json("/v1.0/topology/switches", function(error, switches) {
+            d3.json("/v1.0/topology/links", function(error, links) {
+                topo.initialize({switches: switches, links: links, hosts: hosts});
+                elem.update();
+                
+                loadAdditionalConfigurations(switches);
+            });
+        });
+    });
+}
 
 /**
  * Installs a QoS rule on the specified switch to direct matching traffic to a given queue.
@@ -1066,26 +1265,78 @@ function setOVSDBAddress(switches){
 }
 
 function initialize_topology() {
-    d3.json("/v1.0/topology/hosts", function(error, hosts){
-        d3.json("/v1.0/topology/switches", function(error, switches) {
-            d3.json("/v1.0/topology/links", function(error, links) {
-                topo.initialize({switches: switches, links: links, hosts: hosts});
-                elem.update();
-                setOVSDBAddress(switches);
-                const select = document.getElementById("switchSelect");
-                switches.forEach(sw => {
-                    const opt = document.createElement("option");
-                    opt.value = sw.dpid;
-                    opt.innerText = "s" + trim_zero(sw.dpid);
-                    select.appendChild(opt);
-                });
-                loadQoSRules();
-                
-                // Carica lo stato degli slice dal backend all'avvio
-                loadSliceState();
-            });
-        });
+    console.log("Initializing topology...");
+    
+    // Usa il metodo HTTP semplificato
+    requestCompleteTopology().then(result => {
+        if (result) {
+            console.log("Topology loaded successfully via HTTP");
+        } else {
+            console.log("HTTP method failed, falling back to traditional method");
+            initialize_topology_traditional();
+        }
+    }).catch(error => {
+        console.error("Error in topology initialization:", error);
+        console.log("Falling back to traditional method");
+        initialize_topology_traditional();
     });
+}
+
+/**
+ * Carica le configurazioni aggiuntive dopo che la topologia è stata caricata
+ */
+function loadAdditionalConfigurations(switches = null) {
+    try {
+        // Configura OVSDB se abbiamo gli switch
+        if (switches && Array.isArray(switches)) {
+            setOVSDBAddress(switches);
+            updateSwitchSelector(switches);
+        } else if (topo.nodes && topo.nodes.length > 0) {
+            // Estrai gli switch dalla topologia caricata
+            const switchNodes = topo.nodes.filter(node => node.type === 'switch');
+            if (switchNodes.length > 0) {
+                setOVSDBAddress(switchNodes);
+                updateSwitchSelector(switchNodes);
+            }
+        }
+        
+        // Carica QoS rules
+        loadQoSRules();
+        
+        // Carica stato slice e applica i colori
+        loadSliceState().then(() => {
+            // Dopo aver caricato lo stato degli slice, applica i colori
+            console.log("Applying colors after topology and slice state loaded...");
+            updateColors();
+        });
+        
+        console.log("Additional configurations loaded successfully");
+    } catch (error) {
+        console.error("Error loading additional configurations:", error);
+    }
+}
+
+/**
+ * Aggiorna il selettore degli switch per QoS
+ */
+function updateSwitchSelector(switches) {
+    const select = document.getElementById("switchSelect");
+    if (select && switches && switches.length > 0) {
+        // Pulisce le opzioni esistenti tranne la prima (placeholder)
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+        
+        // Aggiunge i nuovi switch
+        switches.forEach(sw => {
+            const opt = document.createElement("option");
+            opt.value = sw.dpid;
+            opt.innerText = "s" + trim_zero(sw.dpid);
+            select.appendChild(opt);
+        });
+        
+        console.log(`Updated switch selector with ${switches.length} switches`);
+    }
 }
 
 function parseQoSResponse(response) {
@@ -1190,6 +1441,46 @@ async function setQoSRule() {
 
 function main() {
     initialize_topology();
+    
+    // Esponi le funzioni globalmente per debugging e uso esterno
+    window.requestCompleteTopology = requestCompleteTopology;
+    window.reloadTopology = reloadTopology;
+    window.initializeTopology = initialize_topology;
+    window.requestTopologyViaWebSocket = requestTopologyViaWebSocket;
+    window.initializeTopologyTraditional = initialize_topology_traditional;
+    window.loadAdditionalConfigurations = loadAdditionalConfigurations;
+    window.updateSwitchSelector = updateSwitchSelector;
+    window.updateColors = updateColors;
+    window.loadSliceState = loadSliceState;
+    window.syncCheckboxesWithState = syncCheckboxesWithState;
+    
+    // Funzione di utilità per forzare l'aggiornamento completo
+    window.forceRefreshSlices = async function() {
+        console.log("=== Force Refresh Slices ===");
+        try {
+            const success = await loadSliceState();
+            if (success) {
+                syncCheckboxesWithState();
+                updateColors();
+                console.log("Slices refreshed successfully");
+            } else {
+                console.warn("Failed to load slice state");
+            }
+        } catch (error) {
+            console.error("Error refreshing slices:", error);
+        }
+    };
+    
+    console.log("Topology functions exposed globally:");
+    console.log("- window.requestCompleteTopology(): Request topology via HTTP->WebSocket RPC");
+    console.log("- window.reloadTopology(): Reload topology with intelligent fallback");
+    console.log("- window.initializeTopology(): Initialize topology using WebSocket RPC");
+    console.log("- window.requestTopologyViaWebSocket(): Direct WebSocket RPC request");
+    console.log("- window.initializeTopologyTraditional(): Traditional D3.json loading (fallback)");
+    console.log("- window.loadAdditionalConfigurations(): Load QoS and slice configurations");
+    console.log("- window.updateSwitchSelector(): Update switch selector dropdown");
+    console.log("- window.updateColors(): Force update link colors");
+    console.log("- window.forceRefreshSlices(): Force refresh slice state and colors");
 }
 
 main();

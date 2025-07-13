@@ -302,6 +302,23 @@ class ControllerServer(ControllerBase):
         except Exception as e:
             return Response(status=500, body=str(e))
     
+    @route('mode', '/mode/get', methods=['GET'])
+    def get_mode(self, req):
+        try:
+            active_mode = self.state.active_mode
+            active_slices = [
+                i + 1 for i, active in enumerate(self.state.mappers[active_mode].active_slice) if active
+            ]
+            return Response(
+                status=200,
+                json_body={
+                    "active_mode": active_mode,
+                    "active_slices": active_slices
+                }
+            )
+        except Exception as e:
+            return Response(status=500, body=str(e))
+
     @route('slice', '/slice/add', methods=['POST'])
     def add_slice(self, req):
         try:

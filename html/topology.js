@@ -1,4 +1,191 @@
 const MAC_MASK = 256;
+var slice1DayLinkIds = [ 
+    { src: "0000000000000003", dst: (6+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: "262" },  // host 6 (6+256=262)
+    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
+];
+
+// slice 2
+var slice2NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000003", dst: "263" }   // host 7 (7+256=263)
+];
+
+// slice 3
+var slice3DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
+    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
+];
+
+// slice 4
+var slice4DayLinkIds = [
+    { src: "0000000000000006", dst: (10+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (11+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: "266" },  // host 10 (10+256=266)
+    { src: "0000000000000006", dst: "267" },  // host 11 (11+256=267)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
+];
+
+// slice 5
+var slice5DayLinkIds = [
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+];
+
+
+var slice5NightLinkIds = [
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+ ];
+
+// slice 6
+var slice6DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
+];
+
+var slice6NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000003" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000003", dst: (7+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000003", dst: "263" },  // host 7 (7+256=263)
+];
+
+// slice 7
+var slice7DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
+];
+
+var slice7NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000006" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000006", dst: (12+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000006", dst: "268" },  // host 12 (12+256=268)
+];
+
+// slice 8
+var slice8DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
+];
+
+var slice8NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
+];
+
+// slice 9
+var slice9DayLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
+];
+
+var slice9NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (2+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (3+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "258" },  // host 2 (2+256=258)
+    { src: "0000000000000001", dst: "259" },  // host 3 (3+256=259)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
+];
+
+
+// slice 10
+var slice10DayLinkIds = [
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (9+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
+    { src: "0000000000000005", dst: "265" },  // host 9 (9+256=265)
+];
+
+// slice 11
+var slice11NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000004" },
+    { src: "0000000000000004", dst: "0000000000000005" },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+    { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
+];
+
+
+// slice 12
+var slice12DayLinkIds = [
+    { src: "0000000000000002", dst: (4+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: "260" },  // host 4 (4+256=260)
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
+];
+
+// slice 13
+var slice13NightLinkIds = [
+    { src: "0000000000000001", dst: "0000000000000002" },
+    { src: "0000000000000002", dst: (5+MAC_MASK).toString() },
+    { src: "0000000000000001", dst: (1+MAC_MASK).toString() },
+    { src: "0000000000000002", dst: "261" },  // host 5 (5+256=261)
+    { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
+];
+
+
+
+
 
 let selectedSlicesDay = [];
 let selectedSlicesNight = [];

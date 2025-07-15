@@ -84,7 +84,7 @@ All links between switches and hosts are configured with **10 Mbps bandwidth**
 | **S6** | Wi-Fi Zone | Manages visitor and staff wireless connectivity |
 
 <p align="center">
-  <img src="./Topology.png" alt="System architecture" width="1000"/>
+  <img src="./images/Topology.png" alt="System architecture" width="1000"/>
   <br/>
   <em>Figure 1: System architecture</em>
 </p>

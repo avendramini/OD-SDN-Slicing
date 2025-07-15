@@ -1344,17 +1344,58 @@ function getQoSQueue(dpid){
 }
 
 function setOVSDBAddress(switches){
-    switches.forEach(switch_ => {
-        switch_id = switch_.dpid;
-        req = "tcp:127.0.0.1:6632";
-        res = callApi('/v1.0/conf/switches/' + switch_id + '/ovsdb_addr', 'PUT', req);
-        console.log(res);
+    switches.forEach(async switch_ => {
+        try {
+            switch_id = switch_.dpid;
+            req = "tcp:127.0.0.1:6632";
+            console.log(`Setting OVSDB address for switch ${switch_id}`);
+            res = await callApi('/v1.0/conf/switches/' + switch_id + '/ovsdb_addr', 'PUT', req);
+            console.log(`OVSDB address set for switch ${switch_id}:`, res);
+        } catch (error) {
+            console.error(`Failed to set OVSDB address for switch ${switch_id}:`, error);
+            
+            // If this fails due to QoS issues, try clearing and retrying
+            if (error.toString().includes('KeyError: 35020') || error.toString().includes('500')) {
+                console.log(`Detected QoS error during OVSDB setup for switch ${switch_id}, attempting recovery...`);
+                try {
+                    await window.clearAllQoSRules();
+                    console.log(`Retrying OVSDB setup for switch ${switch_id} after QoS cleanup...`);
+                    // Small delay before retry
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    const retryRes = await callApi('/v1.0/conf/switches/' + switch_id + '/ovsdb_addr', 'PUT', req);
+                    console.log(`OVSDB address set for switch ${switch_id} on retry:`, retryRes);
+                } catch (retryError) {
+                    console.error(`Failed to set OVSDB address for switch ${switch_id} even after QoS cleanup:`, retryError);
+                }
+            }
+        }
     });
 }
 
 function initialize_topology() {
     console.log("Initializing topology...");
     
+    // Preemptive system cleanup before starting
+    console.log("Performing preemptive system cleanup...");
+    
+    // Clear any existing problematic QoS rules immediately
+    setTimeout(async () => {
+        try {
+            console.log("Starting preemptive QoS cleanup...");
+            if (window.clearAllQoSRules) {
+                await window.clearAllQoSRules();
+                console.log("Preemptive QoS cleanup completed successfully");
+            }
+        } catch (cleanupError) {
+            console.warn("Preemptive QoS cleanup failed, continuing with topology loading:", cleanupError);
+        }
+        
+        // Now proceed with topology loading
+        proceedWithTopologyLoad();
+    }, 100);
+}
+
+function proceedWithTopologyLoad() {
     // Usa il metodo HTTP semplificato
     requestCompleteTopology().then(result => {
         if (result) {
@@ -1386,6 +1427,15 @@ async function loadAdditionalConfigurations(switches = null) {
                 setOVSDBAddress(switchNodes);
                 updateSwitchSelector(switchNodes);
             }
+        }
+        
+        // Preemptively clear any problematic QoS rules before trying to load them
+        console.log("Preemptively clearing any problematic QoS rules...");
+        try {
+            await window.clearAllQoSRules();
+            console.log("Preemptive QoS clearing completed");
+        } catch (preemptiveError) {
+            console.warn("Preemptive QoS clearing failed, continuing:", preemptiveError);
         }
         
         // Carica QoS rules con auto-recovery
@@ -1642,6 +1692,35 @@ async function setQoSRule() {
 
 
 function main() {
+    // Setup global error monitoring for QoS KeyError 35020
+    window.addEventListener('error', function(event) {
+        if (event.error && event.error.message && event.error.message.includes('KeyError: 35020')) {
+            console.log("Global error handler detected KeyError 35020, triggering automatic cleanup...");
+            if (window.clearAllQoSRules) {
+                window.clearAllQoSRules().catch(err => 
+                    console.error("Global error handler failed to clear QoS rules:", err)
+                );
+            }
+        }
+    });
+    
+    // Setup console error monitoring
+    const originalConsoleError = console.error;
+    console.error = function(...args) {
+        const message = args.join(' ');
+        if (message.includes('KeyError: 35020')) {
+            console.log("Console error handler detected KeyError 35020, triggering automatic cleanup...");
+            if (window.clearAllQoSRules) {
+                setTimeout(() => {
+                    window.clearAllQoSRules().catch(err => 
+                        originalConsoleError("Console error handler failed to clear QoS rules:", err)
+                    );
+                }, 100);
+            }
+        }
+        originalConsoleError.apply(console, args);
+    };
+    
     initialize_topology();
     
     // Esponi le funzioni globalmente per debugging e uso esterno
@@ -1745,7 +1824,7 @@ function main() {
     console.log("- window.setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id): Add QoS rule");
     console.log("- window.loadQoSRules(): Reload QoS rules table");
     console.log("- window.clearAllQoSRules(): Clear all QoS rules from all switches");
-    console.log("To fix the current QoS error, try: window.clearAllQoSRules()");
+    console.log("Auto-recovery for KeyError 35020 is now active!");
 }
 
 main();

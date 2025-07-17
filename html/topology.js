@@ -1517,17 +1517,22 @@ function parseQoSResponse(response) {
 
             qosEntries.forEach(rule => {
                 try {
-                    parsedRules.push({
-                        switch_id: switchId,
-                        qos_id: rule.qos_id || "",
-                        priority: rule.priority || "",
-                        in_port: rule.in_port || "",
-                        eth_type: rule.dl_type || "",
-                        nw_dst: rule.nw_dst || "",
-                        ip_proto: rule.nw_proto || "",
-                        tp_dst: rule.tp_dst || "",
-                        queue_id: rule.qos_id || ""
+                    const actionsEntries = rule.actions || [];
+                    queueId = "";
+                    actionsEntries.forEach(action =>{
+                        queueId += action.queue ? action.queue + " " : "";
                     });
+                    parsedRules.push({
+                            switch_id: switchId,
+                            qos_id: rule.qos_id || "",
+                            priority: rule.priority || "",
+                            in_port: rule.in_port || "",
+                            eth_type: rule.dl_type || "",
+                            nw_dst: rule.nw_dst || "",
+                            ip_proto: rule.nw_proto || "",
+                            tp_dst: rule.tp_dst || "",
+                            queue_id: queueId || ""
+                        });
                 } catch (error) {
                     console.warn("Error parsing QoS rule:", rule, error);
                 }

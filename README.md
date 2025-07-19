@@ -186,19 +186,19 @@ The following commands allow interaction with the controller for setting time mo
 
 | **Action**                | **Description**                                                                                       | **Command**                                                                                                              |
 |---------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| Change mode               | Set the time mode (Day/Night)                                                  | `curl -X POST http://localhost:8080/mode/set -H "Content-Type: application/json" -d '{"mode": "1"}'`                     |
+| Change mode               | Set the time mode (Day/Night)                                                  | `curl -X POST http://localhost:8080/mode/set -H "Content-Type: application/json" -d '{"mode": "<mode>"}'`                     |
 | Get current mode          | Retrieve the current time mode mode                                                                | `curl -X GET http://localhost:8080/mode/get`                                                                             |
-| Add a slice               | Add a new slice with a given ID and mode                                                             | `curl -X POST http://localhost:8080/slice/add -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "1"}'`   |
-| Remove a slice            | Remove an existing slice                                                                             | `curl -X POST http://localhost:8080/slice/remove -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "1"}'`|
+| Add a slice               | Add a new slice with a given ID and mode                                                             | `curl -X POST http://localhost:8080/slice/add -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "<mode>"}'`   |
+| Remove a slice            | Remove an existing slice                                                                             | `curl -X POST http://localhost:8080/slice/remove -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "<mode>"}'`|
 | Get active slices status  | Display the status of all active slices                                                              | `curl -X GET http://localhost:8080/slices/status`                                                                         |
-| Reset forwarding map      | Reset the forwarding map based on current slice configuration                                        | `curl -X POST http://localhost:8080/reset/map -H "Content-Type: application/json" -d '{"mode": 0}'`                      |
+| Reset forwarding map      | Reset the forwarding map based on current slice configuration                                        | `curl -X POST http://localhost:8080/reset/map -H "Content-Type: application/json" -d '{"mode": <mode>}'`                      |
 | Send full topology        | Trigger the controller to broadcast full topology to all slices                                     | `curl -X POST http://localhost:8080/topology/send`                                                                       |
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
 #### General Notes
 
-- `mode = 0` → **Day**, `mode = 1` → **Night**  
+- `<mode> = 0` → **Day**, `<mode> = 1` → **Night**  
   This value must be correctly set when performing time-specific operations.
 
 - Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using:  

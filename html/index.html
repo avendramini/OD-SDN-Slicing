@@ -128,12 +128,46 @@
         <button type="submit">Delete QoS Rules</button>
     </form>
 
-    <input type="submit" id="setQueue" name="QoS"><br>
-    <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
-    <input type="submit" id="getQueue" name="QoS"><br>
-    <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
+    <h3>Set Queue</h3>
+    <form id="setQueueForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQueue();">
+        <label>Switch:</label>
+        <select id="setQueue-switch" required>
+            <option value="">Select Switch</option>
+        </select><br>
+        <label>Port name:</label>
+        <input type="text" id="setQueue-in_port" placeholder="s1-eth1"><br>
+        <label>type:</label>
+        <select id="setQueue-type" name="queue" form="qosForm">
+            <option value="linux-htb">linux-htb</option>
+            <option value="linux-hfsc">linux-hfsc</option>
+        </select><br>
+        <label>max_rate (in bps):</label>
+        <input type="number" step="0.01" id="setQueue-max_rate" placeholder="2000000"><br>
+        <label>min_rate (in bps):</label>
+        <input type="number" step="0.01" id="setQueue-min_rate" placeholder="2000000"><br>
 
-    
+        <button type="submit">Set Queue</button>
+    </form>
+
+    <h4>Get Queues</h4>
+    <label for="queueSelect">Select Switch:</label>
+    <select id="queueSelect" onchange="loadQueues()">
+        <option value="all">all</option>
+    </select>
+
+    <h3>Queue Information</h3>
+    <table id="queueTable">
+        <thead>
+            <tr>
+                            <th>Switch</th>
+                            <th>Interface</th>
+                            <th>Max Rate</th>
+                            <th>Min Rate</th>
+                            <th>Queue ID</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
 </div>
 <script src="./topology.js" charset="utf-8"></script>

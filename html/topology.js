@@ -183,14 +183,9 @@ var slice13NightLinkIds = [
     { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
 ];
 
-
-
-
-
 let selectedSlicesDay = [];
 let selectedSlicesNight = [];
 let dayMode = true;
-
 const sliceColors = {
     1: d3.rgb(0, 102, 204),   
     2: d3.rgb(0, 102, 204),       
@@ -207,8 +202,6 @@ const sliceColors = {
     13: d3.rgb(0, 189, 189),    
     14: d3.rgb(233, 7, 7) 
 };
-
-
 
 const sliceMap = [
     { checkboxId: 1, slices: [{ slice: 1, mode: 'day' }, { slice: 2, mode: 'night' }] },
@@ -607,8 +600,6 @@ function macToDecimal(mac) {
 }
 
 
-// ------------------------------------------------------------------------------------------------
-
 var CONF = {
     image: {
         width: 50,
@@ -693,6 +684,7 @@ var elem = {
         .attr("width", CONF.force.width)
         .attr("height", CONF.force.height),
 };
+
 function _tick() {
     elem.link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -706,6 +698,7 @@ function _tick() {
         return "translate(" + p.x + "," + p.y + ")";
     });
 }
+
 elem.drag = elem.force.drag().on("dragstart", _dragstart);
 function _dragstart(d) {}
 elem.node = elem.svg.selectAll(".node");
@@ -1425,7 +1418,10 @@ function updateSwitchSelector(switches) {
         'add-rule-switch',
         'delete-rule-switch',
         'set-queue-switch',
-        'get-queue-switch'
+        'get-queue-switch',
+        'setQueue-switch',
+        'getQueue-switch',
+        'queueSelect',
     ];
     
     // Trova anche tutti gli elementi che iniziano con "switchSelect" seguito da un numero
@@ -1460,24 +1456,37 @@ function updateSwitchSelector(switches) {
     
     allSelects.forEach(select => {
         if (select) {
-            // Pulisce le opzioni esistenti tranne la prima (se è un placeholder)
-            const firstOption = select.options[0];
-            if (firstOption && (firstOption.value === "" || firstOption.disabled)) {
-                while (select.children.length > 1) {
-                    select.removeChild(select.lastChild);
-                }
-            } else {
-                select.innerHTML = "";
-            }
+            const isQueueSelect = select.id === 'queueSelect';
             
-            // Aggiunge opzione placeholder se non presente
-            if (!firstOption || firstOption.value !== "") {
-                const placeholderOpt = document.createElement("option");
-                placeholderOpt.value = "";
-                placeholderOpt.disabled = true;
-                placeholderOpt.selected = true;
-                placeholderOpt.innerText = "Select Switch";
-                select.appendChild(placeholderOpt);
+            // Pulisce le opzioni esistenti
+            if (isQueueSelect) {
+                // Per queueSelect, mantieni sempre "all" come prima opzione
+                select.innerHTML = "";
+                const allOption = document.createElement("option");
+                allOption.value = "all";
+                allOption.innerText = "all";
+                allOption.selected = true;
+                select.appendChild(allOption);
+            } else {
+                // Per altri selettori, usa la logica originale
+                const firstOption = select.options[0];
+                if (firstOption && (firstOption.value === "" || firstOption.disabled)) {
+                    while (select.children.length > 1) {
+                        select.removeChild(select.lastChild);
+                    }
+                } else {
+                    select.innerHTML = "";
+                }
+                
+                // Aggiunge opzione placeholder se non presente
+                if (!firstOption || firstOption.value !== "") {
+                    const placeholderOpt = document.createElement("option");
+                    placeholderOpt.value = "";
+                    placeholderOpt.disabled = true;
+                    placeholderOpt.selected = true;
+                    placeholderOpt.innerText = "Select Switch";
+                    select.appendChild(placeholderOpt);
+                }
             }
             
             // Aggiunge i nuovi switch
@@ -1493,6 +1502,14 @@ function updateSwitchSelector(switches) {
     });
     
     console.log(`Updated ${updatedCount} switch selectors with ${switches.length} switches`);
+    
+    // Auto-load queue information when switches are updated
+    if (typeof loadQueueInfo === 'function') {
+        // Small delay to ensure DOM is updated
+        setTimeout(() => {
+            loadQueueInfo();
+        }, 100);
+    }
 }
 
 function parseQoSResponse(response) {
@@ -1554,6 +1571,64 @@ function parseQoSResponse(response) {
     return parsedRules;
 }
 
+function parseQueueResponse(response) {
+    const queueData = [];
+    console.log(response[0].command_result);
+    try {
+        // The response structure may vary depending on the Ryu API
+        // Handle different possible response structures
+            // Response is an array of queue configurations
+        response.forEach((queueConfig, index) => {
+            let switchId=queueConfig.switch_id;
+            queueConfig=queueConfig.command_result;
+            if (queueConfig.result==="success" && queueConfig && typeof queueConfig === 'object') 
+            {
+                queueConfig =queueConfig.details;
+                if (queueConfig) {
+                    for(let interface in queueConfig) {
+                        for(let key in interface){
+                            let element=queueConfig[interface][key];
+                            if(element === undefined || element === null) {
+                                continue;}
+                            
+
+                            let queue=element["config"];
+                                // Validate that max_rate and min_rate are integers
+                            const maxRate = queue["max-rate"];
+                            const minRate = queue["min-rate"];
+                            
+                            // Check if rates are valid integers (not "N/A", undefined, null, or non-numeric)
+                            const isMaxRateValid = maxRate !== undefined && maxRate !== null && 
+                                                    maxRate !== "N/A" && Number.isInteger(Number(maxRate));
+                            const isMinRateValid = minRate !== undefined && minRate !== null && 
+                                                    minRate !== "N/A" && Number.isInteger(Number(minRate));
+                            
+                            // Only push if both rates are valid integers
+                            if (isMaxRateValid && isMinRateValid) {
+                                queueData.push({
+                                    queue_id:key,
+                                    switch: switchId,
+                                    interface: interface,
+                                    max_rate: maxRate,
+                                    min_rate: minRate
+                                });
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            
+            
+        });
+        
+        
+    } catch (error) {
+        console.error('Error parsing queue response:', error);
+    }
+    
+    return queueData;
+}
 
 async function loadQoSRules() {
 
@@ -1637,6 +1712,78 @@ async function loadQoSRules() {
         tbody.innerHTML = "";
     }
 }
+
+async function loadQueues() {
+    const sw = document.getElementById("queueSelect").value;
+    if(sw === "" || sw === null) {
+        console.warn("No switch selected for loading queue information");
+        return;
+    }
+    
+    try {
+        let allQueueData = [];
+        
+        // Get queue info - the API handles "all" automatically
+        const response = await getQoSQueue(sw);
+        if (response && typeof response === 'object') {
+            console.log("Queue response received:", response);
+            allQueueData = parseQueueResponse(response);
+        }
+        console.log("Parsed queue data:", allQueueData);
+        
+        const thead = document.getElementById("queueTable").querySelector("thead");
+        const tbody = document.getElementById("queueTable").querySelector("tbody");
+        
+        // Check if the response is valid before processing
+        if (!response) {
+            console.warn("No response received from Queue API");
+            thead.innerHTML = `<tr><th colspan="7">Error loading queue information</th></tr>`;
+            tbody.innerHTML = "";
+            return;
+        }
+        
+        console.log("Queue data:", allQueueData);
+        
+        if(allQueueData.length == 0){
+            thead.innerHTML = `<tr><th colspan="7">No queue information found</th></tr>`;
+            tbody.innerHTML = "";
+            return;
+        }
+        
+        // Set headers for queue table
+        thead.innerHTML = `<tr>
+                            <th>Switch</th>
+                            <th>Interface</th>
+                            <th>Max Rate</th>
+                            <th>Min Rate</th>
+                            <th>Queue ID</th>
+                          </tr>`;
+
+        tbody.innerHTML = "";
+
+        allQueueData.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${"s"+dpid_to_int(item.switch) || "N/A"}</td>
+                <td>${item.interface || "N/A"}</td>
+                <td>${item.max_rate || "N/A"}</td>
+                <td>${item.min_rate || "N/A"}</td>
+                <td>${item.queue_id || "N/A"}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+    } catch (error) {
+        console.error("Failed to load queue information:", error);
+        
+        // Update the table to show error state
+        const thead = document.getElementById("queueTable").querySelector("thead");
+        const tbody = document.getElementById("queueTable").querySelector("tbody");
+        thead.innerHTML = `<tr><th colspan="7">Error loading queue information - Check console for details</th></tr>`;
+        tbody.innerHTML = "";
+    }
+}
+
 
 // QoS Form Handlers
 async function submitDeleteQoS() {
@@ -1785,6 +1932,91 @@ async function submitSetQoS() {
     }
 }
 
+async function submitSetQueue() {
+    const dpid = document.getElementById('setQueue-switch').value;
+    const in_port_name = document.getElementById('setQueue-in_port').value;
+    const type = document.getElementById('setQueue-type').value;
+    const max_rate = document.getElementById('setQueue-max_rate').value;
+    const min_rate = document.getElementById('setQueue-min_rate').value;
+
+    // Validate required fields
+    if (!dpid) {
+        alert('Please select a switch');
+        return;
+    }
+    
+
+    if (!in_port_name || in_port_name === "") {
+        alert("Input port is required");
+        return;
+    }
+    
+    if (!type || type === "") {
+        alert("Type is required");
+        return;
+    }
+    if (!max_rate || max_rate === "") {
+        alert("Max rate is required");
+        return;
+    }
+    if (!min_rate || min_rate === "") {
+        alert("Min rate is required");
+        return;
+    }
+
+    // Convert values
+    const max_rate_int = parseInt(max_rate);
+    const min_rate_int = parseInt(min_rate);
+
+    // Validate numeric conversions
+    if (isNaN(max_rate_int)) {
+        alert("Max rate must be a valid number");
+        return;
+    }
+
+    if (isNaN(min_rate_int)) {
+        alert("Min rate must be a valid number");
+        return;
+    }
+
+
+    // Build request according to Ryu queue REST API
+    const req = {
+        "port_name": in_port_name,
+        "type": type,
+        "max_rate":"10000000",
+        "queues": [{
+            "max_rate": max_rate,
+            "min_rate": min_rate
+        }]
+    };
+
+    console.log(req);
+    try {
+        console.log("Setting Queue:", req);
+        const response = await callApi(`/qos/queue/${dpid}`, 'POST', req);
+        
+        if (response) {
+            alert('Queue set successfully!');
+            console.log("Queue response:", response);
+
+            // Reset form
+            document.getElementById('setQueueForm').reset();
+            
+            // Reload QoS rules table if it exists
+            if (typeof loadQueues === 'function') {
+                loadQueues();
+            }
+        } else {
+            throw new Error('No response from server');
+        }
+    } catch (error) {
+        alert('Failed to set QoS rule: ' + error.message);
+        console.error('Error setting QoS rule:', error);
+    }
+}
+
+
 
 function main() {
     // Setup global error monitoring for QoS KeyError 35020
@@ -1834,6 +2066,8 @@ function main() {
     window.deleteQoS = deleteQoS;
     window.getQoS = getQoS;
     window.loadQoSRules = loadQoSRules;
+    window.loadQueues = loadQueues;
+    window.loadQueueInfo = loadQueues; // Alias for backward compatibility
     
     // Helper function to clear all QoS rules from all switches
     window.clearAllQoSRules = async function() {

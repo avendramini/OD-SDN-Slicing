@@ -395,7 +395,7 @@ body.night-mode #tab3 + .menu-item {
 }
 
 /* Select Switch Dropdown */
-#switchSelect {
+#switchSelect, #queueSelect {
     width: 100%;
     padding: 6px 10px;
     font-size: 13px;
@@ -406,20 +406,21 @@ body.night-mode #tab3 + .menu-item {
 }
 
 /* QoS Table */
-#qosTable {
+#qosTable, #queueTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     font-size: 13px;
 }
 
-#qosTable th, #qosTable td {
+#qosTable th, #qosTable td,
+#queueTable th, #queueTable td {
     border: 1px solid #ccc;
     padding: 6px 8px;
     text-align: center;
 }
 
-#qosTable th {
+#qosTable th, #queueTable th {
     background-color: #dceff3;
 }
 

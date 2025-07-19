@@ -176,11 +176,13 @@ The GUI application provides an intuitive and user-friendly interface to manage 
 <p align="center"> <img src="./images/gui_demo.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Interactive slice management and monitoring</em> </p>
 
 ## CLI REST Commands Overview
+The platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 
+Using simple CLI-based `curl` commands, users can perform various network operations such as changing operational modes, managing slices or configuring QoS policies on OpenFlow switches.
+
 
 ### Core REST API commands for slice management and controller control
 
-The system includes a RESTful API that allows direct interaction with the SDN controller and network slicing logic via CLI commands. Below is an overview of the most relevant `curl` commands for controlling the network from the terminal.
-
+The following commands allow interaction with the controller for setting time modes, adding/removing slices, and managing the forwarding logic and topology.
 
 | **Action**                | **Description**                                                                                       | **Command**                                                                                                              |
 |---------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|

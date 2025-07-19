@@ -56,8 +56,9 @@ class Topology(Topo):
 def setOpenFlow13(net):
     for i in range(1, N_SWITCHES + 1):
         switch = f"s{i}"
-        os.system(f"ovs-vsctl set bridge {switch} protocols=OpenFlow13")
+        os.system(f"ovs-vsctl set Bridge {switch} protocols=OpenFlow13")
         print(f"Set OpenFlow 1.3 for {switch}")
+        os.system(f"ovs-vsctl set-manager ptcp:6632")
 
 if __name__ == "__main__":
     topo = Topology()

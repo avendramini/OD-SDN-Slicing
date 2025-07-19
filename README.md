@@ -191,7 +191,7 @@ The system includes a RESTful API that allows direct interaction with the SDN co
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
-### Notes
+### General Notes
 
 - `mode = 0` → **Day**, `mode = 1` → **Night**  
   This value must be correctly set when performing time-specific operations.
@@ -202,43 +202,19 @@ The system includes a RESTful API that allows direct interaction with the SDN co
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
 
 ## QoS CLI Commands
-================
 
-Action           | Description                                     | Command
------------------|------------------------------------------------|---------------------------------------------------------------
-Get queue config | Retrieve queue configuration for all switches or a specific one | curl -X GET http://localhost:8080/qos/queue/all  
-                 |                                                | or  
-                 |                                                | curl -X GET http://localhost:8080/qos/queue/{dpid}
-Set queue        | Configure or update QoS queue on a specific port | curl -X POST http://localhost:8080/qos/queue/{dpid} -H "Content-Type: application/json" -d '{  
-                 |                                                |   "port_name": "s1-eth1",  
-                 |                                                |   "type": "linux-htb",  
-                 |                                                |   "max_rate": "100000000",  
-                 |                                                |   "queues": [  
-                 |                                                |     {  
-                 |                                                |       "max_rate": "50000000",  
-                 |                                                |       "min_rate": "10000000"  
-                 |                                                |     }  
-                 |                                                |   ]  
-                 |                                                | }'
-Get QoS rules    | Show all QoS rules for a switch                 | curl -X GET http://localhost:8080/qos/rules/{dpid}
-Add QoS rule     | Add a QoS rule to a switch                       | curl -X POST http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{  
-                 |                                                |   "priority": 1,  
-                 |                                                |   "match": {  
-                 |                                                |     "in_port": 1,  
-                 |                                                |     "dl_type": "IPv4",  
-                 |                                                |     "nw_proto": "TCP",  
-                 |                                                |     "nw_dst": "10.0.0.2",  
-                 |                                                |     "tp_dst": 5001  
-                 |                                                |   },  
-                 |                                                |   "actions": {  
-                 |                                                |     "queue": 1  
-                 |                                                |   }  
-                 |                                                | }'
-Delete QoS rule  | Delete specific or all QoS rules                 | curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'  
-                 |                                                | or  
-                 |                                                | curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'
+These are the available CLI commands to manage Quality of Service (QoS) configurations via the REST API. You can use these commands to retrieve queue settings, set new queues, add or delete QoS rules on your OpenFlow switches.
 
-## Notes - Order to Apply QoS CLI Commands
+| **Action**          | **Description**                                                             | **Command**                                                                                                                                                                                                                                                                                            |
+|---------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Get queue config     | Retrieve queue configuration for all switches or a specific one             | `curl -X GET http://localhost:8080/qos/queue/all`<br>`curl -X GET http://localhost:8080/qos/queue/{dpid}`                                                                                                                                                                                             |
+| Set queue            | Configure or update QoS queue on a specific port                            | `curl -X POST http://localhost:8080/qos/queue/{dpid} -H "Content-Type: application/json" -d '{ "port_name": "s1-eth1", "type": "linux-htb", "max_rate": "100000000", "queues": [ { "max_rate": "50000000", "min_rate": "10000000" } ] }'`                                                            |
+| Get QoS rules        | Show all QoS rules for a switch                                              | `curl -X GET http://localhost:8080/qos/rules/{dpid}`                                                                                                                                                                                                                                                  |
+| Add QoS rule         | Add a QoS rule to a switch                                                  | `curl -X POST http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{ "priority": 1, "match": { "in_port": 1, "dl_type": "IPv4", "nw_proto": "TCP", "nw_dst": "10.0.0.2", "tp_dst": 5001 }, "actions": { "queue": 1 } }'`                                                   |
+| Delete QoS rule      | Delete a specific QoS rule or all rules                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
+
+
+### Notes - Order to Apply QoS CLI Commands
 ---------------------------------------
 
 1. Set Queue (POST /qos/queue/{dpid})  

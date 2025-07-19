@@ -50,9 +50,9 @@ Follow the instructions provided in this [link](https://www.granelli-lab.org/res
 
 This section provides all the necessary commands to run and test the application through the GUI.
 
-1. Run Mininet topology: execute the following command `make run-topology`
+1. Run Mininet topology: execute `make run-topology`
 
-2. Run the controller: execute the following command `make run-controller`
+2. Run the controller: execute `make run-controller`
 
 3. Access the GUI: open your web browser and navigate to `http://<your-local-ip>:8080/`
 

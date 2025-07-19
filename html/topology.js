@@ -886,8 +886,8 @@ var topo = {
                     }
                 }
             };
-            if(this.links.find(l => l.source === src_index && l.target === dst_index)) {
-                console.warn("Link between " + src_dpid + " and " + dst_dpid + " already exists!");
+            if(this.links.find(l => l.source === switch_index && l.target === host_index)) {
+                console.warn("Link between " + switch_dpid + " and " + host_mac + " already exists!");
                 continue;
             }
             console.log("add link: " + JSON.stringify(link));

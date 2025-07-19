@@ -132,8 +132,8 @@
     <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
     <input type="submit" id="getQueue" name="QoS"><br>
     <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
-
-    
+    <input type="submit" id="deleteQueue" name="QoS"><br>
+    <button onclick="deleteQoSQueue('0000000000000001')">DELETE_QUEUE</button>
 
 </div>
 <script src="./topology.js" charset="utf-8"></script>

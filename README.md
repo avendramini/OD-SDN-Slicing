@@ -196,7 +196,7 @@ The following commands allow interaction with the controller for setting time mo
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
-### General Notes
+#### General Notes
 ---------------------------------------
 
 - `mode = 0` → **Day**, `mode = 1` → **Night**  
@@ -220,7 +220,7 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 | Delete QoS rule      | Delete a specific QoS ID or all Qos IDs                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
 
 
-### Notes - Order to Apply QoS CLI Commands
+#### Notes - Order to Apply QoS CLI Commands
 ---------------------------------------
 
 1. Set Queue (POST /qos/queue/{dpid})  

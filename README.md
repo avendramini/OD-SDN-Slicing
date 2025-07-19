@@ -197,7 +197,6 @@ The following commands allow interaction with the controller for setting time mo
 
 
 #### General Notes
----------------------------------------
 
 - `mode = 0` → **Day**, `mode = 1` → **Night**  
   This value must be correctly set when performing time-specific operations.
@@ -206,6 +205,8 @@ The following commands allow interaction with the controller for setting time mo
   `curl -X GET http://localhost:8080/mode/get`
 
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
+
+---------------------------------------
 
 ### QoS CLI Commands
 
@@ -221,7 +222,6 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 
 
 #### Notes - Order to Apply QoS CLI Commands
----------------------------------------
 
 1. Set Queue (POST /qos/queue/{dpid})  
    First, configure the QoS queue on the target switch and port. Without this, QoS rules won’t have valid queues to apply.

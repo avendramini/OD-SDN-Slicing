@@ -1288,6 +1288,26 @@ function getQoSQueue(dpid){
     return res;
 }
 
+/**
+ * Deletes a QoS queue from the specified switch or all the QoS queues from all the switches.
+ *
+ * Example usage:
+ * deleteQoSQueue('0000000000000001');        // Deletes the QoS queue from switch 1
+ * deleteQoSQueue('all');    // Deletes all QoS queues from all switches
+ *
+ * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
+ *
+ * @returns {Object} The response object from the delete operation.
+ *
+ * This function sends a DELETE request to the `/qos/queue/<dpid>` API endpoint to remove
+ * a specific QoS queue or clear all queues from the given switch.
+ */
+function deleteQoSQueue(dpid){
+    res = callApi('/qos/queue/' + dpid, 'DELETE');
+    console.log(res);
+    return res;
+}
+
 function setOVSDBAddress(switches){
     switches.forEach(async switch_ => {
         try {
@@ -1820,6 +1840,7 @@ async function submitDeleteQoS() {
             
             // Reset form
             document.getElementById('deleteQoS-qos_id').value = 'all';
+            loadQoSRules(); 
         } else {
             throw new Error('No response from server');
         }

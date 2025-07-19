@@ -776,6 +776,10 @@ var topo = {
     add_switch_nodes: function (nodes) {
         for (var i = 0; i < nodes.length; i++) {
             nodes[i].type = "switch";
+            if(this.nodes.find(n => n.dpid === nodes[i].dpid)) {
+                console.warn("Switch with DPID " + nodes[i].dpid + " already exists!");
+                continue;
+            }
             this.nodes.push(nodes[i]);
         }
         this.refresh_node_index();
@@ -807,6 +811,10 @@ var topo = {
                     name: host.port.name
                 }
             };
+            if(this.node_index[host_mac]) {
+                console.warn("Host with MAC " + host.mac + " already exists!");
+                continue;
+            }
     
             console.log("add host node: " + JSON.stringify(host_node));
             this.nodes.push(host_node);
@@ -829,6 +837,10 @@ var topo = {
                     src: links[i].src,
                     dst: links[i].dst
                 }
+            }
+            if(this.links.find(l => l.source === src_index && l.target === dst_index)) {
+                console.warn("Link between " + src_dpid + " and " + dst_dpid + " already exists!");
+                continue;
             }
             this.links.push(link);
         }
@@ -874,7 +886,10 @@ var topo = {
                     }
                 }
             };
-    
+            if(this.links.find(l => l.source === src_index && l.target === dst_index)) {
+                console.warn("Link between " + src_dpid + " and " + dst_dpid + " already exists!");
+                continue;
+            }
             console.log("add link: " + JSON.stringify(link));
             this.links.push(link);
         }

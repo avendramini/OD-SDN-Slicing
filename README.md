@@ -177,7 +177,10 @@ The GUI application provides an intuitive and user-friendly interface to manage 
 
 ## CLI REST Commands Overview
 
-The system includes a RESTful API that allows direct interaction with the SDN controller and network slicing logic via CLI commands. Below is an overview of the most relevant `curl` commands for controlling the network from the terminal:
+### Core REST API commands for slice management and controller control
+
+The system includes a RESTful API that allows direct interaction with the SDN controller and network slicing logic via CLI commands. Below is an overview of the most relevant `curl` commands for controlling the network from the terminal.
+
 
 | **Action**                | **Description**                                                                                       | **Command**                                                                                                              |
 |---------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
@@ -192,6 +195,7 @@ The system includes a RESTful API that allows direct interaction with the SDN co
 
 
 ### General Notes
+---------------------------------------
 
 - `mode = 0` → **Day**, `mode = 1` → **Night**  
   This value must be correctly set when performing time-specific operations.
@@ -201,7 +205,7 @@ The system includes a RESTful API that allows direct interaction with the SDN co
 
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
 
-## QoS CLI Commands
+### QoS CLI Commands
 
 These are the available CLI commands to manage Quality of Service (QoS) configurations via the REST API. You can use these commands to retrieve queue settings, set new queues, add or delete QoS rules on your OpenFlow switches.
 

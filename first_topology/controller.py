@@ -61,7 +61,7 @@ class Controller(app_manager.RyuApp):
         data = {}
         data['dpset'] = dpset
         data['waiters'] = self.waiters
-        #wsgi.registory['QoSController'] = data
+        wsgi.registory['QoSController'] = data
         wsgi.register(QoSController, data)
 
     @set_ev_cls(ofp_event.EventOFPStateChange, [MAIN_DISPATCHER, CONFIG_DISPATCHER])
@@ -221,7 +221,6 @@ class Controller(app_manager.RyuApp):
     @set_ev_cls(conf_switch.EventConfSwitchSet)
     def conf_switch_set_handler(self, ev):
         if ev.key == cs_key.OVSDB_ADDR:
-            return
             QoSController.set_ovsdb_addr(ev.dpid, ev.value)
         else:
             QoSController._LOGGER.debug("unknown event: %s", ev)

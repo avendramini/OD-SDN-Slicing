@@ -220,7 +220,7 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 | Get QoS rules        | Show all QoS rules for a switch                                              | `curl -X GET http://localhost:8080/qos/rules/{dpid}`                                                                                                                                                                                                                                                  |
 | Add QoS rule         | Add a QoS rule to a switch                                                  | `curl -X POST http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{ "priority": 1, "match": { "in_port": 1, "dl_type": "IPv4", "nw_proto": "TCP", "nw_dst": "10.0.0.2", "tp_dst": 5001 }, "actions": { "queue": 1 } }'`                                                   |
 | Delete QoS rule      | Delete a specific QoS rule or all rules                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
-                                                         |
+                                                    
 
 #### Notes - Order to Apply QoS CLI Commands
 

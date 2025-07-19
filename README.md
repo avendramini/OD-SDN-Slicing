@@ -216,17 +216,20 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 |---------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get queue config     | Retrieve queue configuration for all switches or a specific one             | `curl -X GET http://localhost:8080/qos/queue/all`<br>`curl -X GET http://localhost:8080/qos/queue/{dpid}`                                                                                                                                                                                             |
 | Set queue            | Configure or update QoS queue on a specific port                            | `curl -X POST http://localhost:8080/qos/queue/{dpid} -H "Content-Type: application/json" -d '{ "port_name": "s1-eth1", "type": "linux-htb", "max_rate": "100000000", "queues": [ { "max_rate": "50000000", "min_rate": "10000000" } ] }'`                                                            |
+| Delete queue         | Delete the QoS configuration of a switch or all switches                    | `curl -X DELETE http://localhost:8080/qos/queue/{dpid}`<br>`curl -X DELETE http://localhost:8080/qos/queue/all`                                                                                                                                                                                        |
 | Get QoS rules        | Show all QoS rules for a switch                                              | `curl -X GET http://localhost:8080/qos/rules/{dpid}`                                                                                                                                                                                                                                                  |
 | Add QoS rule         | Add a QoS rule to a switch                                                  | `curl -X POST http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{ "priority": 1, "match": { "in_port": 1, "dl_type": "IPv4", "nw_proto": "TCP", "nw_dst": "10.0.0.2", "tp_dst": 5001 }, "actions": { "queue": 1 } }'`                                                   |
-| Delete QoS rule      | Delete a specific QoS ID or all Qos IDs                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
-
+| Delete QoS rule      | Delete a specific QoS rule or all rules                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
+                                                         |
 
 #### Notes - Order to Apply QoS CLI Commands
 
-1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this, QoS rules won’t have valid queues to apply.
+1. **Set Queue** (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this, QoS rules won’t have valid queues to apply.
 
-2. Add QoS Rule (`POST /qos/rules/{dpid}`): After the queue is set, add QoS rules that specify how to use the configured queues (e.g., map certain traffic to a specific queue).
+2. **Add QoS Rule** (`POST /qos/rules/{dpid}`): After the queue is set, add QoS rules that specify how to use the configured queues (e.g., map certain traffic to a specific queue).
 
-3. Get queue and Get rules (`GET /qos/queue` and `GET /qos/rules`): Use these commands to check current queue and rule configurations.
+3. **Get queue and Get rules** (`GET /qos/queue` and `GET /qos/rules`): Use these commands to check current queue and rule configurations.
 
-4. Delete QoS rule (`DELETE /qos/rules/{dpid}`): Before deleting rules, use GET to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
+4. **Delete QoS rule** (`DELETE /qos/rules/{dpid}`): Before deleting rules, use GET to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
+
+5. **Delete queue** (`DELETE /qos/queue/{dpid}` or `DELETE /qos/queue/all`): Use this command to remove the entire QoS queue configuration on a specific switch or all switches. This should typically be done after verifying the existing configuration with GET commands.

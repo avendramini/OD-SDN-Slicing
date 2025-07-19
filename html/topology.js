@@ -1543,6 +1543,10 @@ function parseQoSResponse(response) {
 async function loadQoSRules() {
 
     const sw = document.getElementById("switchSelect").value;
+    if(sw === "" || sw === null) {
+        console.warn("No switch selected for loading QoS rules");
+        return;
+    }
     try {
         const response = await getQoS(sw);
         
@@ -1752,7 +1756,6 @@ async function submitSetQoS() {
             
             // Reset form
             document.getElementById('qosForm').reset();
-            document.getElementById('switchSelect').value = '';
             
             // Reload QoS rules table if it exists
             if (typeof loadQoSRules === 'function') {
@@ -1853,16 +1856,6 @@ function main() {
         }
         
         console.log(`QoS clearing completed: ${successCount} successful, ${errorCount} failed`);
-        
-        // Reload QoS rules after clearing
-        if (successCount > 0) {
-            try {
-                await loadQoSRules();
-                console.log("QoS rules table refreshed");
-            } catch (error) {
-                console.error("Error reloading QoS rules after clearing:", error);
-            }
-        }
         
         return successCount > 0;
     };

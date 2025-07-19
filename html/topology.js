@@ -1693,6 +1693,7 @@ async function submitDeleteQoS() {
             
             // Reset form
             document.getElementById('deleteQoS-qos_id').value = 'all';
+            loadQoSRules(); 
         } else {
             throw new Error('No response from server');
         }

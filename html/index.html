@@ -70,18 +70,7 @@
     <input type="checkbox" id="tab11" name="menu" checked hidden>
     <label for="tab11" class="menu-button">RESET</label>
 
-    <h3>QoS:</h3>
-    <input type="submit" id="setQoS" name="QoS"><br>
-    <button onclick="setQoS('0000000000000001', 1, 1, 'IPv4', '192.168.1.1', 'UDP', 80, 1)">SET_QOS</button>
-    <input type="submit" id="getQoS" name="QoS"><br>
-    <button onclick="getQoS('0000000000000001')">GET_QOS</button>    
-    <input type="submit" id="deleteQoS" name="QoS"><br>
-    <button onclick="deleteQoS('0000000000000001', 'all')">DELETE_QOS</button>    
-    <input type="submit" id="setQueue" name="QoS"><br>
-    <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
-    <input type="submit" id="getQueue" name="QoS"><br>
-    <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
-
+    
     <h2>QoS Configuration Panel</h2>
 
     <label for="switchSelect">Select Switch:</label>
@@ -98,7 +87,7 @@
     </table>
 
     <h3>Add QoS Rule</h3>
-    <form id="qosForm" class="qos-form" onsubmit="event.preventDefault(); setQoSRule();">
+    <form id="qosForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQoS();">
         <label>priority:</label>
         <input type="text" id="priority" placeholder="1"><br>
         <label>in_port:</label>
@@ -124,6 +113,27 @@
 
         <button type="submit">Set Rule</button>
     </form>
+    
+    <!-- DELETE QoS Rules Form -->
+    <h4>Delete QoS Rules</h4>
+    <form id="deleteQoSForm" class="qos-form" onsubmit="event.preventDefault(); submitDeleteQoS();">
+        <label>Switch:</label>
+        <select id="deleteQoS-switch" required>
+            <option value="">Select Switch</option>
+        </select><br>
+        
+        <label>QoS Rule ID:</label>
+        <input type="text" id="deleteQoS-qos_id" placeholder="all or specific rule ID" value="all" required><br>
+        
+        <button type="submit">Delete QoS Rules</button>
+    </form>
+
+    <input type="submit" id="setQueue" name="QoS"><br>
+    <button onclick="setQoSQueue('0000000000000001', 's1-eth1', 'linux-htb', '1000000', [{'max_rate': '1000000', 'min_rate': '200000'},{'min_rate': '500000'}])">SET_QUEUE</button>
+    <input type="submit" id="getQueue" name="QoS"><br>
+    <button onclick="getQoSQueue('0000000000000001')">GET_QUEUE</button>
+
+    
 
 </div>
 <script src="./topology.js" charset="utf-8"></script>

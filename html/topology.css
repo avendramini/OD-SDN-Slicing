@@ -326,6 +326,48 @@ body.night-mode #tab3 + .menu-item {
     display: inline-block;
 }
 
+/* Styles for SET QoS Form inputs */
+#setQoSForm input,
+#getQoSForm input,
+#deleteQoSForm input {
+    width: 200px;
+    padding: 5px;
+    margin: 4px 0 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    background-color: white;
+    color: black;
+    pointer-events: auto;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+#setQoSForm select,
+#getQoSForm select,
+#deleteQoSForm select {
+    width: 200px;
+    padding: 5px;
+    margin: 4px 0 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    background-color: white;
+    color: black;
+    pointer-events: auto;
+}
+
+/* Ensure inputs are not disabled by any other styles */
+#setQoSForm input:not([readonly]):not([disabled]),
+#getQoSForm input:not([readonly]):not([disabled]),
+#deleteQoSForm input:not([readonly]):not([disabled]) {
+    background-color: white !important;
+    color: black !important;
+    cursor: text !important;
+}
+
 
 /* QoS Section Titles */
 .sidebar h2, 
@@ -414,4 +456,123 @@ body.night-mode #tab3 + .menu-item {
 
 .qos-form button:hover {
     background-color: #064369;
+}
+
+/* QoS Form Styles */
+.sidebar h4 {
+    font-size: 16px;
+    margin: 15px 0 10px 0;
+    color: #0b5787;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.sidebar form {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+.sidebar form label {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.sidebar form input,
+.sidebar form select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.sidebar form input:focus,
+.sidebar form select:focus {
+    outline: none;
+    border-color: #0b5787;
+    box-shadow: 0 0 5px rgba(11, 87, 135, 0.3);
+}
+
+.sidebar form button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #0b5787;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar form button:hover {
+    background-color: #064369;
+}
+
+/* QoS Results Display */
+#getQoSResults {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 11px;
+}
+
+#getQoSResults h5 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #0b5787;
+    font-size: 14px;
+}
+
+#getQoSOutput {
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    background-color: #fff;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Night mode adjustments for QoS forms */
+body.night-mode .sidebar form {
+    background-color: rgba(50, 50, 50, 0.8);
+    border-color: #555;
+}
+
+body.night-mode .sidebar form label {
+    color: rgb(218, 198, 207);
+}
+
+body.night-mode .sidebar form input,
+body.night-mode .sidebar form select {
+    background-color: rgba(60, 60, 60, 0.9);
+    color: rgb(218, 198, 207);
+    border-color: #555;
+}
+
+body.night-mode #getQoSResults {
+    background-color: rgba(50, 50, 50, 0.8);
+    border-color: #555;
+}
+
+body.night-mode #getQoSOutput {
+    background-color: rgba(40, 40, 40, 0.9);
+    color: rgb(218, 198, 207);
+    border-color: #555;
 }

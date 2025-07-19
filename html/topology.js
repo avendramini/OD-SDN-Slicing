@@ -1184,69 +1184,6 @@ function initialize_topology_traditional() {
 }
 
 /**
- * Installs a QoS rule on the specified switch to direct matching traffic to a given queue.
- *
- * Example usage:
- * setQoS('0000000000000001', 1, 1, 'IPv4', '192.168.1.1', 'UDP', 80, 1);
- *
- * @param {string} dpid - The datapath ID of the switch (e.g., '0000000000000001').
- * @param {number} priority - The priority of the rule (higher numbers indicate higher priority).
- * @param {number} in_port - The input port number on the switch to match.
- * @param {string} dl_type - The data link type (usually 'IPv4' or '0x0800' for IPv4 traffic).
- * @param {string} nw_dst - The destination IP address to match (e.g., '192.168.1.1').
- * @param {string} nw_proto - The network protocol to match (e.g., 'TCP' or 'UDP').
- * @param {number} tp_dst - The destination transport-layer port (e.g., 80 for HTTP).
- * @param {number} queue_id - The ID of the queue to direct matching traffic to.
- *
- * @returns {Object} The response object from the QoS rule API call.
- *
- * This function creates a flow rule that matches the specified traffic characteristics and assigns
- * matching packets to a specified QoS queue on the switch.
- */
-
-function setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id){
-    // Validate input parameters
-    if (!dpid || dpid === "") {
-        console.error("Invalid dpid:", dpid);
-        return Promise.resolve(null);
-    }
-    
-    if (priority === null || priority === undefined || isNaN(priority)) {
-        console.error("Invalid priority:", priority);
-        return Promise.resolve(null);
-    }
-    
-    if (in_port === null || in_port === undefined || isNaN(in_port)) {
-        console.error("Invalid in_port:", in_port);
-        return Promise.resolve(null);
-    }
-    
-    if (queue_id === null || queue_id === undefined || isNaN(queue_id)) {
-        console.error("Invalid queue_id:", queue_id);
-        return Promise.resolve(null);
-    }
-
-    req = {
-        "priority": parseInt(priority),
-        "match": {
-            "in_port": parseInt(in_port),
-            "dl_type": dl_type || "IPv4", 
-            "nw_dst": nw_dst || "", 
-            "nw_proto": nw_proto || "", 
-            "tp_dst": tp_dst ? parseInt(tp_dst) : ""
-        }, 
-        "actions": {
-            "queue": parseInt(queue_id)
-        }
-    };
-    
-    console.log("setQoS request:", req);
-    res = callApi('/qos/rules/' + dpid, 'POST', req);
-    console.log(res);
-    return res;
-}
-
-/**
  * Retrieves the list of QoS rules currently installed on the specified switch.
  *
  * Example usage:
@@ -1465,23 +1402,82 @@ async function loadAdditionalConfigurations(switches = null) {
  * Aggiorna il selettore degli switch per QoS
  */
 function updateSwitchSelector(switches) {
-    const select = document.getElementById("switchSelect");
-    if (select && switches && switches.length > 0) {
-        // Pulisce le opzioni esistenti tranne la prima (placeholder)
-        while (select.children.length > 1) {
-            select.removeChild(select.lastChild);
+    // Lista specifica di ID dei selettori di switch
+    const switchSelectorIds = [
+        'switchSelect',
+        'setQoS-switch',
+        'deleteQoS-switch',
+        'add-rule-switch',
+        'delete-rule-switch',
+        'set-queue-switch',
+        'get-queue-switch'
+    ];
+    
+    // Trova anche tutti gli elementi che iniziano con "switchSelect" seguito da un numero
+    const dynamicSelects = document.querySelectorAll('select[id^="switchSelect"]');
+    const allSelects = [];
+    
+    // Aggiungi i selettori statici
+    switchSelectorIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            allSelects.push(element);
         }
-        
-        // Aggiunge i nuovi switch
-        switches.forEach(sw => {
-            const opt = document.createElement("option");
-            opt.value = sw.dpid;
-            opt.innerText = "s" + trim_zero(sw.dpid);
-            select.appendChild(opt);
-        });
-        
-        console.log(`Updated switch selector with ${switches.length} switches`);
+    });
+    
+    // Aggiungi i selettori dinamici (ma solo quelli che sono realmente selettori di switch)
+    dynamicSelects.forEach(select => {
+        const id = select.id;
+        // Includi solo se l'ID è esattamente "switchSelect" o "switchSelect" seguito da numeri
+        if (id === 'switchSelect' || /^switchSelect\d+$/.test(id)) {
+            if (!allSelects.includes(select)) {
+                allSelects.push(select);
+            }
+        }
+    });
+    
+    if (allSelects.length === 0 || !switches || switches.length === 0) {
+        console.warn("No switch selectors found or no switches available");
+        return;
     }
+    
+    let updatedCount = 0;
+    
+    allSelects.forEach(select => {
+        if (select) {
+            // Pulisce le opzioni esistenti tranne la prima (se è un placeholder)
+            const firstOption = select.options[0];
+            if (firstOption && (firstOption.value === "" || firstOption.disabled)) {
+                while (select.children.length > 1) {
+                    select.removeChild(select.lastChild);
+                }
+            } else {
+                select.innerHTML = "";
+            }
+            
+            // Aggiunge opzione placeholder se non presente
+            if (!firstOption || firstOption.value !== "") {
+                const placeholderOpt = document.createElement("option");
+                placeholderOpt.value = "";
+                placeholderOpt.disabled = true;
+                placeholderOpt.selected = true;
+                placeholderOpt.innerText = "Select Switch";
+                select.appendChild(placeholderOpt);
+            }
+            
+            // Aggiunge i nuovi switch
+            switches.forEach(sw => {
+                const opt = document.createElement("option");
+                opt.value = sw.dpid;
+                opt.innerText = "s" + trim_zero(sw.dpid);
+                select.appendChild(opt);
+            });
+            
+            updatedCount++;
+        }
+    });
+    
+    console.log(`Updated ${updatedCount} switch selectors with ${switches.length} switches`);
 }
 
 function parseQoSResponse(response) {
@@ -1545,6 +1541,7 @@ function parseQoSResponse(response) {
 
 
 async function loadQoSRules() {
+
     const sw = document.getElementById("switchSelect").value;
     try {
         const response = await getQoS(sw);
@@ -1622,21 +1619,63 @@ async function loadQoSRules() {
     }
 }
 
-async function setQoSRule() {
-    const sw = document.getElementById("switchSelect").value;
+// QoS Form Handlers
+async function submitDeleteQoS() {
+    const dpid = document.getElementById('deleteQoS-switch').value;
+    const qos_id = document.getElementById('deleteQoS-qos_id').value;
+    
+    if (!dpid) {
+        alert('Please select a switch');
+        return;
+    }
+    
+    if (!qos_id) {
+        alert('Please specify QoS rule ID or "all"');
+        return;
+    }
 
-    const dl_type = document.getElementById("eth_type").value;
-    const nw_proto = document.getElementById("ip_proto").value;
+    const confirmMessage = qos_id === 'all' 
+        ? `Are you sure you want to delete ALL QoS rules from switch ${dpid}?`
+        : `Are you sure you want to delete QoS rule ${qos_id} from switch ${dpid}?`;
+        
+    if (!confirm(confirmMessage)) {
+        return;
+    }
 
-    const nw_dst = document.getElementById("nw_dst").value;
-    const tp_dst_str = document.getElementById("tp_dst").value;
-    const queue_id_str = document.getElementById("queue_id").value;
-    const in_port_str = document.getElementById("in_port").value;
-    const priority_str = document.getElementById("priority").value;
+    try {
+        console.log(`Deleting QoS rule(s) ${qos_id} from switch:`, dpid);
+        
+        const req = { "qos_id": qos_id };
+        const response = await callApi(`/qos/rules/${dpid}`, 'DELETE', req);
+        
+        if (response !== null) {
+            alert(`QoS rule(s) deleted successfully!`);
+            console.log("Delete QoS response:", response);
+            
+            // Reset form
+            document.getElementById('deleteQoS-qos_id').value = 'all';
+        } else {
+            throw new Error('No response from server');
+        }
+    } catch (error) {
+        alert('Failed to delete QoS rule(s): ' + error.message);
+        console.error('Error deleting QoS rules:', error);
+    }
+}
+
+async function submitSetQoS() {
+    const dpid = document.getElementById('switchSelect').value;
+    const priority_str = document.getElementById('priority').value;
+    const in_port_str = document.getElementById('in_port').value;
+    const dl_type = document.getElementById('eth_type').value;
+    const nw_dst = document.getElementById('nw_dst').value;
+    const nw_proto = document.getElementById('ip_proto').value;
+    const tp_dst_str = document.getElementById('tp_dst').value;
+    const queue_id_str = document.getElementById('queue_id').value;
 
     // Validate required fields
-    if (!sw || sw === "") {
-        alert("Please select a switch");
+    if (!dpid) {
+        alert('Please select a switch');
         return;
     }
     
@@ -1655,11 +1694,11 @@ async function setQoSRule() {
         return;
     }
 
-    // Convert to numbers
-    const tp_dst = tp_dst_str ? parseInt(tp_dst_str) : null;
-    const queue_id = parseInt(queue_id_str);
-    const in_port = parseInt(in_port_str);
+    // Convert values
     const priority = parseInt(priority_str);
+    const in_port = parseInt(in_port_str);
+    const queue_id = parseInt(queue_id_str);
+    const tp_dst = tp_dst_str ? parseInt(tp_dst_str) : null;
 
     // Validate numeric conversions
     if (isNaN(priority)) {
@@ -1677,21 +1716,54 @@ async function setQoSRule() {
         return;
     }
 
-    console.log("Setting QoS rule with:", {
-        sw, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id
-    });
+    // Build request according to Ryu QoS REST API
+    const req = {
+        "priority": priority,
+        "match": {},
+        "actions": {
+            "queue": queue_id
+        }
+    };
+
+    // Add match fields only if they have values
+    if (in_port) req.match.in_port = in_port;
+    
+    // Convert dl_type from string to proper format according to API
+    if (dl_type) {
+        req.match.dl_type = dl_type; // Use the string directly as per API ("IPv4" or "IPv6")
+    }
+    
+    if (nw_dst) req.match.nw_dst = nw_dst;
+    
+    // Convert nw_proto from string to proper format according to API
+    if (nw_proto) {
+        req.match.nw_proto = nw_proto; // Use the string directly as per API ("TCP", "UDP", "ICMP")
+    }
+    
+    if (tp_dst) req.match.tp_dst = tp_dst;
 
     try {
-        const res = await setQoS(sw, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id);
-        console.log("setQoS result:", res);
-        if (res == null) {
-            throw new Error("No response from server");
+        console.log("Setting QoS rule:", req);
+        const response = await callApi(`/qos/rules/${dpid}`, 'POST', req);
+        
+        if (response) {
+            alert('QoS rule set successfully!');
+            console.log("QoS rule response:", response);
+            
+            // Reset form
+            document.getElementById('qosForm').reset();
+            document.getElementById('switchSelect').value = '';
+            
+            // Reload QoS rules table if it exists
+            if (typeof loadQoSRules === 'function') {
+                loadQoSRules();
+            }
+        } else {
+            throw new Error('No response from server');
         }
-        alert("Rule set!");
-        loadQoSRules(); 
     } catch (error) {
-        alert("Failed to set rule: " + error);
-        console.error(error);
+        alert('Failed to set QoS rule: ' + error.message);
+        console.error('Error setting QoS rule:', error);
     }
 }
 
@@ -1743,7 +1815,6 @@ function main() {
     // Esponi le funzioni QoS per debugging
     window.deleteQoS = deleteQoS;
     window.getQoS = getQoS;
-    window.setQoS = setQoS;
     window.loadQoSRules = loadQoSRules;
     
     // Helper function to clear all QoS rules from all switches
@@ -1826,10 +1897,52 @@ function main() {
     console.log("QoS functions exposed globally:");
     console.log("- window.deleteQoS(dpid, qos_id): Delete specific QoS rule or 'all'");
     console.log("- window.getQoS(dpid): Get QoS rules for switch");
-    console.log("- window.setQoS(dpid, priority, in_port, dl_type, nw_dst, nw_proto, tp_dst, queue_id): Add QoS rule");
     console.log("- window.loadQoSRules(): Reload QoS rules table");
     console.log("- window.clearAllQoSRules(): Clear all QoS rules from all switches");
     console.log("Auto-recovery for KeyError 35020 is now active!");
+    
+    // Debug function to check input states
+    window.debugInputs = function() {
+        const inputIds = [
+            'setQoS-priority', 'setQoS-in_port', 'setQoS-nw_dst', 
+            'setQoS-tp_dst', 'setQoS-queue_id', 'deleteQoS-qos_id'
+        ];
+        
+        console.log("=== Input Debug Info ===");
+        inputIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                console.log(`${id}:`, {
+                    disabled: element.disabled,
+                    readonly: element.readOnly,
+                    value: element.value,
+                    style: window.getComputedStyle(element).pointerEvents
+                });
+            } else {
+                console.log(`${id}: Element not found`);
+            }
+        });
+    };
+    
+    // Ensure inputs are not disabled
+    setTimeout(() => {
+        const inputIds = [
+            'setQoS-priority', 'setQoS-in_port', 'setQoS-nw_dst', 
+            'setQoS-tp_dst', 'setQoS-queue_id', 'deleteQoS-qos_id'
+        ];
+        
+        inputIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.disabled = false;
+                element.readOnly = false;
+                element.style.pointerEvents = 'auto';
+                element.style.userSelect = 'text';
+            }
+        });
+        
+        console.log("Input elements have been ensured to be editable");
+    }, 1000);
 }
 
 main();

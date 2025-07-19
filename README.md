@@ -38,28 +38,6 @@ Using SDN and network slicing, the system dynamically adapts to different scenar
 - Ryu SDN controller integration for traffic control and policy enforcement
 - Modular and extensible architecture for testing other SDN strategies
 
-## Application Setup and Testing Commands
-### Installation
-
-Follow the instructions provided in this [link](https://www.granelli-lab.org/researches/relevant-projects/comnetsemu-labs). After installation, complete the following additional steps:
-
-1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
-2. Do `cd OD-SDN-Slicing`.
-
-### How to Run
-
-This section provides all the necessary commands to run and test the application through the GUI.
-
-1. Run Mininet topology: execute <pre> ```bash make run-topology ``` </pre>
-
-2. Run the controller: execute  <pre> ```bash make run-controller ``` </pre>
-
-3. Access the GUI: open your web browser and navigate to `http://<your-local-ip>:8080/`.
-
-
-### How to verify
-
-
 ## System architecture
 
 The system is composed of:
@@ -182,6 +160,28 @@ Day: This slice connects the IP cameras with the security server to enable live 
 Night: During the night, it links security systems to the central database for data synchronization and allows remote monitoring, maintaining security oversight even when on-site activity is reduced.
 
 <p align="center"> <img src="./images/slice_securityMonitoringNIGHT.png" alt="Security Monitoring Slice Diagram" width="1000"/> <br/> <em>Figure 13: Security Monitoring Slice - Nighttime</em> </p>
+
+
+## Application Setup and Testing Commands
+### Installation
+
+Follow the instructions provided in this [link](https://www.granelli-lab.org/researches/relevant-projects/comnetsemu-labs). After installation, complete the following additional steps:
+
+1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
+2. Do `cd OD-SDN-Slicing`.
+
+### How to Run
+
+This section provides all the necessary commands to run and test the application through the GUI.
+
+1. Run Mininet topology: <pre> ```bash make run-topology ``` </pre>
+
+2. Run the controller:  <pre> ```bash make run-controller ``` </pre>
+
+3. Access the GUI: open your web browser and navigate to `http://<your-local-ip>:8080/`.
+
+
+### How to verify
 
 
 ## GUI Application 

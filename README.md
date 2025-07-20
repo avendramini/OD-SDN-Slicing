@@ -216,9 +216,7 @@ To see how packets are being forwarded in detail, run:
 mininet> dpctl dump-flows -O OpenFlow13
 ```
 
-Look for flow entries with:
-
-``` actions=set_queue:1,output:... ```
+Look for flow entries with: ``` actions=set_queue:1,output:... ```
 
 Example Flow Entry:
 

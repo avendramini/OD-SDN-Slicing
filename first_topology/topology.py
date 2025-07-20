@@ -51,7 +51,7 @@ class Topology(Topo):
             self.addLink(link[0], link[1], bw=10, port1=link[2], port2=link[3])
         
         for link in HOST_LINKS:
-            self.addLink(link[0], link[1], port1=link[2], port2=link[3])
+            self.addLink(link[0], link[1],bw=10, port1=link[2], port2=link[3])
 
 def setOpenFlow13(net):
     for i in range(1, N_SWITCHES + 1):

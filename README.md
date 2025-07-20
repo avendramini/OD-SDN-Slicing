@@ -182,9 +182,9 @@ This section provides all the necessary commands to run and test the application
 
 ### How to Test
 
-INTRO DA FARE
+This section guides you through basic connectivity checks and bandwidth limit verification to ensure that traffic shaping, isolation, and queue-based forwarding are applied as expected.
 
-### 1. Test Basic Connectivity (ping)  
+#### 1. Test Basic Connectivity (ping)  
 Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
 ```bash mininet> pingall ```
 
@@ -228,7 +228,7 @@ This means packets are being sent through a QoS queue and shows that packets mat
 
 ---
 
-### 2. Test Bandwidth Limits (iperf)  
+#### 2. Test Bandwidth Limits (iperf)  
 Use this to check if bandwidth limits are being enforced correctly by the QoS rules.
 
 **Step 1:** Start the iperf server on one host (e.g., h9)

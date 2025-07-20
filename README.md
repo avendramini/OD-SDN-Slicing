@@ -180,7 +180,97 @@ This section provides all the necessary commands to run and test the application
 3. Access the GUI: open your web browser and navigate to `http://<your-local-ip>:8080/`.
 
 
-### How to verify
+### How to Test
+
+INTRO DA FARE
+
+### 1. Test Basic Connectivity (ping)  
+Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
+```bash mininet> pingall ```
+
+This will show a matrix of which hosts can ping others. If rules are correct, only specific hosts should be able to communicate.
+
+#### Example: pingall output for *Web Access Slice (DAY)*
+
+```bash
+mininet> pingall
+*** Ping: testing ping reachability
+h1  -> X X X X X X X h9  h10 X X 
+h2  -> X X X X X X X X  X   X  X 
+h3  -> X X X X X X X X  X   X  X 
+h4  -> X X X X X X X X  X   X  X 
+h5  -> X X X X X X X X  X   X  X 
+h6  -> X X X X X X X X  X   X  X 
+h7  -> X X X X X X X X  X   X  X 
+h8  -> X X X X X X X X  X   X  X 
+h9  -> h1 X X X X X X X  h10 X  X 
+h10 -> h1 X X X X X X X  h9  X  X 
+h11 -> X X X X X X X X  X   X  X 
+h12 -> X X X X X X X X  X   X  X 
+*** Results: 95% dropped (6/132 received)
+```
+
+To see how packets are being forwarded in detail, run:
+
+```bash
+mininet> dpctl dump-flows -O OpenFlow13
+```
+
+Look for flow entries with:
+
+``` actions=set_queue:1,output:... ```
+
+Example Flow Entry:
+
+```text
+*** s1 ------------------------------------------------------------------------
+ cookie=0x1, duration=576.749s, table=0, n_packets=0, n_bytes=0, priority=1,tcp,in_port="s1-eth1",nw_dst=10.0.0.2,tp_dst=1 actions=set_queue:1,goto_table:1
+```
+This means packets are being sent through a QoS queue and shows that packets matching this flow are being forwarded through **queue 1** and passed to **table 1** for further processing.
+
+---
+
+### 2. Test Bandwidth Limits (iperf)  
+Use this to check if bandwidth limits are being enforced correctly by the QoS rules.
+
+**Step 1:** Start the iperf server on one host (e.g., h9)
+
+```bash
+mininet> h9 iperf -s &
+```
+
+**Step 2:** Run the iperf client from another host (e.g., h1)
+
+```bash
+mininet> h1 iperf -c <IP_OF_H9>
+```
+
+To find the IP address of h9:
+
+```bash
+mininet> h9 ifconfig
+# or
+mininet> dump
+```
+
+Output example:
+
+```text
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+------------------------------------------------------------
+Client connecting to 192.168.1.9, TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  1] local 192.168.1.1 port 51520 connected with 192.168.1.9 port 5001 (icwnd/mss/irtt=14/1448/22411)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.6615 sec  5.63 MBytes  4.43 Mbits/sec
+
+```
+
+The result (4.43 Mbits/sec) reflects the actual bandwidth usage and should correspond to the configured QoS queue limit (e.g., if queue 1 ≈ 5 Mbps).
 
 
 ## GUI Application 

@@ -173,9 +173,9 @@ Follow the instructions provided in this [link](https://www.granelli-lab.org/res
 
 This section provides all the necessary commands to run and test the application through the GUI.
 
-1. Run Mininet topology: <pre> ```bash make run-topology ``` </pre>
+1. Run Mininet topology: <pre> ``` make run-topology ``` </pre>
 
-2. Run the controller:  <pre> ```bash make run-controller ``` </pre>
+2. Run the controller:  <pre> ``` make run-controller ``` </pre>
 
 3. Access the GUI: open your web browser and navigate to `http://<your-local-ip>:8080/`.
 
@@ -186,7 +186,7 @@ This section guides you through basic connectivity checks and bandwidth limit ve
 
 #### 1. Test Basic Connectivity (ping)  
 Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
-```bash mininet> pingall ```
+``` mininet> pingall ```
 
 This will show a matrix of which hosts can ping others. If rules are correct, only specific hosts should be able to communicate.
 

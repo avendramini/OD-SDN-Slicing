@@ -1,5 +1,4 @@
-# Smart Zoo Network Management System
-
+# OD-SDN-Slicing
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-yellow)
 ![Python](https://img.shields.io/badge/Python-blue)
@@ -15,7 +14,7 @@
 
 ## Project Overview 
 
-A dynamic and modular SDN-based system for managing network slices in real time. This platform enables activation and deactivation of network slices, real-time QoS configuration and intuitive slice control through both CLI and GUI interfaces. Built using Mininet for emulation and the Ryu controller for policy enforcement, the system demonstrates how network resources can be intelligently and flexibly allocated in a real-world environment.
+ OD-SDN-Slicing is a dynamic and modular SDN-based system for managing network slices in real time. This platform enables activation and deactivation of network slices, real-time QoS configuration and intuitive slice control through both CLI and GUI interfaces. Built using Mininet for emulation and the Ryu controller for policy enforcement, the system demonstrates how network resources can be intelligently and flexibly allocated in a real-world environment.
 
 ## Table of contents
 

@@ -70,105 +70,108 @@
     <input type="checkbox" id="tab11" name="menu" checked hidden>
     <label for="tab11" class="menu-button">RESET</label>
 
-    
+</div>
+
+<!-- QoS Configuration Panel - spostato sotto la topologia -->
+<div class="qos-panel">
     <h2>QoS Configuration Panel</h2>
 
-    <label for="switchSelect">Select Switch:</label>
-    <select id="switchSelect" onchange="loadQoSRules()"></select>
+    <!-- Sezione 1: QoS Rules -->
+    <div class="qos-section">
+        <label for="switchSelect">Select Switch:</label>
+        <select id="switchSelect" onchange="loadQoSRules()"></select>
 
-    <h3>QoS Rules</h3>
-    <table id="qosTable">
-        <thead>
-            <tr>
-                <th>priority</th><th>in_port</th><th>eth_type</th><th>nw_dst</th><th>ip_proto</th><th>tp_dst</th><th>queue_id</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <h3>QoS Rules</h3>
+        <table id="qosTable">
+            <thead>
+                <tr>
+                    <th>priority</th><th>in_port</th><th>eth_type</th><th>nw_dst</th><th>ip_proto</th><th>tp_dst</th><th>queue_id</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-    <h3>Add QoS Rule</h3>
-    <form id="qosForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQoS();">
-        <label>priority:</label>
-        <input type="text" id="priority" placeholder="1"><br>
-        <label>in_port:</label>
-        <input type="text" id="in_port" placeholder="1"><br>
-        <label>eth_type:</label>
-        <select id="eth_type" name="ethTypeList" form="qosForm">
-            <option value="IPv4">IPv4</option>
-            <option value="IPv6">IPv6</option>
-        </select><br>
-        <label>nw_dst:</label>
-        <input type="text" id="nw_dst" placeholder="10.0.0.2"><br>
+        <h3>Add QoS Rule</h3>
+        <form id="qosForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQoS();">
+            <label>priority:</label>
+            <input type="text" id="priority" placeholder="1"><br>
+            <label>in_port:</label>
+            <input type="text" id="in_port" placeholder="1"><br>
+            <label>eth_type:</label>
+            <select id="eth_type" name="ethTypeList" form="qosForm">
+                <option value="IPv4">IPv4</option>
+                <option value="IPv6">IPv6</option>
+            </select><br>
+            <label>nw_dst:</label>
+            <input type="text" id="nw_dst" placeholder="10.0.0.2"><br>
+            <label>ip_proto:</label>
+            <select id="ip_proto" name="ipProtoList" form="qosForm">
+                <option value="TCP">TCP</option>
+                <option value="UDP">UDP</option>
+            </select><br>
+            <label>tp_dst:</label>
+            <input type="number" id="tp_dst" placeholder="5001"><br>
+            <label>queue_id:</label>
+            <input type="number" id="queue_id" placeholder="1"><br>
+            <button type="submit">Set Rule</button>
+        </form>
 
-        <label>ip_proto:</label>
-        <select id="ip_proto" name="ipProtoList" form="qosForm">
-            <option value="TCP">TCP</option>
-            <option value="UDP">UDP</option>
-        </select><br>
-        <label>tp_dst:</label>
-        <input type="number" id="tp_dst" placeholder="5001"><br>
+        <h4>Delete QoS Rules</h4>
+        <form id="deleteQoSForm" class="qos-form" onsubmit="event.preventDefault(); submitDeleteQoS();">
+            <label>Switch:</label>
+            <select id="deleteQoS-switch" required>
+                <option value="">Select Switch</option>
+            </select><br>
+            
+            <label>QoS Rule ID:</label>
+            <input type="text" id="deleteQoS-qos_id" placeholder="all or specific rule ID" value="all" required><br>
+            
+            <button type="submit">Delete QoS Rules</button>
+        </form>
+    </div>
 
-        <label>queue_id:</label>
-        <input type="number" id="queue_id" placeholder="1"><br>
+    <!-- Sezione 2: Queue Management -->
+    <div class="qos-section">
+        <h3>Set Queue</h3>
+        <form id="setQueueForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQueue();">
+            <label>Switch:</label>
+            <select id="setQueue-switch" required>
+                <option value="">Select Switch</option>
+            </select><br>
+            <label>Port name:</label>
+            <input type="text" id="setQueue-in_port" placeholder="s1-eth1"><br>
+            <label>type:</label>
+            <select id="setQueue-type" name="queue" form="qosForm">
+                <option value="linux-htb">linux-htb</option>
+                <option value="linux-hfsc">linux-hfsc</option>
+            </select><br>
+            <label>max_rate (in bps):</label>
+            <input type="number" step="0.01" id="setQueue-max_rate" placeholder="2000000"><br>
+            <label>min_rate (in bps):</label>
+            <input type="number" step="0.01" id="setQueue-min_rate" placeholder="2000000"><br>
+            <button type="submit">Set Queue</button>
+        </form>
 
-        <button type="submit">Set Rule</button>
-    </form>
-    
-    <!-- DELETE QoS Rules Form -->
-    <h4>Delete QoS Rules</h4>
-    <form id="deleteQoSForm" class="qos-form" onsubmit="event.preventDefault(); submitDeleteQoS();">
-        <label>Switch:</label>
-        <select id="deleteQoS-switch" required>
-            <option value="">Select Switch</option>
-        </select><br>
-        
-        <label>QoS Rule ID:</label>
-        <input type="text" id="deleteQoS-qos_id" placeholder="all or specific rule ID" value="all" required><br>
-        
-        <button type="submit">Delete QoS Rules</button>
-    </form>
+        <h4>Get Queues</h4>
+        <label for="queueSelect">Select Switch:</label>
+        <select id="queueSelect" onchange="loadQueues()">
+            <option value="all">all</option>
+        </select>
 
-    <h3>Set Queue</h3>
-    <form id="setQueueForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQueue();">
-        <label>Switch:</label>
-        <select id="setQueue-switch" required>
-            <option value="">Select Switch</option>
-        </select><br>
-        <label>Port name:</label>
-        <input type="text" id="setQueue-in_port" placeholder="s1-eth1"><br>
-        <label>type:</label>
-        <select id="setQueue-type" name="queue" form="qosForm">
-            <option value="linux-htb">linux-htb</option>
-            <option value="linux-hfsc">linux-hfsc</option>
-        </select><br>
-        <label>max_rate (in bps):</label>
-        <input type="number" step="0.01" id="setQueue-max_rate" placeholder="2000000"><br>
-        <label>min_rate (in bps):</label>
-        <input type="number" step="0.01" id="setQueue-min_rate" placeholder="2000000"><br>
-
-        <button type="submit">Set Queue</button>
-    </form>
-
-    <h4>Get Queues</h4>
-    <label for="queueSelect">Select Switch:</label>
-    <select id="queueSelect" onchange="loadQueues()">
-        <option value="all">all</option>
-    </select>
-
-    <h3>Queue Information</h3>
-    <table id="queueTable">
-        <thead>
-            <tr>
-                            <th>Switch</th>
-                            <th>Interface</th>
-                            <th>Max Rate</th>
-                            <th>Min Rate</th>
-                            <th>Queue ID</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
+        <h3>Queue Information</h3>
+        <table id="queueTable">
+            <thead>
+                <tr>
+                    <th>Switch</th>
+                    <th>Interface</th>
+                    <th>Max Rate</th>
+                    <th>Min Rate</th>
+                    <th>Queue ID</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 <script src="./topology.js" charset="utf-8"></script>
 </body>

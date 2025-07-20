@@ -159,7 +159,7 @@ h3 {
 /* QoS Panel layout - posizionato sotto la topologia */
 .qos-panel {
     position: absolute;
-    top: 750px;   
+    top: 680px;   
     left: 50px;   
     right: 50px;  
     background: rgb(228, 242, 237);

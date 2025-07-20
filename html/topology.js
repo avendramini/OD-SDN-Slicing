@@ -1442,6 +1442,7 @@ function updateSwitchSelector(switches) {
         'setQueue-switch',
         'getQueue-switch',
         'queueSelect',
+        'delQueueSelect'
     ];
     
     // Trova anche tutti gli elementi che iniziano con "switchSelect" seguito da un numero
@@ -1476,7 +1477,7 @@ function updateSwitchSelector(switches) {
     
     allSelects.forEach(select => {
         if (select) {
-            const isQueueSelect = select.id === 'queueSelect';
+            const isQueueSelect = select.id === 'queueSelect' || select.id=== 'delQueueSelect';
             
             // Pulisce le opzioni esistenti
             if (isQueueSelect) {
@@ -1841,6 +1842,44 @@ async function submitDeleteQoS() {
             // Reset form
             document.getElementById('deleteQoS-qos_id').value = 'all';
             loadQoSRules(); 
+        } else {
+            throw new Error('No response from server');
+        }
+    } catch (error) {
+        alert('Failed to delete queues: ' + error.message);
+        console.error('Error deleting queues:', error);
+    }
+}
+
+async function submitDeleteQueue() {
+    const dpid = document.getElementById('delQueueSelect').value;
+
+    if (!dpid) {
+        alert('Please select a switch');
+        return;
+    }
+
+    const confirmMessage = dpid === 'all' 
+        ? `Are you sure you want to delete ALL queues?`
+        : `Are you sure you want to delete ALL queues from switch ${dpid}?`;
+
+    if (!confirm(confirmMessage)) {
+        return;
+    }
+
+    try {
+        console.log(`Deleting queues from switch:`, dpid);
+
+        
+        const response = await callApi(`/qos/queue/${dpid}`, 'DELETE');
+        
+        if (response !== null) {
+            alert(`Queues deleted successfully!`);
+            console.log("Delete queue response:", response);
+            
+            // Reset form
+            document.getElementById('delQueueSelect').value = 'all';
+            loadQueues();
         } else {
             throw new Error('No response from server');
         }

@@ -171,6 +171,15 @@
             </thead>
             <tbody></tbody>
         </table>
+
+        <h4>Delete Queues</h4>
+        <form id="deleteQueueForm" class="qos-form" onsubmit="event.preventDefault(); submitDeleteQueue();">
+            <label>Switch:</label>
+            <select id="delQueueSelect" required>
+                <option value="all">all</option>
+            </select><br>
+            <button type="submit">Delete Queue</button>
+        </form>
     </div>
 </div>
 <script src="./topology.js" charset="utf-8"></script>

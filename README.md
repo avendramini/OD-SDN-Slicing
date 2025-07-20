@@ -182,7 +182,7 @@ This section provides all the necessary commands to run and test the application
 
 ### How to Test
 
-This section guides you through basic connectivity checks and bandwidth limit verification to ensure that traffic shaping, isolation, and queue-based forwarding are applied as expected.
+This section guides you through basic connectivity checks and bandwidth limit verification to ensure that traffic shaping, isolation and queue-based forwarding are applied as expected.
 
 #### 1. Test Basic Connectivity (ping)  
 Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
@@ -284,7 +284,7 @@ Using simple CLI-based `curl` commands, users can perform various network operat
 
 ### Core REST API commands for slice management and controller control
 
-The following commands allow interaction with the controller for setting time modes, adding/removing slices, and managing the forwarding logic and topology.
+The following commands allow interaction with the controller for setting time modes, adding/removing slices and managing the forwarding logic and topology.
 
 | **Action**                | **Description**                                                                                       | **Command**                                                                                                              |
 |---------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|

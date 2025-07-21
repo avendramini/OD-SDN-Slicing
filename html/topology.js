@@ -2115,7 +2115,7 @@ async function submitSetQueue() {
         console.log("Checking existing queues for switch:", dpid);
         const existingQueueResponse = await getQoSQueue(dpid);
         let existingQueues = [];
-        let nextQueueId = 0;
+        let predictedQueueId = 0;
         
         if (existingQueueResponse && Array.isArray(existingQueueResponse)) {
             const parsedQueues = parseQueueResponse(existingQueueResponse);
@@ -2126,9 +2126,8 @@ async function submitSetQueue() {
             if (interfaceQueues.length > 0) {
                 console.log("Found existing queues for interface", in_port_name, ":", interfaceQueues);
                 
-                // Get the highest queue ID for this interface
-                const maxQueueId = Math.max(...interfaceQueues.map(q => q.queue_id));
-                nextQueueId = maxQueueId + 1;
+                // The next queue ID will be the current count (since OVS starts from 0)
+                predictedQueueId = interfaceQueues.length;
                 
                 // Build array of existing queues for this interface
                 for (let i = 0; i < interfaceQueues.length; i++) {
@@ -2139,8 +2138,12 @@ async function submitSetQueue() {
                     });
                 }
                 
-                console.log("Next queue ID will be:", nextQueueId);
+                console.log("Predicted next queue ID will be:", predictedQueueId);
                 console.log("Existing queues to preserve:", existingQueues);
+            } else {
+                // No existing queues, so this will be queue ID 0
+                predictedQueueId = 0;
+                console.log("No existing queues found, predicted queue ID will be:", predictedQueueId);
             }
         }
         
@@ -2165,7 +2168,7 @@ async function submitSetQueue() {
         const response = await callApi('/qos/queue/' + dpid, 'POST', req);
         
         if (response) {
-            alert(`Queue added successfully! Queue ID: ${nextQueueId}`);
+            alert(`Queue added successfully! Queue ID: ${predictedQueueId}`);
             console.log("Queue response:", response);
 
             // Reset form

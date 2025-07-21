@@ -1698,7 +1698,7 @@ function parseQueueResponse(response) {
                                 console.log(`Interface counters state:`, interfaceQueueCounters);
                                 console.log("Final queue ID assigned:", queueId);
                                 queueData.push({
-                                    queue_id: queueId,
+                                    queue_id: queueId !== undefined && queueId !== null ? queueId : 0,
                                     switch: switchId,
                                     interface: interface,
                                     max_rate: maxRate,
@@ -1855,12 +1855,13 @@ async function loadQueues() {
 
         allQueueData.forEach(item => {
             const row = document.createElement("tr");
+            const queueId = (item.queue_id !== undefined && item.queue_id !== null && item.queue_id !== "N/A") ? item.queue_id : 0;
             row.innerHTML = `
                 <td>${"s"+dpid_to_int(item.switch) || "N/A"}</td>
                 <td>${item.interface || "N/A"}</td>
                 <td>${item.max_rate || "N/A"}</td>
                 <td>${item.min_rate || "N/A"}</td>
-                <td>${item.queue_id || "N/A"}</td>
+                <td>${queueId}</td>
             `;
             tbody.appendChild(row);
         });

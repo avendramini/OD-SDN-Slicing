@@ -2110,29 +2110,67 @@ async function submitSetQueue() {
         return;
     }
 
-
-    // Build request according to Ryu queue REST API
-    const req = {
-        "port_name": in_port_name,
-        "type": type,
-        "max_rate":"10000000",
-        "queues": [{
-            "max_rate": max_rate,
-            "min_rate": min_rate
-        }]
-    };
-
-    console.log(req);
     try {
-        console.log("Setting Queue:", req);
-        const response = await callApi(`/qos/queue/${dpid}`, 'POST', req);
+        // First, get existing queues for this switch/interface
+        console.log("Checking existing queues for switch:", dpid);
+        const existingQueueResponse = await getQoSQueue(dpid);
+        let existingQueues = [];
+        let nextQueueId = 0;
+        
+        if (existingQueueResponse && Array.isArray(existingQueueResponse)) {
+            const parsedQueues = parseQueueResponse(existingQueueResponse);
+            
+            // Filter queues for this specific interface
+            const interfaceQueues = parsedQueues.filter(q => q.interface === in_port_name);
+            
+            if (interfaceQueues.length > 0) {
+                console.log("Found existing queues for interface", in_port_name, ":", interfaceQueues);
+                
+                // Get the highest queue ID for this interface
+                const maxQueueId = Math.max(...interfaceQueues.map(q => q.queue_id));
+                nextQueueId = maxQueueId + 1;
+                
+                // Build array of existing queues for this interface
+                for (let i = 0; i < interfaceQueues.length; i++) {
+                    const queue = interfaceQueues[i];
+                    existingQueues.push({
+                        max_rate: queue.max_rate.toString(),
+                        min_rate: queue.min_rate.toString()
+                    });
+                }
+                
+                console.log("Next queue ID will be:", nextQueueId);
+                console.log("Existing queues to preserve:", existingQueues);
+            }
+        }
+        
+        // Add the new queue to the existing ones
+        const newQueue = {
+            max_rate: max_rate,
+            min_rate: min_rate
+        };
+        
+        const allQueues = [...existingQueues, newQueue];
+        console.log("Final queue configuration:", allQueues);
+
+        // Build request according to Ryu queue REST API
+        const req = {
+            "port_name": in_port_name,
+            "type": type,
+            "max_rate": "10000000", // Port max rate
+            "queues": allQueues
+        };
+
+        console.log("Sending queue configuration request:", req);
+        const response = await callApi('/qos/queue/' + dpid, 'POST', req);
         
         if (response) {
-            alert('Queue set successfully!');
+            alert(`Queue added successfully! Queue ID: ${nextQueueId}`);
             console.log("Queue response:", response);
 
             // Reset form
-            document.getElementById('setQueueForm').reset();
+            document.getElementById('setQueue-max_rate').value = '';
+            document.getElementById('setQueue-min_rate').value = '';
             
             // Reload QoS rules table if it exists
             if (typeof loadQueues === 'function') {
@@ -2142,8 +2180,8 @@ async function submitSetQueue() {
             throw new Error('No response from server');
         }
     } catch (error) {
-        alert('Failed to set QoS rule: ' + error.message);
-        console.error('Error setting QoS rule:', error);
+        alert('Failed to set queue: ' + error.message);
+        console.error('Error setting queue:', error);
     }
 }
 

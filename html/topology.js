@@ -1031,6 +1031,14 @@ var topo = {
             this.node_index[this.nodes[i].dpid] = i;
         }
     },
+    get_hosts: function () {
+        // Restituisce tutti i nodi di tipo "host"
+        return this.nodes.filter(node => node.type === "host");
+    },
+    get_links: function () {
+        // Restituisce tutti i links
+        return this.links;
+    },
 }
 
 var rpc = {

@@ -1654,33 +1654,33 @@ function parseQueueResponse(response) {
                                 // Create unique key for this interface
                                 const interfaceKey = `${switchId}_${interface}`;
                                 
-                                // Initialize counter for this interface if not exists (starting from 1)
+                                // Initialize counter for this interface if not exists (starting from 0)
                                 if (!interfaceQueueCounters[interfaceKey]) {
-                                    interfaceQueueCounters[interfaceKey] = 1;
+                                    interfaceQueueCounters[interfaceKey] = 0;
                                 }
                                 
-                                // First try to use the key if it's a valid number and greater than 0
-                                if (key && !isNaN(key) && parseInt(key) > 0) {
+                                // First try to use the key if it's a valid number
+                                if (key && !isNaN(key)) {
                                     queueId = parseInt(key);
                                     console.log("Using key as queue ID:", queueId);
                                     
                                     // Update counter to be higher than this ID for next queue on same interface
                                     interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
                                 } 
-                                // Check if element has an explicit queue_id or _uuid greater than 0
-                                else if (element["_uuid"] && !isNaN(element["_uuid"]) && parseInt(element["_uuid"]) > 0) {
+                                // Check if element has an explicit queue_id or _uuid
+                                else if (element["_uuid"] && !isNaN(element["_uuid"])) {
                                     queueId = parseInt(element["_uuid"]);
                                     console.log("Using _uuid as queue ID:", queueId);
                                     
                                     // Update counter to be higher than this ID for next queue on same interface
                                     interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
-                                } else if (element["id"] && !isNaN(element["id"]) && parseInt(element["id"]) > 0) {
+                                } else if (element["id"] && !isNaN(element["id"])) {
                                     queueId = parseInt(element["id"]);
                                     console.log("Using id as queue ID:", queueId);
                                     
                                     // Update counter to be higher than this ID for next queue on same interface
                                     interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
-                                } else if (element["queue_id"] && !isNaN(element["queue_id"]) && parseInt(element["queue_id"]) > 0) {
+                                } else if (element["queue_id"] && !isNaN(element["queue_id"])) {
                                     queueId = parseInt(element["queue_id"]);
                                     console.log("Using queue_id as queue ID:", queueId);
                                     
@@ -2126,8 +2126,8 @@ async function submitSetQueue() {
             if (interfaceQueues.length > 0) {
                 console.log("Found existing queues for interface", in_port_name, ":", interfaceQueues);
                 
-                // The next queue ID will be the current count + 1 (since we start counting from 1)
-                predictedQueueId = interfaceQueues.length + 1;
+                // The next queue ID will be the current count (since OVS starts from 0)
+                predictedQueueId = interfaceQueues.length;
                 
                 // Build array of existing queues for this interface
                 for (let i = 0; i < interfaceQueues.length; i++) {
@@ -2141,8 +2141,8 @@ async function submitSetQueue() {
                 console.log("Predicted next queue ID will be:", predictedQueueId);
                 console.log("Existing queues to preserve:", existingQueues);
             } else {
-                // No existing queues, so this will be queue ID 1
-                predictedQueueId = 1;
+                // No existing queues, so this will be queue ID 0
+                predictedQueueId = 0;
                 console.log("No existing queues found, predicted queue ID will be:", predictedQueueId);
             }
         }

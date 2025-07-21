@@ -676,13 +676,32 @@ function port_to_interface_name(dpid, port_no) {
 }
 
 function get_switch_interfaces(dpid) {
-    // Trova tutte le interfacce per uno switch specifico
+    // Trova tutte le interfacce per uno switch specifico basandosi sui dati degli host
     const interfaces = [];
-    const ports = topo.get_ports();
     
-    ports.forEach(port => {
-        if (port.dpid === dpid && port.port_no !== "host") {
-            const interfaceName = port_to_interface_name(dpid, port.port_no);
+    // Prima aggiungi le interfacce verso gli host (dalle connessioni reali)
+    const hosts = topo.get_hosts();
+    hosts.forEach(host => {
+        if (host.port && host.port.dpid === dpid) {
+            // Usa il nome interfaccia dal campo "name" se disponibile, altrimenti genera
+            const interfaceName = host.port.name || port_to_interface_name(dpid, parseInt(host.port.port_no));
+            if (!interfaces.includes(interfaceName)) {
+                interfaces.push(interfaceName);
+            }
+        }
+    });
+    
+    // Poi aggiungi le interfacce verso altri switch (dai links)
+    const links = topo.get_links();
+    links.forEach(link => {
+        if (link.src && link.src.dpid === dpid) {
+            const interfaceName = port_to_interface_name(dpid, parseInt(link.src.port_no));
+            if (!interfaces.includes(interfaceName)) {
+                interfaces.push(interfaceName);
+            }
+        }
+        if (link.dst && link.dst.dpid === dpid) {
+            const interfaceName = port_to_interface_name(dpid, parseInt(link.dst.port_no));
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }

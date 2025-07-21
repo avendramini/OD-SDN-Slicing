@@ -669,102 +669,6 @@ function dpid_to_int(dpid) {
     return Number("0x" + dpid);
 }
 
-function port_to_interface_name(dpid, port_no) {
-    // Converte DPID e porta in nome interfaccia (es: s1-eth1)
-    const switch_num = dpid_to_int(dpid);
-    return `s${switch_num}-eth${port_no}`;
-}
-
-function getExpectedConnections(dpid) {
-    // Restituisce le connessioni previste dalla topologia fisica per ogni switch
-    const switchNum = dpid_to_int(dpid);
-    
-    switch (switchNum) {
-        case 1: // s1
-            return ['s1-eth1', 's1-eth2', 's1-eth3', 's1-eth4', 's1-eth5', 's1-eth6'];
-        case 2: // s2  
-            return ['s2-eth1', 's2-eth2', 's2-eth3'];
-        case 3: // s3
-            return ['s3-eth1', 's3-eth2', 's3-eth3'];
-        case 4: // s4
-            return ['s4-eth1', 's4-eth2', 's4-eth3'];
-        case 5: // s5
-            return ['s5-eth1', 's5-eth2', 's5-eth3'];
-        case 6: // s6
-            return ['s6-eth1', 's6-eth2', 's6-eth3', 's6-eth4'];
-        default:
-            return [];
-    }
-}
-
-function get_switch_interfaces(dpid) {
-    const interfaces = [];
-    
-    console.log(`=== DEBUG per switch ${dpid} ===`);
-    
-    // Prima aggiungi le interfacce verso gli host
-    const hosts = topo.get_hosts();
-    console.log("Host connessi:");
-    
-    hosts.forEach(host => {
-        if (host.port && host.port.dpid === dpid) {
-            const portNum = parseInt(host.port.port_no, 16); // Converti da hex
-            const interfaceName = port_to_interface_name(dpid, portNum);
-            console.log(`  Host ${host.dpid - 256} → porta ${portNum} (${interfaceName})`);
-            if (!interfaces.includes(interfaceName)) {
-                interfaces.push(interfaceName);
-            }
-        }
-    });
-    
-    // Poi aggiungi le interfacce verso altri switch
-    const links = topo.get_links();
-    console.log("Switch-to-switch links:");
-    
-    links.forEach((link, index) => {
-        // Verifica struttura port.src e port.dst (questa sembra essere quella corretta dai log)
-        if (link.port && link.port.src && link.port.src.dpid === dpid && link.port.dst.port_no !== "host") {
-            const srcPortNum = parseInt(link.port.src.port_no, 16);
-            const dstSwitch = dpid_to_int(link.port.dst.dpid);
-            const dstPortNum = parseInt(link.port.dst.port_no, 16);
-            const interfaceName = port_to_interface_name(dpid, srcPortNum);
-            
-            console.log(`  ${port_to_interface_name(dpid, srcPortNum)} ↔ s${dstSwitch}-eth${dstPortNum}`);
-            
-            if (!interfaces.includes(interfaceName)) {
-                interfaces.push(interfaceName);
-            }
-        }
-        
-        if (link.port && link.port.dst && link.port.dst.dpid === dpid && link.port.src.port_no !== "host") {
-            const dstPortNum = parseInt(link.port.dst.port_no, 16);
-            const srcSwitch = dpid_to_int(link.port.src.dpid);
-            const srcPortNum = parseInt(link.port.src.port_no, 16);
-            const interfaceName = port_to_interface_name(dpid, dstPortNum);
-            
-            console.log(`  ${port_to_interface_name(dpid, dstPortNum)} ↔ s${srcSwitch}-eth${srcPortNum}`);
-            
-            if (!interfaces.includes(interfaceName)) {
-                interfaces.push(interfaceName);
-            }
-        }
-    });
-    
-    console.log(`Interfacce mappate: [${interfaces.sort().join(', ')}]`);
-    
-    // Verifica coerenza con topologia fisica prevista
-    const expectedConnections = getExpectedConnections(dpid);
-    if (expectedConnections.length > 0) {
-        console.log(`Connessioni previste dalla topologia fisica: [${expectedConnections.join(', ')}]`);
-        const missing = expectedConnections.filter(expected => !interfaces.includes(expected));
-        if (missing.length > 0) {
-            console.warn(`⚠️  Interfacce mancanti: [${missing.join(', ')}]`);
-        }
-    }
-    
-    return interfaces.sort();
-}
-
 var elem = {
     force: d3.layout.force()
         .size([CONF.force.width, CONF.force.height])
@@ -843,12 +747,7 @@ elem.update = function () {
     portEnter.append("text")
         .attr("dx", -3)
         .attr("dy", 3)
-        .text(function(d) { return trim_zero(d.port_no); })
-        .append("title")
-        .text(function(d) { 
-            // Mostra il nome completo dell'interfaccia nel tooltip
-            return port_to_interface_name(d.dpid, d.port_no);
-        });
+        .text(function(d) { return trim_zero(d.port_no); });
 };
 
 function is_valid_link(link) {
@@ -1072,14 +971,6 @@ var topo = {
         for (var i = 0; i < this.nodes.length; i++) {
             this.node_index[this.nodes[i].dpid] = i;
         }
-    },
-    get_hosts: function () {
-        // Restituisce tutti i nodi di tipo "host"
-        return this.nodes.filter(node => node.type === "host");
-    },
-    get_links: function () {
-        // Restituisce tutti i links
-        return this.links;
     },
 }
 
@@ -1503,17 +1394,6 @@ async function loadAdditionalConfigurations(switches = null) {
             }
         }
         
-        // Debug: mostra il mapping delle interfacce
-        console.log("=== DEBUG: Mapping interfacce ===");
-        if (topo.nodes && topo.nodes.length > 0) {
-            const switchNodes = topo.nodes.filter(node => node.type === 'switch');
-            switchNodes.forEach(sw => {
-                const interfaces = get_switch_interfaces(sw.dpid);
-                console.log(`Switch ${sw.dpid} (s${dpid_to_int(sw.dpid)}): interfacce disponibili:`, interfaces);
-            });
-        }
-        console.log("=== Fine DEBUG interfacce ===");
-        
         // Preemptively clear any problematic QoS rules before trying to load them
         console.log("Preemptively clearing any problematic QoS rules...");
         try {
@@ -1650,41 +1530,6 @@ function updateSwitchSelector(switches) {
         setTimeout(() => {
             loadQueueInfo();
         }, 100);
-    }
-    
-    // Aggiungi listener per aggiornare le interfacce quando si cambia switch
-    const setQueueSwitchSelect = document.getElementById('setQueue-switch');
-    if (setQueueSwitchSelect) {
-        setQueueSwitchSelect.removeEventListener('change', updateInterfaceOptions);
-        setQueueSwitchSelect.addEventListener('change', updateInterfaceOptions);
-    }
-}
-
-function updateInterfaceOptions() {
-    const switchSelect = document.getElementById('setQueue-switch');
-    const portInput = document.getElementById('setQueue-in_port');
-    
-    if (!switchSelect || !portInput) return;
-    
-    const selectedDpid = switchSelect.value;
-    if (!selectedDpid) {
-        portInput.placeholder = "s1-eth1";
-        return;
-    }
-    
-    // Ottieni le interfacce disponibili per questo switch
-    const interfaces = get_switch_interfaces(selectedDpid);
-    
-    if (interfaces.length > 0) {
-        // Aggiorna il placeholder con la prima interfaccia disponibile
-        portInput.placeholder = interfaces[0];
-        
-        // Opzionale: potresti anche aggiungere una lista di suggerimenti
-        console.log(`Interfacce disponibili per switch ${selectedDpid}:`, interfaces);
-    } else {
-        // Fallback per switch senza interfacce rilevate
-        const switch_num = dpid_to_int(selectedDpid);
-        portInput.placeholder = `s${switch_num}-eth1`;
     }
 }
 

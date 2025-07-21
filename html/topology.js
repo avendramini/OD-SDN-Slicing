@@ -1614,6 +1614,10 @@ function parseQueueResponse(response) {
                     for(let interface in queueConfig) {
                         console.log("Processing interface:", interface);
                         console.log("Interface data:", queueConfig[interface]);
+                        
+                        // Generate a counter for queue IDs since OVS doesn't always provide meaningful queue IDs
+                        let queueCounter = 0;
+                        
                         for(let key in queueConfig[interface]){
                             console.log("Processing queue key:", key);
                             let element=queueConfig[interface][key];
@@ -1640,9 +1644,26 @@ function parseQueueResponse(response) {
                             
                             // Only push if both rates are valid integers
                             if (isMaxRateValid && isMinRateValid) {
-                                console.log("Adding queue with ID:", key);
+                                // Try to get queue ID from different possible sources
+                                let queueId = key;
+                                
+                                // Check if element has an explicit queue_id or _uuid that's not "0"
+                                if (element["_uuid"] && element["_uuid"] !== "0") {
+                                    queueId = element["_uuid"];
+                                } else if (element["id"] && element["id"] !== "0") {
+                                    queueId = element["id"];
+                                } else if (element["queue_id"] && element["queue_id"] !== "0") {
+                                    queueId = element["queue_id"];
+                                } else {
+                                    // Use a combination of interface and counter for unique identification
+                                    queueId = `${interface}-q${queueCounter}`;
+                                }
+                                
+                                queueCounter++;
+                                
+                                console.log("Adding queue with ID:", queueId);
                                 queueData.push({
-                                    queue_id:key,
+                                    queue_id: queueId,
                                     switch: switchId,
                                     interface: interface,
                                     max_rate: maxRate,

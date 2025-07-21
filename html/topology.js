@@ -675,74 +675,94 @@ function port_to_interface_name(dpid, port_no) {
     return `s${switch_num}-eth${port_no}`;
 }
 
+function getExpectedConnections(dpid) {
+    // Restituisce le connessioni previste dalla topologia fisica per ogni switch
+    const switchNum = dpid_to_int(dpid);
+    
+    switch (switchNum) {
+        case 1: // s1
+            return ['s1-eth1', 's1-eth2', 's1-eth3', 's1-eth4', 's1-eth5', 's1-eth6'];
+        case 2: // s2  
+            return ['s2-eth1', 's2-eth2', 's2-eth3'];
+        case 3: // s3
+            return ['s3-eth1', 's3-eth2', 's3-eth3'];
+        case 4: // s4
+            return ['s4-eth1', 's4-eth2', 's4-eth3'];
+        case 5: // s5
+            return ['s5-eth1', 's5-eth2', 's5-eth3'];
+        case 6: // s6
+            return ['s6-eth1', 's6-eth2', 's6-eth3', 's6-eth4'];
+        default:
+            return [];
+    }
+}
+
 function get_switch_interfaces(dpid) {
-    // Trova tutte le interfacce per uno switch specifico basandosi sui dati degli host
     const interfaces = [];
     
-    console.log(`DEBUG COMPLETO per switch ${dpid}:`);
+    console.log(`=== DEBUG per switch ${dpid} ===`);
     
-    // Prima aggiungi le interfacce verso gli host (dalle connessioni reali)
+    // Prima aggiungi le interfacce verso gli host
     const hosts = topo.get_hosts();
-    console.log("Hosts connessi a questo switch:");
+    console.log("Host connessi:");
     
     hosts.forEach(host => {
         if (host.port && host.port.dpid === dpid) {
-            console.log(`- Host ${host.dpid - 256} connesso alla porta ${host.port.port_no} (${host.port.name})`);
-            // Usa il nome interfaccia dal campo "name" se disponibile, altrimenti genera
-            const interfaceName = host.port.name || port_to_interface_name(dpid, parseInt(host.port.port_no));
+            const portNum = parseInt(host.port.port_no, 16); // Converti da hex
+            const interfaceName = port_to_interface_name(dpid, portNum);
+            console.log(`  Host ${host.dpid - 256} → porta ${portNum} (${interfaceName})`);
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
         }
     });
     
-    // Poi aggiungi le interfacce verso altri switch (dai links)
+    // Poi aggiungi le interfacce verso altri switch
     const links = topo.get_links();
-    console.log("Links da/verso altri switch:");
-    console.log("Totale links nella topologia:", links.length);
+    console.log("Switch-to-switch links:");
     
     links.forEach((link, index) => {
-        console.log(`Link ${index}:`, {
-            src: link.port?.src,
-            dst: link.port?.dst,
-            source_index: link.source,
-            target_index: link.target
-        });
-        
-        if (link.src && link.src.dpid === dpid) {
-            console.log(`- Link SRC: porta ${link.src.port_no} -> switch ${link.dst.dpid} porta ${link.dst.port_no}`);
-            const interfaceName = port_to_interface_name(dpid, parseInt(link.src.port_no));
-            if (!interfaces.includes(interfaceName)) {
-                interfaces.push(interfaceName);
-            }
-        }
-        if (link.dst && link.dst.dpid === dpid) {
-            console.log(`- Link DST: porta ${link.dst.port_no} <- switch ${link.src.dpid} porta ${link.src.port_no}`);
-            const interfaceName = port_to_interface_name(dpid, parseInt(link.dst.port_no));
+        // Verifica struttura port.src e port.dst (questa sembra essere quella corretta dai log)
+        if (link.port && link.port.src && link.port.src.dpid === dpid && link.port.dst.port_no !== "host") {
+            const srcPortNum = parseInt(link.port.src.port_no, 16);
+            const dstSwitch = dpid_to_int(link.port.dst.dpid);
+            const dstPortNum = parseInt(link.port.dst.port_no, 16);
+            const interfaceName = port_to_interface_name(dpid, srcPortNum);
+            
+            console.log(`  ${port_to_interface_name(dpid, srcPortNum)} ↔ s${dstSwitch}-eth${dstPortNum}`);
+            
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
         }
         
-        // Verifica anche usando la struttura port.src e port.dst
-        if (link.port && link.port.src && link.port.src.dpid === dpid) {
-            console.log(`- Link PORT.SRC: porta ${link.port.src.port_no} -> switch ${link.port.dst.dpid} porta ${link.port.dst.port_no}`);
-            const interfaceName = port_to_interface_name(dpid, parseInt(link.port.src.port_no));
-            if (!interfaces.includes(interfaceName)) {
-                interfaces.push(interfaceName);
-            }
-        }
-        if (link.port && link.port.dst && link.port.dst.dpid === dpid) {
-            console.log(`- Link PORT.DST: porta ${link.port.dst.port_no} <- switch ${link.port.src.dpid} porta ${link.port.src.port_no}`);
-            const interfaceName = port_to_interface_name(dpid, parseInt(link.port.dst.port_no));
+        if (link.port && link.port.dst && link.port.dst.dpid === dpid && link.port.src.port_no !== "host") {
+            const dstPortNum = parseInt(link.port.dst.port_no, 16);
+            const srcSwitch = dpid_to_int(link.port.src.dpid);
+            const srcPortNum = parseInt(link.port.src.port_no, 16);
+            const interfaceName = port_to_interface_name(dpid, dstPortNum);
+            
+            console.log(`  ${port_to_interface_name(dpid, dstPortNum)} ↔ s${srcSwitch}-eth${srcPortNum}`);
+            
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
         }
     });
     
-    console.log(`Interfacce finali generate:`, interfaces);
-    return interfaces.sort(); // Ordina alfabeticamente
+    console.log(`Interfacce mappate: [${interfaces.sort().join(', ')}]`);
+    
+    // Verifica coerenza con topologia fisica prevista
+    const expectedConnections = getExpectedConnections(dpid);
+    if (expectedConnections.length > 0) {
+        console.log(`Connessioni previste dalla topologia fisica: [${expectedConnections.join(', ')}]`);
+        const missing = expectedConnections.filter(expected => !interfaces.includes(expected));
+        if (missing.length > 0) {
+            console.warn(`⚠️  Interfacce mancanti: [${missing.join(', ')}]`);
+        }
+    }
+    
+    return interfaces.sort();
 }
 
 var elem = {

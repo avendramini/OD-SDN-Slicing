@@ -699,8 +699,16 @@ function get_switch_interfaces(dpid) {
     // Poi aggiungi le interfacce verso altri switch (dai links)
     const links = topo.get_links();
     console.log("Links da/verso altri switch:");
+    console.log("Totale links nella topologia:", links.length);
     
-    links.forEach(link => {
+    links.forEach((link, index) => {
+        console.log(`Link ${index}:`, {
+            src: link.port?.src,
+            dst: link.port?.dst,
+            source_index: link.source,
+            target_index: link.target
+        });
+        
         if (link.src && link.src.dpid === dpid) {
             console.log(`- Link SRC: porta ${link.src.port_no} -> switch ${link.dst.dpid} porta ${link.dst.port_no}`);
             const interfaceName = port_to_interface_name(dpid, parseInt(link.src.port_no));
@@ -711,6 +719,22 @@ function get_switch_interfaces(dpid) {
         if (link.dst && link.dst.dpid === dpid) {
             console.log(`- Link DST: porta ${link.dst.port_no} <- switch ${link.src.dpid} porta ${link.src.port_no}`);
             const interfaceName = port_to_interface_name(dpid, parseInt(link.dst.port_no));
+            if (!interfaces.includes(interfaceName)) {
+                interfaces.push(interfaceName);
+            }
+        }
+        
+        // Verifica anche usando la struttura port.src e port.dst
+        if (link.port && link.port.src && link.port.src.dpid === dpid) {
+            console.log(`- Link PORT.SRC: porta ${link.port.src.port_no} -> switch ${link.port.dst.dpid} porta ${link.port.dst.port_no}`);
+            const interfaceName = port_to_interface_name(dpid, parseInt(link.port.src.port_no));
+            if (!interfaces.includes(interfaceName)) {
+                interfaces.push(interfaceName);
+            }
+        }
+        if (link.port && link.port.dst && link.port.dst.dpid === dpid) {
+            console.log(`- Link PORT.DST: porta ${link.port.dst.port_no} <- switch ${link.port.src.dpid} porta ${link.port.src.port_no}`);
+            const interfaceName = port_to_interface_name(dpid, parseInt(link.port.dst.port_no));
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }

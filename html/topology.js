@@ -1598,6 +1598,10 @@ function parseQueueResponse(response) {
     if (response && response[0]) {
         console.log("First response command_result:", response[0].command_result);
     }
+    
+    // Global counter for simple numeric queue IDs
+    let globalQueueCounter = 1;
+    
     try {
         // The response structure may vary depending on the Ryu API
         // Handle different possible response structures
@@ -1614,9 +1618,6 @@ function parseQueueResponse(response) {
                     for(let interface in queueConfig) {
                         console.log("Processing interface:", interface);
                         console.log("Interface data:", queueConfig[interface]);
-                        
-                        // Generate a counter for queue IDs since OVS doesn't always provide meaningful queue IDs
-                        let queueCounter = 0;
                         
                         for(let key in queueConfig[interface]){
                             console.log("Processing queue key:", key);
@@ -1645,23 +1646,35 @@ function parseQueueResponse(response) {
                             // Only push if both rates are valid integers
                             if (isMaxRateValid && isMinRateValid) {
                                 // Try to get queue ID from different possible sources
-                                let queueId = key;
+                                let queueId;
                                 
-                                // Check if element has an explicit queue_id or _uuid that's not "0"
-                                if (element["_uuid"] && element["_uuid"] !== "0") {
-                                    queueId = element["_uuid"];
-                                } else if (element["id"] && element["id"] !== "0") {
-                                    queueId = element["id"];
-                                } else if (element["queue_id"] && element["queue_id"] !== "0") {
-                                    queueId = element["queue_id"];
+                                console.log("Trying to determine queue ID from key:", key);
+                                console.log("Element structure:", element);
+                                
+                                // First try to use the key if it's a valid number and greater than 0
+                                if (key && !isNaN(key) && parseInt(key) > 0) {
+                                    queueId = parseInt(key);
+                                    console.log("Using key as queue ID:", queueId);
+                                } 
+                                // Check if element has an explicit queue_id or _uuid greater than 0
+                                else if (element["_uuid"] && !isNaN(element["_uuid"]) && parseInt(element["_uuid"]) > 0) {
+                                    queueId = parseInt(element["_uuid"]);
+                                    console.log("Using _uuid as queue ID:", queueId);
+                                } else if (element["id"] && !isNaN(element["id"]) && parseInt(element["id"]) > 0) {
+                                    queueId = parseInt(element["id"]);
+                                    console.log("Using id as queue ID:", queueId);
+                                } else if (element["queue_id"] && !isNaN(element["queue_id"]) && parseInt(element["queue_id"]) > 0) {
+                                    queueId = parseInt(element["queue_id"]);
+                                    console.log("Using queue_id as queue ID:", queueId);
                                 } else {
-                                    // Use a combination of interface and counter for unique identification
-                                    queueId = `${interface}-q${queueCounter}`;
+                                    // Use global counter for simple numeric ID
+                                    queueId = globalQueueCounter;
+                                    console.log("Using global counter as queue ID:", queueId);
                                 }
                                 
-                                queueCounter++;
+                                globalQueueCounter++;
                                 
-                                console.log("Adding queue with ID:", queueId);
+                                console.log("Final queue ID assigned:", queueId);
                                 queueData.push({
                                     queue_id: queueId,
                                     switch: switchId,

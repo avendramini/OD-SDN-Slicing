@@ -1599,8 +1599,8 @@ function parseQueueResponse(response) {
         console.log("First response command_result:", response[0].command_result);
     }
     
-    // Global counter for simple numeric queue IDs
-    let globalQueueCounter = 1;
+    // Interface-specific counters for queue IDs
+    const interfaceQueueCounters = {};
     
     try {
         // The response structure may vary depending on the Ryu API
@@ -1651,29 +1651,51 @@ function parseQueueResponse(response) {
                                 console.log("Trying to determine queue ID from key:", key);
                                 console.log("Element structure:", element);
                                 
+                                // Create unique key for this interface
+                                const interfaceKey = `${switchId}_${interface}`;
+                                
+                                // Initialize counter for this interface if not exists
+                                if (!interfaceQueueCounters[interfaceKey]) {
+                                    interfaceQueueCounters[interfaceKey] = 1;
+                                }
+                                
                                 // First try to use the key if it's a valid number and greater than 0
                                 if (key && !isNaN(key) && parseInt(key) > 0) {
                                     queueId = parseInt(key);
                                     console.log("Using key as queue ID:", queueId);
+                                    
+                                    // Update counter to be higher than this ID for next queue on same interface
+                                    interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
                                 } 
                                 // Check if element has an explicit queue_id or _uuid greater than 0
                                 else if (element["_uuid"] && !isNaN(element["_uuid"]) && parseInt(element["_uuid"]) > 0) {
                                     queueId = parseInt(element["_uuid"]);
                                     console.log("Using _uuid as queue ID:", queueId);
+                                    
+                                    // Update counter to be higher than this ID for next queue on same interface
+                                    interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
                                 } else if (element["id"] && !isNaN(element["id"]) && parseInt(element["id"]) > 0) {
                                     queueId = parseInt(element["id"]);
                                     console.log("Using id as queue ID:", queueId);
+                                    
+                                    // Update counter to be higher than this ID for next queue on same interface
+                                    interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
                                 } else if (element["queue_id"] && !isNaN(element["queue_id"]) && parseInt(element["queue_id"]) > 0) {
                                     queueId = parseInt(element["queue_id"]);
                                     console.log("Using queue_id as queue ID:", queueId);
+                                    
+                                    // Update counter to be higher than this ID for next queue on same interface
+                                    interfaceQueueCounters[interfaceKey] = Math.max(interfaceQueueCounters[interfaceKey], queueId + 1);
                                 } else {
-                                    // Use global counter for simple numeric ID
-                                    queueId = globalQueueCounter;
-                                    console.log("Using global counter as queue ID:", queueId);
+                                    // Use interface-specific counter for simple numeric ID
+                                    queueId = interfaceQueueCounters[interfaceKey];
+                                    console.log(`Using interface counter as queue ID for ${interfaceKey}:`, queueId);
+                                    
+                                    // Increment counter for next queue on this interface
+                                    interfaceQueueCounters[interfaceKey]++;
                                 }
                                 
-                                globalQueueCounter++;
-                                
+                                console.log(`Interface counters state:`, interfaceQueueCounters);
                                 console.log("Final queue ID assigned:", queueId);
                                 queueData.push({
                                     queue_id: queueId,

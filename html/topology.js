@@ -1594,29 +1594,41 @@ function parseQoSResponse(response) {
 
 function parseQueueResponse(response) {
     const queueData = [];
-    console.log(response[0].command_result);
+    console.log("Full response:", response);
+    if (response && response[0]) {
+        console.log("First response command_result:", response[0].command_result);
+    }
     try {
         // The response structure may vary depending on the Ryu API
         // Handle different possible response structures
             // Response is an array of queue configurations
         response.forEach((queueConfig, index) => {
             let switchId=queueConfig.switch_id;
+            console.log("Processing switch:", switchId);
             queueConfig=queueConfig.command_result;
             if (queueConfig.result==="success" && queueConfig && typeof queueConfig === 'object') 
             {
                 queueConfig =queueConfig.details;
+                console.log("Queue config details:", queueConfig);
                 if (queueConfig) {
                     for(let interface in queueConfig) {
+                        console.log("Processing interface:", interface);
+                        console.log("Interface data:", queueConfig[interface]);
                         for(let key in queueConfig[interface]){
+                            console.log("Processing queue key:", key);
                             let element=queueConfig[interface][key];
+                            console.log("Element for key", key, ":", element);
                             if(element === undefined || element === null) {
                                 continue;}
                             
 
                             let queue=element["config"];
+                            console.log("Queue config:", queue);
                                 // Validate that max_rate and min_rate are integers
                             const maxRate = queue["max-rate"];
                             const minRate = queue["min-rate"];
+                            
+                            console.log("Max rate:", maxRate, "Min rate:", minRate);
                             
                             // Check if rates are valid integers (not "N/A", undefined, null, or non-numeric)
                             const isMaxRateValid = maxRate !== undefined && maxRate !== null && 
@@ -1624,8 +1636,11 @@ function parseQueueResponse(response) {
                             const isMinRateValid = minRate !== undefined && minRate !== null && 
                                                     minRate !== "N/A" && Number.isInteger(Number(minRate));
                             
+                            console.log("Rate validation - max valid:", isMaxRateValid, "min valid:", isMinRateValid);
+                            
                             // Only push if both rates are valid integers
                             if (isMaxRateValid && isMinRateValid) {
+                                console.log("Adding queue with ID:", key);
                                 queueData.push({
                                     queue_id:key,
                                     switch: switchId,

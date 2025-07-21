@@ -679,19 +679,17 @@ function get_switch_interfaces(dpid) {
     // Trova tutte le interfacce per uno switch specifico basandosi sui dati degli host
     const interfaces = [];
     
-    // DEBUG: Log per capire cosa contengono i dati
-    console.log(`DEBUG get_switch_interfaces per dpid ${dpid}:`);
+    console.log(`DEBUG COMPLETO per switch ${dpid}:`);
     
     // Prima aggiungi le interfacce verso gli host (dalle connessioni reali)
     const hosts = topo.get_hosts();
-    console.log("DEBUG hosts:", hosts);
+    console.log("Hosts connessi a questo switch:");
     
     hosts.forEach(host => {
         if (host.port && host.port.dpid === dpid) {
-            console.log(`DEBUG host trovato per switch ${dpid}:`, host);
+            console.log(`- Host ${host.dpid - 256} connesso alla porta ${host.port.port_no} (${host.port.name})`);
             // Usa il nome interfaccia dal campo "name" se disponibile, altrimenti genera
             const interfaceName = host.port.name || port_to_interface_name(dpid, parseInt(host.port.port_no));
-            console.log(`DEBUG interfaccia generata: ${interfaceName}`);
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
@@ -700,26 +698,26 @@ function get_switch_interfaces(dpid) {
     
     // Poi aggiungi le interfacce verso altri switch (dai links)
     const links = topo.get_links();
-    console.log("DEBUG links:", links);
+    console.log("Links da/verso altri switch:");
     
     links.forEach(link => {
         if (link.src && link.src.dpid === dpid) {
+            console.log(`- Link SRC: porta ${link.src.port_no} -> switch ${link.dst.dpid} porta ${link.dst.port_no}`);
             const interfaceName = port_to_interface_name(dpid, parseInt(link.src.port_no));
-            console.log(`DEBUG link src per switch ${dpid}: ${interfaceName}`);
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
         }
         if (link.dst && link.dst.dpid === dpid) {
+            console.log(`- Link DST: porta ${link.dst.port_no} <- switch ${link.src.dpid} porta ${link.src.port_no}`);
             const interfaceName = port_to_interface_name(dpid, parseInt(link.dst.port_no));
-            console.log(`DEBUG link dst per switch ${dpid}: ${interfaceName}`);
             if (!interfaces.includes(interfaceName)) {
                 interfaces.push(interfaceName);
             }
         }
     });
     
-    console.log(`DEBUG interfacce finali per switch ${dpid}:`, interfaces);
+    console.log(`Interfacce finali generate:`, interfaces);
     return interfaces.sort(); // Ordina alfabeticamente
 }
 

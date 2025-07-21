@@ -1607,7 +1607,7 @@ function parseQueueResponse(response) {
                 queueConfig =queueConfig.details;
                 if (queueConfig) {
                     for(let interface in queueConfig) {
-                        for(let key in interface){
+                        for(let key in queueConfig[interface]){
                             let element=queueConfig[interface][key];
                             if(element === undefined || element === null) {
                                 continue;}

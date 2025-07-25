@@ -282,7 +282,7 @@ The platform exposes a RESTful API that enables direct control of the SDN contro
 Using simple CLI-based `curl` commands, users can perform various network operations such as changing operational modes, managing slices or configuring QoS policies on OpenFlow switches.
 
 
-### Core REST API commands for slice management and controller control
+### Core REST API Commands for Slice and Controller Management:
 
 The following commands allow interaction with the controller for setting time modes, adding/removing slices and managing the forwarding logic and topology.
 
@@ -290,8 +290,8 @@ The following commands allow interaction with the controller for setting time mo
 |---------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
 | Change mode               | Set the time mode (Day/Night)                                                  | `curl -X POST http://localhost:8080/mode/set -H "Content-Type: application/json" -d '{"mode": "<mode>"}'`                     |
 | Get current mode          | Retrieve the current time mode mode                                                                | `curl -X GET http://localhost:8080/mode/get`                                                                             |
-| Add a slice               | Add a new slice with a given ID and mode                                                             | `curl -X POST http://localhost:8080/slice/add -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "<mode>"}'`   |
-| Remove a slice            | Remove an existing slice                                                                             | `curl -X POST http://localhost:8080/slice/remove -H "Content-Type: application/json" -d '{"slice_id": "9", "mode": "<mode>"}'`|
+| Add a slice               | Add a new slice with a given ID and mode                                                             | `curl -X POST http://localhost:8080/slice/add -H "Content-Type: application/json" -d '{"slice_id": "<slice_id>", "mode": "<mode>"}'`   |
+| Remove a slice            | Remove an existing slice                                                                             | `curl -X POST http://localhost:8080/slice/remove -H "Content-Type: application/json" -d '{"slice_id": "<slice_id>", "mode": "<mode>"}'`|
 | Get active slices status  | Display the status of all active slices                                                              | `curl -X GET http://localhost:8080/slices/status`                                                                         |
 | Reset forwarding map      | Reset the forwarding map based on current slice configuration                                        | `curl -X POST http://localhost:8080/reset/map -H "Content-Type: application/json" -d '{"mode": "<mode>"}'`                      |
 | Send full topology        | Trigger the controller to broadcast full topology to all slices                                     | `curl -X POST http://localhost:8080/topology/send`                                                                       |

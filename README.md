@@ -74,9 +74,9 @@ The structure of the project is as follows:
   - `topology.py`: Mininet script that creates the zoo network topology
 - **`html/`** contains the web-based GUI:
   - `index.html`: main interface for slice management and network visualization
-  - `topology.js`: frontend logic for D3.js topology rendering, slice control, and QoS management
+  - `topology.js`: frontend logic for D3.js topology rendering, slice control and QoS management
   - `topology.css`: styling for the web interface
-  - `images/`: SVG icons for hosts, switches, and routers used in the visualization
+  - `images/`: SVG icons for hosts, switches and routers used in the visualization
 - **`images/`** contains documentation assets including topology diagrams and slice visualizations
 - **`Makefile`** provides convenient commands to run the topology and controller
 

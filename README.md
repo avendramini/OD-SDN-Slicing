@@ -379,8 +379,7 @@ The following commands allow interaction with the controller for setting time mo
 - `<mode> = 0` → **Day**, `<mode> = 1` → **Night**  
   This value must be correctly set when performing time-specific operations.
 
-- Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using:  
-  `curl -X GET http://localhost:8080/mode/get`
+- Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using: `curl -X GET http://localhost:8080/mode/get`
 
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
 
@@ -402,15 +401,15 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 
 #### Notes - Order to Apply QoS CLI Commands
 
-1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this, QoS rules won’t have valid queues to apply.
+1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this step, QoS rules won’t have valid queues to apply.
 
-2. Add QoS Rule (`POST /qos/rules/{dpid}`): After the queue is set, add QoS rules that specify how to use the configured queues (e.g., map certain traffic to a specific queue).
+2. Add QoS Rule (`POST /qos/rules/{dpid}`): After setting the queue, add QoS rules to specify how to use the configured queues (e.g., how to map certain traffic to a specific queue).
 
-3. Get queue and Get rules (`GET /qos/queue` and `GET /qos/rules`): Use these commands to check current queue and rule configurations.
+3. Get queue and Get rules (`GET /qos/queue` and `GET /qos/rules`): Use these commands to check the current queue and rule configurations.
 
-4. Delete QoS rule (`DELETE /qos/rules/{dpid}`): Before deleting rules, use GET to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
+4. Delete QoS rule (`DELETE /qos/rules/{dpid}`): Before deleting rules, use `GET` to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
 
-5. **Delete queue** (`DELETE /qos/queue/{dpid}` or `DELETE /qos/queue/all`): Use this command to remove the entire QoS queue configuration on a specific switch or all switches. This should typically be done after verifying the existing configuration with GET commands.
+5. Delete queue (`DELETE /qos/queue/{dpid}` or `DELETE /qos/queue/all`): Use this command to remove the entire QoS queue configuration on a specific switch or in all switches. This should typically be done after verifying the existing configuration with `GET` commands.
 
 
 ## Common Errors

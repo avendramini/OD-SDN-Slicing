@@ -37,6 +37,49 @@ Using SDN and network slicing, the system dynamically adapts to different scenar
 - Ryu SDN controller integration for traffic control and policy enforcement
 - Modular and extensible architecture for testing other SDN strategies
 
+## Project Structure
+
+The structure of the project is as follows:
+
+```
+├── externals/
+│   └── ryu/                    # Ryu SDN framework (git submodule)
+├── first_topology/
+│   ├── controller.py           # SDN controller logic with REST API endpoints
+│   ├── MacToPortMapper.py      # Network slice management and compatibility logic  
+│   ├── ProblemConstants.py     # Constants for slices and network configuration
+│   └── topology.py             # Mininet topology definition for the zoo network
+├── html/
+│   ├── images/                 # SVG icons for network components
+│   │   ├── host.svg
+│   │   ├── router.svg
+│   │   └── switch.svg
+│   ├── index.html              # Main web interface
+│   ├── topology.css            # Styles for the web GUI
+│   └── topology.js             # Frontend logic for topology visualization and slice control
+├── images/                     # Documentation and demo images
+│   ├── gui_demo.gif
+│   ├── Topology.png
+│   └── slice_*.png             # Slice diagrams for different scenarios
+└── Makefile                    # Build automation for running topology and controller
+```
+
+**Key directories and files:**
+
+- **`externals/ryu/`** contains the Ryu SDN framework as a git submodule
+- **`first_topology/`** contains the core SDN implementation:
+  - `controller.py`: main SDN controller with REST API endpoints for slice management and QoS configuration  
+  - `MacToPortMapper.py`: handles network slice activation/deactivation and compatibility checking
+  - `ProblemConstants.py`: defines slice configurations and network constants
+  - `topology.py`: Mininet script that creates the zoo network topology
+- **`html/`** contains the web-based GUI:
+  - `index.html`: main interface for slice management and network visualization
+  - `topology.js`: frontend logic for D3.js topology rendering, slice control, and QoS management
+  - `topology.css`: styling for the web interface
+  - `images/`: SVG icons for hosts, switches, and routers used in the visualization
+- **`images/`** contains documentation assets including topology diagrams and slice visualizations
+- **`Makefile`** provides convenient commands to run the topology and controller
+
 ## System architecture
 
 The system is composed of:

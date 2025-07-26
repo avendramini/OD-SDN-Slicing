@@ -1257,12 +1257,17 @@ function deleteQoS(dpid, qos_id){
  */
 
 function setQoSQueue(dpid, port_name, type, max_rate, queues){
-    req = {
-        "port_name": port_name, 
+    // Crea un oggetto di richiesta base
+    let req = {
         "type": type, 
         "max_rate": max_rate, 
         "queues": queues
     };
+    
+    // Aggiungi port_name solo se è stato specificato
+    if (port_name && port_name.trim() !== "") {
+        req.port_name = port_name;
+    }
     res = callApi('/qos/queue/' + dpid, 'POST', req);
     console.log(res);
     return res;
@@ -2004,10 +2009,10 @@ async function submitSetQoS() {
         return;
     }
     
-    if (isNaN(in_port)) {
+    /*if (isNaN(in_port)) {
         alert("Input port must be a valid number");
         return;
-    }
+    }*/
     
     if (isNaN(queue_id)) {
         alert("Queue ID must be a valid number");
@@ -2024,7 +2029,8 @@ async function submitSetQoS() {
     };
 
     // Add match fields only if they have values
-    if (in_port) req.match.in_port = in_port;
+    /*if (in_port) req.match.in_port = in_port;*/
+    if(in_port_str) req.match.in_port = in_port_str; // Use the string directly as per API
     
     // Convert dl_type from string to proper format according to API
     if (dl_type) {
@@ -2078,10 +2084,8 @@ async function submitSetQueue() {
     }
     
 
-    if (!in_port_name || in_port_name === "") {
-        alert("Input port is required");
-        return;
-    }
+    // Port name è ora opzionale, non serve più questo controllo
+    // La validazione avverrà sul backend se necessario
     
     if (!type || type === "") {
         alert("Type is required");
@@ -2159,11 +2163,15 @@ async function submitSetQueue() {
 
         // Build request according to Ryu queue REST API
         const req = {
-            "port_name": in_port_name,
             "type": type,
             "max_rate": "10000000", // Port max rate
             "queues": allQueues
         };
+        
+        // Aggiungi port_name solo se è stato specificato
+        if (in_port_name && in_port_name.trim() !== "") {
+            req.port_name = in_port_name;
+        }
 
         console.log("Sending queue configuration request:", req);
         const response = await callApi('/qos/queue/' + dpid, 'POST', req);

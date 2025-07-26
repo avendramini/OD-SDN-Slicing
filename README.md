@@ -354,7 +354,7 @@ The GUI application provides an intuitive and user-friendly interface to manage 
 TODO
 
 ## CLI REST Commands Overview
-The platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 
+In addition to the graphical interface, the platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 
 Using simple CLI-based `curl` commands, users can perform various network operations such as changing operational modes, managing slices or configuring QoS policies on OpenFlow switches.
 
 

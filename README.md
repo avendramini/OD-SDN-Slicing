@@ -51,13 +51,13 @@ The project simulates a smart, software-defined network for a modern zoo — a c
 
 Using SDN and network slicing, the system dynamically adapts to different scenarios:
 
-- **Daytime**: prioritizes administrative tasks, retail transactions and visitor Wi-Fi access.
-- **Nighttime**: reallocates bandwidth to security systems and minimizes unnecessary traffic.
+- **Day-time**: prioritizes administrative tasks, retail transactions and visitor Wi-Fi access.
+- **Night-time**: reallocates bandwidth to security systems and minimizes unnecessary traffic.
 
 
 ## Key Features
 
-- Dynamic creation and deletion of network slices
+- Dynamic activation and de-activation of network slices
 - Real-time QoS adjustment per slice
 - Web-based GUI for intuitive slice management
 - Mininet-based emulation of the network topology
@@ -162,7 +162,7 @@ Each slice connects specific hosts and zones for dedicated tasks (e.g., administ
 
 #### Store Management Slice (DAY/NIGHT)
 
-Day: This slice connects store PCs to the central database during the day to support real-time sales and inventory updates.
+Day: This slice enables communication between the store PCs (H6, H7) and each other, allowing coordination between sales and store control operations during the day. It ensures isolated communication within the Stores/restaurants Zone (S3) for internal store activities.
 
 <p align="center"> <img src="./images/slice_store_managementDAY.png" alt="Store Management Slice Diagram" width="1000"/> <br/> <em>Figure 2: Store Management Slice – Daytime</em> </p>
 
@@ -212,11 +212,11 @@ This slice enables administrative systems to communicate seamlessly with animal 
 <p align="center"> <img src="./images/slice_adminAnimal.png" alt="Administration–Animal Data Slice Diagram" width="1000"/> <br/> <em>Figure 9: Administration–Animal Data Slice </em> </p>
 
 #### Animal Management Slice (DAY/NIGHT)
-Day:This slice is active during the day to manage and monitor animals using environmental sensors and a dedicated control PC, ensuring real-time tracking of animal conditions and behaviors. 
+Day: This slice is active during the day to manage and monitor animals using environmental sensors and a dedicated control PC, ensuring real-time tracking of animal conditions and behaviors. 
 
 <p align="center"> <img src="./images/slice_animalManDAY.png" alt="Animal Management Slice Diagram" width="1000"/> <br/> <em>Figure 10: Animal Management Slice - Daytime </em> </p>
 
-Night: During the night, the slice operates in a limited mode, primarily allowing access to the central database for data updates and system maintenance, with reduced active monitoring.
+Night: During the night, the slice operates in a limited mode, primarily allowing access to the central database for data updates and system maintenance.
 
 <p align="center"> <img src="./images/slice_animalManNIGHT.png" alt="Animal Management Slice Diagram" width="1000"/> <br/> <em>Figure 11: Animal Management Slice - Nighttime </em> </p>
 
@@ -226,7 +226,7 @@ Day: This slice connects the IP cameras with the security server to enable live 
 
 <p align="center"> <img src="./images/slice_securityMonitoringDAY.png" alt="Security Monitoring Slice Diagram" width="1000"/> <br/> <em>Figure 12: Security Monitoring Slice - Daytime</em> </p>
 
-Night: During the night, it links security systems to the central database for data synchronization and allows remote monitoring, maintaining security oversight even when on-site activity is reduced.
+Night: During the night, it links security systems to the central database for data synchronization, ensuring all security events are securely stored and accessible for review. 
 
 <p align="center"> <img src="./images/slice_securityMonitoringNIGHT.png" alt="Security Monitoring Slice Diagram" width="1000"/> <br/> <em>Figure 13: Security Monitoring Slice - Nighttime</em> </p>
 
@@ -345,7 +345,13 @@ The result (4.43 Mbits/sec) reflects the actual bandwidth usage and should corre
 
 The GUI application provides an intuitive and user-friendly interface to manage and monitor network slices in real time. Users can activate/deactivate slices, view current network status and dynamically adjust QoS configurations without needing command-line interaction.
 
-<p align="center"> <img src="./images/gui_demo.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Interactive slice management and monitoring</em> </p>
+### Slices activation/de-activation:
+
+<p align="center"> <img src="./images/guiDemo_slices.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Interactive slice management and monitoring</em> </p>
+
+### Qos Management:
+
+TODO
 
 ## CLI REST Commands Overview
 The platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 

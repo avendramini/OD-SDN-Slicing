@@ -18,6 +18,33 @@
 
 ## Table of contents
 
+- [Project Overview](#project-overview)
+- [Project Idea](#project-idea)
+- [Key Features](#key-features)
+- [Project Structure](#project-structure)
+- [System Architecture](#system-architecture)
+  - [Hosts](#hosts)
+  - [OpenFlow Switches](#openflow-switches)
+- [Network Slicing Overview](#network-slicing-overview)
+  - [Slice Descriptions](#slice-descriptions)
+    - [Store Management Slice (DAY/NIGHT)](#store-management-slice-daynight)
+    - [Web Access Slice (DAY)](#web-access-slice-day)
+    - [Wi-Fi Access Slice (DAY)](#wi-fi-access-slice-day)
+    - [Administrative Core Slice (DAY/NIGHT)](#administrative-core-slice-daynight)
+    - [Administration–Store Sync Slice (DAY/NIGHT)](#administrationstore-sync-slice-daynight)
+    - [Administration–Wi-Fi Control Slice (DAY/NIGHT)](#administrationwi-fi-control-slice-daynight)
+    - [Administration–Security Slice (DAY/NIGHT)](#administrationsecurity-slice-daynight)
+    - [Administration–Animal Data Slice (DAY/NIGHT)](#administrationanimal-data-slice-daynight)
+    - [Animal Management Slice (DAY/NIGHT)](#animal-management-slice-daynight)
+    - [Security Monitoring Slice (DAY/NIGHT)](#security-monitoring-slice-daynight)
+- [Application Setup and Testing Commands](#application-setup-and-testing-commands)
+  - [Installation](#installation)
+  - [How to Run](#how-to-run)
+  - [How to Test](#how-to-test)
+- [GUI Application](#gui-application)
+- [CLI REST Commands Overview](#cli-rest-commands-overview)
+- [Common Errors](#common-errors)
+
 ## Project Idea
 
 The project simulates a smart, software-defined network for a modern zoo — a complex environment with diverse operational needs. The network integrates multiple functional zones such as administration, animal care, retail, security and visitor services.

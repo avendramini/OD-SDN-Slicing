@@ -2,6 +2,8 @@
 
 run-topology:
 	@echo "Running topology..."
+	@./cleanDB.sh
+	@./cleanQoS.sh
 	@sudo mn -c
 	@sudo python3 first_topology/topology.py
 

@@ -115,8 +115,6 @@ The system is composed of:
 - **12 Hosts**, each representing a key component of the smart zoo
 - **6 OpenFlow Switches**, divided into functional network zones
 
-All links between switches and hosts are configured with **10 Mbps bandwidth**
-
 ### Hosts
 
 | Host | Role | Description |

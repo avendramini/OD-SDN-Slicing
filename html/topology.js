@@ -146,7 +146,6 @@ var slice9NightLinkIds = [
     { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
 ];
 
-
 // slice 10
 var slice10DayLinkIds = [
     { src: "0000000000000005", dst: (8+MAC_MASK).toString() },
@@ -164,7 +163,6 @@ var slice11NightLinkIds = [
     { src: "0000000000000001", dst: "257" },  // host 1 (1+256=257)
     { src: "0000000000000005", dst: "264" },  // host 8 (8+256=264)
 ];
-
 
 // slice 12
 var slice12DayLinkIds = [
@@ -1768,6 +1766,9 @@ async function loadQoSRules() {
         tbody.innerHTML = "";
 
         data.forEach(rule => {
+            if(rule.qos_id !== undefined && rule.qos_id !== null && rule.qos_id !== "") {
+            }
+            
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${rule.qos_id}</td>
@@ -1780,6 +1781,7 @@ async function loadQoSRules() {
                 <td>${rule.queue_id}</td>
             `;
             tbody.appendChild(row);
+            
         });
     } catch (error) {
         console.error("Failed to load QoS rules:", error);
@@ -1970,14 +1972,15 @@ async function submitSetQoS() {
     const dpid = document.getElementById('switchSelect').value;
     const priority_str = document.getElementById('priority').value;
     const in_port_str = document.getElementById('in_port').value;
-    const dl_type = document.getElementById('eth_type').value;
+    const out_port_str = document.getElementById('out_port').value;
+    const nw_src = document.getElementById('nw_src').value; // Aggiungi questa linea per prendere nw_src
     const nw_dst = document.getElementById('nw_dst').value;
     const nw_proto = document.getElementById('ip_proto').value;
     const tp_dst_str = document.getElementById('tp_dst').value;
     const queue_id_str = document.getElementById('queue_id').value;
 
     // Validate required fields
-    if (!dpid) {
+    /*if (!dpid) {
         alert('Please select a switch');
         return;
     }
@@ -1995,11 +1998,12 @@ async function submitSetQoS() {
     if (!queue_id_str || queue_id_str === "") {
         alert("Queue ID is required");
         return;
-    }
+    }*/
 
     // Convert values
     const priority = parseInt(priority_str);
     const in_port = parseInt(in_port_str);
+    const out_port = parseInt(out_port_str);
     const queue_id = parseInt(queue_id_str);
     const tp_dst = tp_dst_str ? parseInt(tp_dst_str) : null;
 
@@ -2009,11 +2013,16 @@ async function submitSetQoS() {
         return;
     }
     
-    /*if (isNaN(in_port)) {
+    if (isNaN(in_port)) {
         alert("Input port must be a valid number");
         return;
-    }*/
-    
+    }
+
+    if (isNaN(out_port)) {
+        alert("Output port must be a valid number");
+        return;
+    }
+
     if (isNaN(queue_id)) {
         alert("Queue ID must be a valid number");
         return;
@@ -2022,20 +2031,21 @@ async function submitSetQoS() {
     // Build request according to Ryu QoS REST API
     const req = {
         "priority": priority,
-        "match": {},
+        "match": {
+            "in_port": in_port,
+            "dl_type":"IPv4" // Use the string directly as per API
+        },
         "actions": {
-            "queue": queue_id
+            "queue": queue_id,
+            "output": out_port
         }
     };
 
     // Add match fields only if they have values
-    /*if (in_port) req.match.in_port = in_port;*/
-    if(in_port_str) req.match.in_port = in_port_str; // Use the string directly as per API
     
-    // Convert dl_type from string to proper format according to API
-    if (dl_type) {
-        req.match.dl_type = dl_type; // Use the string directly as per API ("IPv4" or "IPv6")
-    }
+    
+    // Aggiungi nw_src se specificato
+    if (nw_src) req.match.nw_src = nw_src;
     
     if (nw_dst) req.match.nw_dst = nw_dst;
     
@@ -2164,7 +2174,7 @@ async function submitSetQueue() {
         // Build request according to Ryu queue REST API
         const req = {
             "type": type,
-            "max_rate": "10000000", // Port max rate
+            "max_rate": "10000000000", // Port max rate
             "queues": allQueues
         };
         

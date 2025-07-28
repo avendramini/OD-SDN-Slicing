@@ -60,6 +60,30 @@ def setOpenFlow13(net):
         print(f"Set OpenFlow 1.3 for {switch}")
         os.system(f"ovs-vsctl set-manager ptcp:6632")
 
+def applyQosRules(net, max_rate=10000000, min_rate=1000000):
+    print("\nApplying QoS rules to host-facing interfaces...")
+    for link in HOST_LINKS:
+        switch_name = link[1]
+        switch_port_num = link[3]
+        
+        port_name = f"{switch_name}-eth{switch_port_num}"
+
+        qos_id = "@qos"
+        queue_id = "@queue"
+
+        command = (
+            f"sudo ovs-vsctl -- --id={queue_id} create queue "
+            f"other-config:max-rate={max_rate} other-config:min-rate={min_rate} "
+            f"-- --id={qos_id} create qos type=linux-htb queues:0={queue_id} "
+            f"other-config:max-rate={max_rate} "
+            f"-- set port {port_name} qos={qos_id}"
+        )
+        
+        print(f"  - Setting QoS for port {port_name} on {switch_name}")
+        os.system(command)
+    
+    print("QoS rules applied successfully.\n")
+
 if __name__ == "__main__":
     topo = Topology()
     net = Mininet(
@@ -77,6 +101,7 @@ if __name__ == "__main__":
     net.start()
 
     setOpenFlow13(net)
+    applyQosRules(net)
 
     CLI(net)
     net.stop()

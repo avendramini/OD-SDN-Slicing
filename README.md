@@ -368,7 +368,7 @@ In addition to the graphical interface, the platform exposes a RESTful API that 
 Using simple CLI-based `curl` commands, users can perform various network operations such as changing operational modes, managing slices or configuring QoS policies on OpenFlow switches.
 
 
-### Core REST API Commands for Slice and Controller Management:
+### 1. Core REST API Commands for Slice and Controller Management:
 
 The following commands allow interaction with the controller for setting time modes, adding/removing slices and managing the forwarding logic and topology.
 
@@ -403,7 +403,6 @@ This section lists the parameters used in slice and mode management API requests
 
 - **`slice_id`** *(string or integer)*: Identifier of the slice being added or removed.   This is a **1-indexed** value, ranging from `1` to `13`. Each slice represents a distinct network partition or service profile.
 
-------------------
 
 ### General Notes
 
@@ -411,9 +410,8 @@ This section lists the parameters used in slice and mode management API requests
 
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
 
----------------------------------------
 
-### QoS CLI Commands
+###  2. QoS CLI Commands
 
 These are the available CLI commands to manage Quality of Service (QoS) configurations via the REST API. You can use these commands to retrieve queue settings, set new queues, add or delete QoS rules on your OpenFlow switches.
 
@@ -473,9 +471,8 @@ This section lists all parameters used in the QoS API requests, along with their
 - **`qos_id`** *(integer or string)*: ID of the QoS rule to delete, or `"all"` to delete all rules for the given switch.
 
 
----
 
-#### Notes - Order to Apply QoS CLI Commands
+### Notes - Order to Apply QoS CLI Commands
 
 1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this step, QoS rules won’t have valid queues to apply.
 

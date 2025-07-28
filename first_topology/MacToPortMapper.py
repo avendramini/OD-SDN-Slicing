@@ -11,7 +11,7 @@ class MacToPortMapper:
             self.adjacency_list[a].append(b)
             self.adjacency_list[b].append(a)
         
-        # Non attivare slice di default - il sistema parte vuoto
+        # Don't activate default slice - the system starts empty
         # self._activate_all_slices()
 
     def verify_add_compatibility(self, slice_number):
@@ -49,7 +49,7 @@ class MacToPortMapper:
         return self.map
     
     def _activate_all_slices(self):
-        """Attiva tutti gli slice di default se compatibili"""
+        """Activate all default slices if compatible"""
         activated_slices = []
         for slice_id in range(1, st.NUM_SLICES + 1):
             if self.verify_add_compatibility(slice_id):
@@ -60,16 +60,16 @@ class MacToPortMapper:
                         if x not in self.map:
                             self.map[x] = {}
                         self.map[x][y] = st.SLICES_RULES[slice_id - 1][x][y]
-        print(f"Slices attivati di default: {activated_slices}")
-        print(f"Stato active_slice: {self.active_slice}")
-        print(f"Numero di regole nella mappa: {len(self.map)}")
+        print(f"Slices enabled by default: {activated_slices}")
+        print(f"active_slice state: {self.active_slice}")
+        print(f"Number of rules in the map: {len(self.map)}")
     
     def get_active_slices(self):
-        """Restituisce la lista degli slice attualmente attivi"""
+        """Returns the list of currently active slices"""
         return [i + 1 for i, active in enumerate(self.active_slice) if active == 1]
     
     def get_active_slices_status(self):
-        """Restituisce il dettaglio dello stato degli slice"""
+        """Returns the slice status details"""
         return {
             'active_slices': self.get_active_slices(),
             'active_slice_array': self.active_slice,

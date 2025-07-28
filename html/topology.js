@@ -288,13 +288,14 @@ function updateColors() {
         if (Array.isArray(sliceLinkIds) && sliceLinkIds.length > 0) {
             var sliceLinks = topo.links.filter(function(link) {
                 return sliceLinkIds.some(function(id) {
-                    // Converte i DPID in string per confronto consistente
+                    // Convert DPIDs to strings for consistent comparison
                     var linkSrcStr = String(link.port.src.dpid);
                     var linkDstStr = String(link.port.dst.dpid);
                     var sliceSrcStr = String(id.src);
                     var sliceDstStr = String(id.dst);
                     
-                    // Verifica entrambe le direzioni del link
+
+                    // Check both directions of the link
                     var forward = (linkSrcStr === sliceSrcStr && linkDstStr === sliceDstStr);
                     var reverse = (linkSrcStr === sliceDstStr && linkDstStr === sliceSrcStr);
                     
@@ -348,20 +349,20 @@ function calculateCombinedColor(slices) {
     return `rgb(${combinedColor.r}, ${combinedColor.g}, ${combinedColor.b})`;
 }
 
-// Funzione per caricare lo stato di entrambe le modalità all'avvio
+// Function to load the state of both modes at startup
 async function loadAllSlicesState() {
     try {
-        console.log("Caricamento stato slice per entrambe le modalità...");
+        console.log("Loading slice state for both modes...");
         
-        // Carica stato modalità giorno
+        // Load day mode state
         const currentMode = dayMode;
         
-        // Forza temporaneamente modalità giorno nel backend per ottenere gli slice
+        // Temporarily force day mode in the backend to get slices
         await callApi('/mode/set', 'POST', { mode: "0" });
         const dayResponse = await callApi('/slices/status', 'GET');
         if (dayResponse && dayResponse.active_slices) {
             selectedSlicesDay = [...dayResponse.active_slices];
-            console.log("Slice giorno caricati:", selectedSlicesDay);
+            console.log("Uploaded day slices:", selectedSlicesDay);
         }
         
         // Carica stato modalità notte
@@ -369,7 +370,7 @@ async function loadAllSlicesState() {
         const nightResponse = await callApi('/slices/status', 'GET');
         if (nightResponse && nightResponse.active_slices) {
             selectedSlicesNight = [...nightResponse.active_slices];
-            console.log("Slice notte caricati:", selectedSlicesNight);
+            console.log("Night slices uploaded:", selectedSlicesNight);
         }
         
         // Ripristina la modalità originale
@@ -380,25 +381,25 @@ async function loadAllSlicesState() {
         syncCheckboxesWithState();
         updateColors();
         
-        console.log("Stato completo caricato:");
+        console.log("Full status loaded:");
         console.log("selectedSlicesDay:", selectedSlicesDay);
         console.log("selectedSlicesNight:", selectedSlicesNight);
         
     } catch (error) {
-        console.error("Errore nel caricamento completo dello stato slice:", error);
+        console.error("Error loading slice state completely:", error);
     }
 }
 
-// Funzione per caricare lo stato degli slice dal backend
+// Function to load the slice state from the backend
 async function loadSliceState(skipModeUpdate = false) {
     try {
-        console.log("Caricamento stato slice dal backend...");
+        console.log("Loading slice state from backend...");
         const response = await callApi('/slices/status', 'GET');
         
         if (response && response.active_slices) {
-            console.log("Stato slice ricevuto:", response);
+            console.log("Slice status received:", response);
             
-            // Imposta la modalità corrente solo se non è stato specificato di saltare l'aggiornamento
+            // Set the current mode only if skip refresh is not specified
             if (!skipModeUpdate) {
                 const isNightMode = response.mode === 'NIGHT';
                 dayMode = !isNightMode;
@@ -417,53 +418,53 @@ async function loadSliceState(skipModeUpdate = false) {
                     document.body.classList.remove('night-mode');
                 }
             }
-            
-            // Aggiorna gli array degli slice attivi per la modalità corrente del backend
-            const isCurrentlyNightMode = response.mode === 'NIGHT';
+
+            // Update the active slice arrays for the current backend mode
+                        const isCurrentlyNightMode = response.mode === 'NIGHT';
             if (isCurrentlyNightMode) {
                 selectedSlicesNight = [...response.active_slices];
-                console.log("Slice attivi in modalità notte:", selectedSlicesNight);
+                console.log("Active slices in night mode:", selectedSlicesNight);
                 
-                // Se siamo in modalità notte nel frontend, aggiorna i checkbox e colori
+                // If we are in night mode in the frontend, update the checkboxes and colors
                 if (!dayMode) {
                     syncCheckboxesWithState();
                     updateColors();
                 }
             } else {
                 selectedSlicesDay = [...response.active_slices];
-                console.log("Slice attivi in modalità giorno:", selectedSlicesDay);
+                console.log("Active slices in day mode:", selectedSlicesDay);
                 
-                // Se siamo in modalità giorno nel frontend, aggiorna i checkbox e colori
+                // If we are in day mode in the frontend, update the checkboxes and colors
                 if (dayMode) {
                     syncCheckboxesWithState();
                     updateColors();
                 }
             }
             
-            console.log("Stato slice sincronizzato con successo!");
+            console.log("Slice state synced successfully!");
             console.log("selectedSlicesDay:", selectedSlicesDay);
             console.log("selectedSlicesNight:", selectedSlicesNight);
             
-            return true; // Restituisce true per indicare successo
+            return true; // Returns true to indicate success
         } else {
-            console.warn("Nessun dato slice ricevuto dal backend");
+            console.warn("No slice data received from the backend");
             return false;
         }
     } catch (error) {
-        console.error("Errore nel caricamento dello stato slice:", error);
+        console.error("Error loading slice state:", error);
         return false;
     }
 }
 
-// Funzione per sincronizzare i checkbox con lo stato degli slice
+// Function to synchronize checkboxes with the state of slices
 function syncCheckboxesWithState() {
     const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
-    console.log(`Sincronizzazione checkbox per modalità ${dayMode ? 'Day' : 'Night'}:`, selectedSlices);
+    console.log(`Checkbox synchronization for modes ${dayMode ? 'Day' : 'Night'}:`, selectedSlices);
     
     sliceMap.forEach((item) => {
         const checkbox = document.getElementById(`tab${item.checkboxId}`);
-        if (checkbox && item.checkboxId !== 11) { // Escludi il checkbox RESET
-            // Verifica se almeno uno degli slice dell'item è attivo nella modalità corrente
+        if (checkbox && item.checkboxId !== 11) { // Exclude the RESET checkbox
+            // Check if at least one of the item's slices is active in the current mode
             const isActive = item.slices.some(sliceItem => {
                 const modeMatches = sliceItem.mode === (dayMode ? 'day' : 'night');
                 const sliceIsSelected = selectedSlices.includes(sliceItem.slice);
@@ -471,7 +472,7 @@ function syncCheckboxesWithState() {
             });
             
             checkbox.checked = isActive;
-            console.log(`Checkbox ${item.checkboxId}: ${isActive ? 'attivo' : 'inattivo'}`);
+            console.log(`Checkbox ${item.checkboxId}: ${isActive ? 'active' : 'inactive'}`);
         }
     });
 }
@@ -495,7 +496,7 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
             console.log("Switching to Night Mode");
             await callApi('/mode/set', 'POST', { mode: "1" });
             
-            // Ricarica lo stato degli slice dal backend dopo il cambio modalità
+            // Reload slice state from backend after mode change
             await loadSliceState(true);
 
         } else {
@@ -504,7 +505,7 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
             console.log("Switching to Day Mode");
             await callApi('/mode/set', 'POST', { mode: "0" });
             
-            // Ricarica lo stato degli slice dal backend dopo il cambio modalità
+            // Reload slice state from backend after mode change
             await loadSliceState(true);
         }
         
@@ -513,7 +514,7 @@ document.querySelectorAll('input[name="userType"]').forEach(function (input) {
     });
 });
 
-// Gestione degli eventi di selezione per ogni checkbox
+// Handling selection events for each checkbox
 sliceMap.forEach((item) => {
     document.getElementById(`tab${item.checkboxId}`).addEventListener('change', function() {
         const selectedSlices = dayMode ? selectedSlicesDay : selectedSlicesNight;
@@ -531,7 +532,7 @@ sliceMap.forEach((item) => {
                 callApi('/reset/map', 'POST', { mode: "1" });
             }
 
-            // Resetta le connessioni e la colorazione degli elementi
+            // Reset the connections and coloring of the elements
             d3.selectAll(".link").attr("class", "link").style("stroke", null).style("stroke-width", null).style("stroke-opacity", null);
             document.querySelectorAll('.sidebar .menu-item, .sidebar .menu-button').forEach(function (menuItem) {
                 menuItem.style.backgroundColor = '';  
@@ -633,8 +634,8 @@ ws.onerror = function(event) {
 }
 
 /**
- * Invia una richiesta per la topologia completa tramite WebSocket
- * Questa è un'alternativa alla richiesta HTTP
+* Send a request for the complete topology via WebSocket
+* This is an alternative to the HTTP request
  */
 function requestTopologyViaWebSocket() {
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1008,7 +1009,7 @@ var rpc = {
         return "";
     },
     event_slice_update: function (params) {
-        // Gestisce aggiornamenti degli slice in tempo reale
+        // Handles slice updates in real time
         console.log("Slice update event:", params);
         if (params && params.active_slices) {
             const isNightMode = params.mode === 'NIGHT';
@@ -1023,7 +1024,7 @@ var rpc = {
         return "";
     },
     event_mode_change: function (params) {
-        // Gestisce cambi di modalità in tempo reale
+        // Handles mode changes in real time
         console.log("Mode change event:", params);
         if (params && params.mode !== undefined) {
             const isNightMode = params.mode === 'NIGHT';
@@ -1048,20 +1049,20 @@ var rpc = {
         return "";
     },
     event_topology_complete: function (params) {
-        // Gestisce il caricamento della topologia completa
+        // Handles loading of the complete topology
         console.log("Complete topology received:", params);
         if (params && params.switches && params.links && params.hosts) {
             console.log(`Processing topology: ${params.switches.length} switches, ${params.links.length} links, ${params.hosts.length} hosts`);
             
-            // Reinizializza la topologia con i nuovi dati
+            //Reinitialize the topology with the new data
             topo.initialize({
                 switches: params.switches, 
                 links: params.links, 
                 hosts: params.hosts
             });
             elem.update();
-            
-            // Carica le configurazioni aggiuntive
+            // Load additional configurations
+             
             loadAdditionalConfigurations(params.switches);
             
             console.log("Topology updated successfully from complete data");
@@ -1075,8 +1076,8 @@ var rpc = {
 // QoS
 
 /**
- * Richiede al controller di inviare la topologia completa
- * Approccio semplificato che riceve i dati direttamente via HTTP
+* Requires the controller to send the complete topology
+* Simplified approach that receives data directly via HTTP
  */
 async function requestCompleteTopology() {
     try {
@@ -1087,7 +1088,7 @@ async function requestCompleteTopology() {
             console.log("Complete topology received directly via HTTP:", response);
             console.log(`Processing topology: ${response.switches.length} switches, ${response.links.length} links, ${response.hosts.length} hosts`);
             
-            // Processa i dati direttamente
+            // Process data directly
             topo.initialize({
                 switches: response.switches, 
                 links: response.links, 
@@ -1095,10 +1096,10 @@ async function requestCompleteTopology() {
             });
             elem.update();
             
-            // Carica le configurazioni aggiuntive
+            // Load additional configurations
             loadAdditionalConfigurations(response.switches);
             
-            // Applica i colori degli slice attivi dopo un breve delay per assicurarsi che tutto sia caricato
+            // Apply the colors of the active slices after a short delay to make sure everything is loaded
             setTimeout(() => {
                 console.log("Applying slice colors after topology load...");
                 updateColors();
@@ -1116,8 +1117,8 @@ async function requestCompleteTopology() {
 }
 
 /**
- * Richiede direttamente la topologia tramite WebSocket senza passare per HTTP
- * Invia un messaggio RPC custom al controller
+* Requests the topology directly via WebSocket without going through HTTP
+* Sends a custom RPC message to the controller
  */
 function requestTopologyViaWebSocket() {
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1137,14 +1138,14 @@ function requestTopologyViaWebSocket() {
 }
 
 /**
- * Recarica la topologia utilizzando il metodo WebSocket RPC
- * Con fallback al metodo tradizionale se necessario
+ * Reloads the topology using the WebSocket RPC method
+* Fallback to the traditional method if necessary
  */
 async function reloadTopology() {
     try {
         console.log("Reloading topology...");
         
-        // Prova prima con WebSocket diretto se disponibile
+        // Try direct WebSocket first if available
         if (ws && ws.readyState === WebSocket.OPEN) {
             const wsResult = requestTopologyViaWebSocket();
             if (wsResult) {
@@ -1153,14 +1154,14 @@ async function reloadTopology() {
             }
         }
         
-        // Altrimenti usa il metodo HTTP che triggera il WebSocket
+        // Otherwise use the HTTP method that triggers the WebSocket
         const httpResult = await requestCompleteTopology();
         
         if (httpResult) {
             console.log("Topology reload requested via HTTP->WebSocket");
             return true;
         } else {
-            // Fallback finale al metodo tradizionale
+            // Final fallback to the traditional method
             console.log("Falling back to traditional topology loading...");
             initialize_topology_traditional();
             return true;
@@ -1172,8 +1173,8 @@ async function reloadTopology() {
 }
 
 /**
- * Caricamento tradizionale della topologia (metodo originale)
- * Mantenuto come fallback
+* Traditional topology loading (original method)
+* Retained as a fallback
  */
 function initialize_topology_traditional() {
     console.log("Using traditional topology loading method");
@@ -1255,14 +1256,13 @@ function deleteQoS(dpid, qos_id){
  */
 
 function setQoSQueue(dpid, port_name, type, max_rate, queues){
-    // Crea un oggetto di richiesta base
+    // Create a basic request object
     let req = {
         "type": type, 
         "max_rate": max_rate, 
         "queues": queues
     };
-    
-    // Aggiungi port_name solo se è stato specificato
+    // Add port_name only if specified
     if (port_name && port_name.trim() !== "") {
         req.port_name = port_name;
     }
@@ -1380,16 +1380,16 @@ function proceedWithTopologyLoad() {
 }
 
 /**
- * Carica le configurazioni aggiuntive dopo che la topologia è stata caricata
+* Load additional configurations after the topology has been loaded
  */
 async function loadAdditionalConfigurations(switches = null) {
     try {
-        // Configura OVSDB se abbiamo gli switch
+        // Configure OVSDB if we have switches
         if (switches && Array.isArray(switches)) {
             setOVSDBAddress(switches);
             updateSwitchSelector(switches);
         } else if (topo.nodes && topo.nodes.length > 0) {
-            // Estrai gli switch dalla topologia caricata
+            // Extract switches from the loaded topology
             const switchNodes = topo.nodes.filter(node => node.type === 'switch');
             if (switchNodes.length > 0) {
                 setOVSDBAddress(switchNodes);
@@ -1406,17 +1406,17 @@ async function loadAdditionalConfigurations(switches = null) {
             console.warn("Preemptive QoS clearing failed, continuing:", preemptiveError);
         }
         
-        // Carica QoS rules con auto-recovery
+        // Load QoS rules with auto-recovery
         try {
             await loadQoSRules();
         } catch (qosError) {
             console.warn("QoS rules loading failed, continuing with slice loading:", qosError);
         }
         
-        // Carica stato slice e applica i colori
+        // Load slice state and apply colors
         try {
             await loadSliceState();
-            // Dopo aver caricato lo stato degli slice, applica i colori
+            // After loading the slice state, apply the colors
             console.log("Applying colors after topology and slice state loaded...");
             updateColors();
         } catch (sliceError) {
@@ -1448,11 +1448,11 @@ function updateSwitchSelector(switches) {
         'delQueueSelect'
     ];
     
-    // Trova anche tutti gli elementi che iniziano con "switchSelect" seguito da un numero
+    // Also finds all items that start with "switchSelect" followed by a number
     const dynamicSelects = document.querySelectorAll('select[id^="switchSelect"]');
     const allSelects = [];
     
-    // Aggiungi i selettori statici
+    // Add static selectors
     switchSelectorIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
@@ -1460,10 +1460,10 @@ function updateSwitchSelector(switches) {
         }
     });
     
-    // Aggiungi i selettori dinamici (ma solo quelli che sono realmente selettori di switch)
+    // Add dynamic selectors (but only those that are actually switch selectors)
     dynamicSelects.forEach(select => {
         const id = select.id;
-        // Includi solo se l'ID è esattamente "switchSelect" o "switchSelect" seguito da numeri
+        // Include only if the ID is exactly "switchSelect" or "switchSelect" followed by numbers
         if (id === 'switchSelect' || /^switchSelect\d+$/.test(id)) {
             if (!allSelects.includes(select)) {
                 allSelects.push(select);
@@ -1482,7 +1482,7 @@ function updateSwitchSelector(switches) {
         if (select) {
             const isQueueSelect = select.id === 'queueSelect' || select.id=== 'delQueueSelect';
             
-            // Pulisce le opzioni esistenti
+            // Clear existing options
             if (isQueueSelect) {
                 // Per queueSelect, mantieni sempre "all" come prima opzione
                 select.innerHTML = "";
@@ -1492,7 +1492,7 @@ function updateSwitchSelector(switches) {
                 allOption.selected = true;
                 select.appendChild(allOption);
             } else {
-                // Per altri selettori, usa la logica originale
+                // For other selectors, use the original logic
                 const firstOption = select.options[0];
                 if (firstOption && (firstOption.value === "" || firstOption.disabled)) {
                     while (select.children.length > 1) {
@@ -1502,7 +1502,7 @@ function updateSwitchSelector(switches) {
                     select.innerHTML = "";
                 }
                 
-                // Aggiunge opzione placeholder se non presente
+                // Adds placeholder option if not present
                 if (!firstOption || firstOption.value !== "") {
                     const placeholderOpt = document.createElement("option");
                     placeholderOpt.value = "";
@@ -1513,7 +1513,7 @@ function updateSwitchSelector(switches) {
                 }
             }
             
-            // Aggiunge i nuovi switch
+            // Adds the new switches
             switches.forEach(sw => {
                 const opt = document.createElement("option");
                 opt.value = sw.dpid;
@@ -1973,7 +1973,7 @@ async function submitSetQoS() {
     const priority_str = document.getElementById('priority').value;
     const in_port_str = document.getElementById('in_port').value;
     const out_port_str = document.getElementById('out_port').value;
-    const nw_src = document.getElementById('nw_src').value; // Aggiungi questa linea per prendere nw_src
+    const nw_src = document.getElementById('nw_src').value; // Add this line to get nw_src
     const nw_dst = document.getElementById('nw_dst').value;
     const nw_proto = document.getElementById('ip_proto').value;
     const tp_dst_str = document.getElementById('tp_dst').value;
@@ -2094,8 +2094,8 @@ async function submitSetQueue() {
     }
     
 
-    // Port name è ora opzionale, non serve più questo controllo
-    // La validazione avverrà sul backend se necessario
+    // Port name is now optional; this check is no longer needed.
+    // Validation will be performed on the backend if necessary.
     
     if (!type || type === "") {
         alert("Type is required");
@@ -2241,7 +2241,7 @@ function main() {
     
     initialize_topology();
     
-    // Esponi le funzioni globalmente per debugging e uso esterno
+    // Expose functions globally for debugging and external use
     window.requestCompleteTopology = requestCompleteTopology;
     window.reloadTopology = reloadTopology;
     window.initializeTopology = initialize_topology;
@@ -2253,7 +2253,7 @@ function main() {
     window.loadSliceState = loadSliceState;
     window.syncCheckboxesWithState = syncCheckboxesWithState;
     
-    // Esponi le funzioni QoS per debugging
+    // Expose QoS functions for debugging
     window.deleteQoS = deleteQoS;
     window.getQoS = getQoS;
     window.loadQoSRules = loadQoSRules;
@@ -2300,7 +2300,7 @@ function main() {
         return successCount > 0;
     };
     
-    // Funzione di utilità per forzare l'aggiornamento completo
+    // Utility function to force full refresh
     window.forceRefreshSlices = async function() {
         console.log("=== Force Refresh Slices ===");
         try {

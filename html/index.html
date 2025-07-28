@@ -72,11 +72,13 @@
 
 </div>
 
-<!-- QoS Configuration Panel - spostato sotto la topologia -->
+
+<!-- QoS Configuration Panel - moved under Topology -->
 <div class="qos-panel">
     <h2>QoS Configuration Panel</h2>
 
-    <!-- Sezione 1: QoS Rules -->
+
+<!-- Section 1: QoS Rules -->
     <div class="qos-section">
         <label for="switchSelect">Select Switch:</label>
         <select id="switchSelect" onchange="loadQoSRules()"></select>
@@ -129,7 +131,7 @@
         </form>
     </div>
 
-    <!-- Sezione 2: Queue Management -->
+     <!-- Section 2: Queue Management -->
     <div class="qos-section">
         <h3>Set Queue</h3>
         <form id="setQueueForm" class="qos-form" onsubmit="event.preventDefault(); submitSetQueue();">

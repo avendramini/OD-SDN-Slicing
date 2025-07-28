@@ -192,23 +192,23 @@ class Controller(app_manager.RyuApp):
     
     def reset_switches(self):
         """
-        Resetta tutte le tabelle di flusso degli switch connessi e reinizializza la rete
+Resets all flow tables of connected switches and reinitializes the network
         """
         for datapath in self.datapaths.values():  # Itera sugli switch conosciuti
             ofproto = datapath.ofproto
             parser = datapath.ofproto_parser
 
-            # Crea un messaggio di eliminazione delle regole di flusso
-            match = parser.OFPMatch()  # Nessun match = cancella tutte le regole
+          # Create a flow rule deletion message
+            match = parser.OFPMatch()  # No match = clear all rules
             mod = parser.OFPFlowMod(
                 datapath=datapath, 
-                command=ofproto.OFPFC_DELETE,  # Comando di eliminazione
-                out_port=ofproto.OFPP_ANY,  # Cancella per tutte le porte
-                out_group=ofproto.OFPG_ANY,  # Cancella per tutti i gruppi
+                command=ofproto.OFPFC_DELETE,  # Delete command
+                out_port=ofproto.OFPP_ANY,  # Clear for all ports
+                out_group=ofproto.OFPG_ANY,  # Clear for all groups
                 match=match
             )
-            datapath.send_msg(mod)  # Invia il messaggio allo switch
-            self.logger.info(f"Reset delle tabelle di flusso per lo switch {datapath.id}")
+            datapath.send_msg(mod)  # Send the message to the switch
+            self.logger.info(f"Resetting the flow tables for the switch {datapath.id}")
 
             # Reinstall table-miss flow entry
             match = parser.OFPMatch()
@@ -308,8 +308,8 @@ class ControllerServer(ControllerBase):
         try:
             mode_data = req.json if req.body else {}
             mode = int(mode_data.get('mode')) if mode_data.get('mode') else None
-            print(f"Modalità attuale: {self.state.active_mode}")
-            print(f"Modalità richiesta{mode}")
+            print(f"Current mode: {self.state.active_mode}")
+            print(f"Requested mode{mode}")
             if mode not in [self.state.DAY, self.state.NIGHT]:
                 return Response(status=400, body="Invalid mode")
             self.state.active_mode = mode
@@ -317,7 +317,7 @@ class ControllerServer(ControllerBase):
             active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
             self.controller_instance.reset_switches()
-            print(f"Modalità modificata: {self.state.active_mode}")
+            print(f"Modified mode: {self.state.active_mode}")
             return Response(status=200, json_body={"message": "Mode set successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -351,12 +351,9 @@ class ControllerServer(ControllerBase):
             
             if self.state.mappers[self.state.active_mode].active_slice[slice_id-1] == 1 or not self.state.mappers[self.state.active_mode].add_slice(slice_id):
                 return Response(status=400, body="Failed to add slice")
-            print("Non sono crashato1")
             active_slices = [i+1 for i, active in enumerate(self.state.mappers[self.state.active_mode].active_slice) if active]
-            print("Non sono crashato2")
             self.controller_instance.mac_to_port = self.state.mappers[self.state.active_mode].map
             self.controller_instance.reset_switches()
-            print("Non sono crashato3")
             return Response(status=200, json_body={"message": "Slice added successfully", "active_mode": self.state.active_mode, "active_slices": active_slices})
         except Exception as e:
             return Response(status=500, body=str(e))
@@ -415,10 +412,10 @@ class ControllerServer(ControllerBase):
     @route('topology', '/topology/send', methods=['POST'])
     def send_complete_topology(self, req):
         """
-        Restituisce la topologia completa con host hardcodati
+Returns the complete topology with hardcoded hosts
         """
         try:
-            # Dati mock per switches (evita chiamate HTTP ricorsive)
+            # Dati mock per switches (avoid recursive HTTP calls)
             switches = [
                 {"dpid": "0000000000000001", "ports": []},
                 {"dpid": "0000000000000002", "ports": []},
@@ -428,7 +425,7 @@ class ControllerServer(ControllerBase):
                 {"dpid": "0000000000000006", "ports": []}
             ]
             
-            # Dati mock per links (evita chiamate HTTP ricorsive)
+            # Dati mock per links (avoid recursive HTTP calls)
             links = [
                 {"src": {"dpid": "0000000000000001", "port_no": "00000001"}, 
                  "dst": {"dpid": "0000000000000004", "port_no": "00000001"}},
@@ -442,14 +439,14 @@ class ControllerServer(ControllerBase):
                  "dst": {"dpid": "0000000000000006", "port_no": "00000001"}}
             ]
             
-            # Host hardcodati basati su topology.py
+            # Hard-coded hosts based on topology.py
             hosts = [
                 {
                     "mac": "00:00:00:00:01:01",
                     "ipv4": ["192.168.1.1"],
                     "port": {
                         "dpid": "0000000000000001",  # s1
-                        "port_no": "00000004",       # porta 4
+                        "port_no": "00000004",       # port 4
                         "hw_addr": "00:00:00:00:01:01",
                         "name": "s1-eth4"
                     }
@@ -459,7 +456,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.2"],
                     "port": {
                         "dpid": "0000000000000001",  # s1
-                        "port_no": "00000005",       # porta 5
+                        "port_no": "00000005",       # port 5
                         "hw_addr": "00:00:00:00:01:02",
                         "name": "s1-eth5"
                     }
@@ -469,7 +466,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.3"], 
                     "port": {
                         "dpid": "0000000000000001",  # s1
-                        "port_no": "00000006",       # porta 6
+                        "port_no": "00000006",       # port 6
                         "hw_addr": "00:00:00:00:01:03",
                         "name": "s1-eth6"
                     }
@@ -479,7 +476,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.4"],
                     "port": {
                         "dpid": "0000000000000002",  # s2
-                        "port_no": "00000002",       # porta 2
+                        "port_no": "00000002",       # port 2
                         "hw_addr": "00:00:00:00:01:04",
                         "name": "s2-eth2"
                     }
@@ -489,7 +486,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.5"],
                     "port": {
                         "dpid": "0000000000000002",  # s2
-                        "port_no": "00000003",       # porta 3
+                        "port_no": "00000003",       # port 3
                         "hw_addr": "00:00:00:00:01:05",
                         "name": "s2-eth3"
                     }
@@ -499,7 +496,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.6"],
                     "port": {
                         "dpid": "0000000000000003",  # s3
-                        "port_no": "00000002",       # porta 2
+                        "port_no": "00000002",       # port 2
                         "hw_addr": "00:00:00:00:01:06",
                         "name": "s3-eth2"
                     }
@@ -509,7 +506,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.7"],
                     "port": {
                         "dpid": "0000000000000003",  # s3
-                        "port_no": "00000003",       # porta 3
+                        "port_no": "00000003",       # port 3
                         "hw_addr": "00:00:00:00:01:07",
                         "name": "s3-eth3"
                     }
@@ -529,7 +526,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.9"],
                     "port": {
                         "dpid": "0000000000000005",  # s5
-                        "port_no": "00000003",       # porta 3
+                        "port_no": "00000003",       # port 3
                         "hw_addr": "00:00:00:00:01:09",
                         "name": "s5-eth3"
                     }
@@ -539,7 +536,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.10"],
                     "port": {
                         "dpid": "0000000000000006",  # s6
-                        "port_no": "00000002",       # porta 2
+                        "port_no": "00000002",       # port 2
                         "hw_addr": "00:00:00:00:01:0a",
                         "name": "s6-eth2"
                     }
@@ -549,7 +546,7 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.11"],
                     "port": {
                         "dpid": "0000000000000006",  # s6
-                        "port_no": "00000003",       # porta 3
+                        "port_no": "00000003",       # port 3
                         "hw_addr": "00:00:00:00:01:0b",
                         "name": "s6-eth3"
                     }
@@ -559,14 +556,14 @@ class ControllerServer(ControllerBase):
                     "ipv4": ["192.168.1.12"],
                     "port": {
                         "dpid": "0000000000000006",  # s6
-                        "port_no": "00000004",       # porta 4
+                        "port_no": "00000004",       # port 4
                         "hw_addr": "00:00:00:00:01:0c",
                         "name": "s6-eth4"
                     }
                 }
             ]
             
-            # Creazione della risposta completa
+            # Creating the complete response
             complete_data = {
                 "switches": switches,
                 "links": links,

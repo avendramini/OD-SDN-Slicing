@@ -236,7 +236,7 @@ Follow the instructions provided in this [link](https://www.granelli-lab.org/res
 
 1. Copy and paste this command:
 ```bash
- `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
+git clone git@github.com:avendramini/OD-SDN-Slicing.git
  ```
 2. Do `cd OD-SDN-Slicing`.
 3. Download the external libraries by running:

@@ -237,7 +237,9 @@ Follow the instructions provided in this [link](https://www.granelli-lab.org/res
 1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
 2. Do `cd OD-SDN-Slicing`.
 3. Download the external libraries by running:
-<pre> ```git submodule update --init --recursive ``` </pre>
+```bash
+git submodule update --init --recursive
+```
 This step is necessary because we have made custom modifications to the REST QoS component. As a result, we need to have the corresponding library cloned locally, instead of relying on the default version included upstream.
 
 

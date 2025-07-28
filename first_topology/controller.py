@@ -13,6 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
+import importlib.util
+
+MODULE_TO_REPLACE = 'ryu.app.rest_qos'
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+MODIFIED_FILE_PATH = os.path.join(
+    PROJECT_ROOT,
+    'externals',
+    'ryu',
+    MODULE_TO_REPLACE.replace('.', os.path.sep) + '.py'
+)
+
+if os.path.exists(MODIFIED_FILE_PATH):
+    spec = importlib.util.spec_from_file_location(MODULE_TO_REPLACE, MODIFIED_FILE_PATH)
+    modified_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modified_module)
+    sys.modules[MODULE_TO_REPLACE] = modified_module
+    
+    print(f"--- Successfully patched '{MODULE_TO_REPLACE}' ---")
+    print(f"    Using file: {MODIFIED_FILE_PATH}")
+else:
+    print(f"--- Patching failed: File not found at {MODIFIED_FILE_PATH} ---")
+    print(f"    Falling back to system-installed '{MODULE_TO_REPLACE}'.")
 
 from ryu.base import app_manager
 from ryu.app.wsgi import ControllerBase, WSGIApplication, route
@@ -32,15 +55,13 @@ from MacToPortMapper import MacToPortMapper
 from ryu.controller import dpset
 from ryu.ofproto import ofproto_v1_0
 from ryu.ofproto import ofproto_v1_2
-from ryu.ofproto import ofproto_v1_3
 from ryu.ofproto import ofproto_v1_3_parser
 from ryu.controller import conf_switch
 from ryu.app.rest_qos import QoSController
 from ryu.app import conf_switch_key as cs_key
 
-
-PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-print(PATH)
+PATH = PROJECT_ROOT
+print(f"Project Root Path: {PATH}")
 
 class Controller(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]

@@ -236,6 +236,10 @@ Follow the instructions provided in this [link](https://www.granelli-lab.org/res
 
 1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
 2. Do `cd OD-SDN-Slicing`.
+3. Download the external libraries by running:
+<pre> ```git submodule update --init --recursive ``` </pre>
+This step is necessary because we have made custom modifications to the REST QoS component. As a result, we need to have the corresponding library cloned locally, instead of relying on the default version included upstream.
+
 
 ### How to Run
 
@@ -408,6 +412,3 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 4. Delete QoS rule (`DELETE /qos/rules/{dpid}`): Before deleting rules, use `GET` to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
 
 5. Delete queue (`DELETE /qos/queue/{dpid}` or `DELETE /qos/queue/all`): Use this command to remove the entire QoS queue configuration on a specific switch or in all switches. This should typically be done after verifying the existing configuration with `GET` commands.
-
-
-## Common Errors

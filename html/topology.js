@@ -1767,7 +1767,7 @@ async function loadQoSRules() {
 
         data.forEach(rule => {
             if(rule.qos_id !== undefined && rule.qos_id !== null && rule.qos_id !== "") {
-            }
+            
             
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -1781,6 +1781,7 @@ async function loadQoSRules() {
                 <td>${rule.queue_id}</td>
             `;
             tbody.appendChild(row);
+            }
             
         });
     } catch (error) {

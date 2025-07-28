@@ -361,7 +361,10 @@ The GUI application provides an intuitive and user-friendly interface to manage 
 
 ### Qos Management:
 
-TODO
+<p align="center"> <img src="./images/guiDEMO_setQueue.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Set Queue: interactive configuration of switch queues for traffic prioritization</em> </p>
+
+<p align="center"> <img src="./images/guiDEMO_setQoS.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Set QoS: define quality of service rules to control bandwidth and prioritization</em> </p>
+
 
 ## CLI REST Commands Overview
 In addition to the graphical interface, the platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 

@@ -234,8 +234,17 @@ Night: During the night, it links security systems to the central database for d
 
 Follow the instructions provided in this [link](https://www.granelli-lab.org/researches/relevant-projects/comnetsemu-labs). After installation, complete the following additional steps:
 
-1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
+1. Copy and paste this command:
+```bash
+git clone git@github.com:avendramini/OD-SDN-Slicing.git
+ ```
 2. Do `cd OD-SDN-Slicing`.
+3. Download the external libraries by running:
+```bash
+git submodule update --init --recursive
+```
+This step is necessary because we have made custom modifications to the REST QoS component. As a result, we need to have the corresponding library cloned locally, instead of relying on the default version included upstream.
+
 
 ### How to Run
 
@@ -254,7 +263,10 @@ This section guides you through basic connectivity checks and bandwidth limit ve
 
 #### 1. Test Basic Connectivity (ping)  
 Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
-``` mininet> pingall ```
+
+```bash
+mininet> pingall 
+```
 
 This will show a matrix of which hosts can ping others. If rules are correct, only specific hosts should be able to communicate.
 
@@ -349,14 +361,17 @@ The GUI application provides an intuitive and user-friendly interface to manage 
 
 ### Qos Management:
 
-TODO
+<p align="center"> <img src="./images/guiDEMO_setQueue.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Set Queue: interactive configuration of switch queues for traffic prioritization</em> </p>
+
+<p align="center"> <img src="./images/guiDEMO_setQoS.gif" alt="GUI Application Demo" width="1000"/> <br/> <em> GUI Application – Set QoS: define quality of service rules to control bandwidth and prioritization</em> </p>
+
 
 ## CLI REST Commands Overview
 In addition to the graphical interface, the platform exposes a RESTful API that enables direct control of the SDN controller and network slicing logic. 
 Using simple CLI-based `curl` commands, users can perform various network operations such as changing operational modes, managing slices or configuring QoS policies on OpenFlow switches.
 
 
-### Core REST API Commands for Slice and Controller Management:
+### 1. Core REST API Commands for Slice and Controller Management:
 
 The following commands allow interaction with the controller for setting time modes, adding/removing slices and managing the forwarding logic and topology.
 
@@ -367,23 +382,39 @@ The following commands allow interaction with the controller for setting time mo
 | Add a slice               | Add a new slice with a given ID and mode                                                             | `curl -X POST http://localhost:8080/slice/add -H "Content-Type: application/json" -d '{"slice_id": "<slice_id>", "mode": "<mode>"}'`   |
 | Remove a slice            | Remove an existing slice                                                                             | `curl -X POST http://localhost:8080/slice/remove -H "Content-Type: application/json" -d '{"slice_id": "<slice_id>", "mode": "<mode>"}'`|
 | Get active slices status  | Display the status of all active slices                                                              | `curl -X GET http://localhost:8080/slices/status`                                                                         |
-| Reset forwarding map      | Reset the forwarding map based on current slice configuration                                        | `curl -X POST http://localhost:8080/reset/map -H "Content-Type: application/json" -d '{"mode": "<mode>"}'`                      |
+| Reset slices configuration      |  Disable all active slices                                        | `curl -X POST http://localhost:8080/reset/map -H "Content-Type: application/json" -d '{"mode": "<mode>"}'`                      |
 | Send full topology        | Trigger the controller to broadcast full topology to all slices                                     | `curl -X POST http://localhost:8080/topology/send`                                                                       |
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
-#### General Notes
+### Slice Parameters Reference
 
-- `<mode> = 0` → **Day**, `<mode> = 1` → **Night**  
-  This value must be correctly set when performing time-specific operations.
+This section lists the parameters used in slice and mode management API requests.
+
+#### Mode Management Parameters
+
+- **`mode`** *(integer)*: Specifies the operation mode of the system.
+  - `0` → **Day Mode**
+  - `1` → **Night Mode**
+
+  This value must be correctly set when performing time-specific actions (e.g., slice configuration or reset).  
+  It is included in requests to differentiate between modes of operation.
+
+---
+
+#### Slice Management Parameters
+
+- **`slice_id`** *(string or integer)*: Identifier of the slice being added or removed.   This is a **1-indexed** value, ranging from `1` to `13`. Each slice represents a distinct network partition or service profile.
+
+
+### General Notes
 
 - Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using: `curl -X GET http://localhost:8080/mode/get`
 
 - If you add or remove a slice in the wrong mode (e.g., adding a Day slice while in Night mode), it will not be active or behave as expected.
 
----------------------------------------
 
-### QoS CLI Commands
+###  2. QoS CLI Commands
 
 These are the available CLI commands to manage Quality of Service (QoS) configurations via the REST API. You can use these commands to retrieve queue settings, set new queues, add or delete QoS rules on your OpenFlow switches.
 
@@ -397,7 +428,54 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 | Delete QoS rule      | Delete a specific QoS rule or all rules                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
                                                     
 
-#### Notes - Order to Apply QoS CLI Commands
+
+### QoS API Parameters Reference
+
+This section lists all parameters used in the QoS API requests, along with their meaning.
+
+#### General Parameters
+
+- **`{dpid}`**: The datapath ID of the switch (e.g., `0000000000000001`).
+
+---
+
+#### Queue Configuration Parameters
+
+- **`port_name`** *(string)*: The name of the switch port where the QoS queue should be applied (e.g., `s1-eth1`).
+
+- **`type`** *(string)*: The QoS queue type (e.g., `linux-htb`).
+
+- **`max_rate`** *(string)*: Maximum bandwidth allowed on the port, in **bits per second** (e.g., `100000000` for 100 Mbps).
+
+- **`queues`** *(array)*: A list of queue definitions. Each object in the list includes:
+  - **`max_rate`** *(string)*: Maximum bandwidth for the individual queue (bps).
+  - **`min_rate`** *(string)*: Minimum guaranteed bandwidth for the queue (bps).
+
+---
+
+#### Rule Configuration Parameters
+
+- **`priority`** *(integer)*: Priority of the QoS rule. Higher values indicate higher priority.
+
+- **`match`** *(object)*: Criteria used to match traffic for the rule:
+  - **`in_port`** *(integer)*: Input port number.
+  - **`dl_type`** *(string)*: Data link type (e.g., `0x0800` for IPv4).
+  - **`nw_proto`** *(string)*: Network protocol (e.g., `TCP`, `UDP`).
+  - **`nw_dst`** *(string)*: Destination IP address or subnet (e.g., `10.0.0.1` or `10.0.0.0/24`).
+  - **`tp_dst`** *(integer)*: Transport-layer destination port (e.g., `80` for HTTP).
+
+- **`actions`** *(object)*:
+  - **`queue`** *(integer)*: The ID of the queue to which matched packets will be assigned.
+
+---
+
+#### Deletion Parameters
+
+- **`qos_id`** *(integer or string)*: ID of the QoS rule to delete, or `"all"` to delete all rules for the given switch.
+
+
+
+### Notes - Order to Apply QoS CLI Commands
 
 1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this step, QoS rules won’t have valid queues to apply.
 
@@ -408,6 +486,3 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 4. Delete QoS rule (`DELETE /qos/rules/{dpid}`): Before deleting rules, use `GET` to verify which rule IDs actually exist. You can delete single rules or all rules with `qos_id: "all"`.
 
 5. Delete queue (`DELETE /qos/queue/{dpid}` or `DELETE /qos/queue/all`): Use this command to remove the entire QoS queue configuration on a specific switch or in all switches. This should typically be done after verifying the existing configuration with `GET` commands.
-
-
-## Common Errors

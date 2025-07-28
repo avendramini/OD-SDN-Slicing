@@ -23,15 +23,15 @@ HOST_LINKS = [
     ["h1", "s1",1,4],  # DB Server
     ["h2", "s1",1,5],  # PC Admin 1
     ["h3", "s1",1,6],  # PC Admin 2
-    ["h4", "s2",1,2],  # Telecamera IP
-    ["h5", "s2",1,3],  # Server Sicurezza
-    ["h6", "s3",1,2],  # PC Negozio 1
-    ["h7", "s3",1,3],  # PC Negozio Controllo
-    ["h8", "s5",1,2],   # PC Controllo sensori
-    ["h9", "s5",1,3],   # Sensori IoT
+    ["h4", "s2",1,2],  # IP Camera
+    ["h5", "s2",1,3],  # Security Server
+    ["h6", "s3",1,2],  # Store PC 1
+    ["h7", "s3",1,3],  # Store Control PC
+    ["h8", "s5",1,2],   # Sensor Control PC
+    ["h9", "s5",1,3],   # IoT Sensors
     ["h10", "s6",1,2],  # Web Server
     ["h11", "s6",1,3],  # Wi-Fi AP
-    ["h12", "s6",1,4]   # PC controllo Wi-Fi
+    ["h12", "s6",1,4]   # Wi-Fi Control PC
 ]
 
 class Topology(Topo):

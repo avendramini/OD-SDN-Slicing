@@ -156,7 +156,7 @@ h3 {
     flex-direction: column;
 }
 
-/* QoS Panel layout - posizionato sotto la topologia */
+/* QoS Panel layout - positioned below the topology */
 .qos-panel {
     position: absolute;
     top: 680px;   
@@ -173,7 +173,7 @@ h3 {
 }
 
 .qos-panel > h2 {
-    grid-column: 1 / -1; /* Il titolo occupa tutta la larghezza */
+    grid-column: 1 / -1;
     text-align: center;
     margin-top: 0;
 }
@@ -291,7 +291,7 @@ h3 {
 .menu-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #0b5787; /* colore fisso */
+  background-color: #0b5787; 
   color: white;
   border: none;
   border-radius: 6px;
@@ -409,7 +409,7 @@ body.night-mode #tab3 + .menu-item {
 }
 
 .qos-panel > h2 {
-    grid-column: 1 / -1; /* Il titolo occupa tutta la larghezza */
+    grid-column: 1 / -1; 
     margin-top: 0;
 }
 

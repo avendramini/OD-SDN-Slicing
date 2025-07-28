@@ -101,7 +101,7 @@ if __name__ == "__main__":
     net.start()
 
     setOpenFlow13(net)
-    applyQosRules(net)
+    #applyQosRules(net)
 
     CLI(net)
     net.stop()

@@ -409,6 +409,53 @@ These are the available CLI commands to manage Quality of Service (QoS) configur
 | Delete QoS rule      | Delete a specific QoS rule or all rules                                     | `curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": {qos_id}}'`<br>`curl -X DELETE http://localhost:8080/qos/rules/{dpid} -H "Content-Type: application/json" -d '{"qos_id": "all"}'`                                                             |
                                                     
 
+
+### QoS API Parameters Reference
+
+This section lists all parameters used in the QoS API requests, along with their meaning.
+
+#### General Parameters
+
+- **`{dpid}`**: The datapath ID of the switch (e.g., `0000000000000001`).
+
+---
+
+#### Queue Configuration Parameters
+
+- **`port_name`** *(string)*: The name of the switch port where the QoS queue should be applied (e.g., `s1-eth1`).
+
+- **`type`** *(string)*: The QoS queue type (e.g., `linux-htb`).
+
+- **`max_rate`** *(string)*: Maximum bandwidth allowed on the port, in **bits per second** (e.g., `100000000` for 100 Mbps).
+
+- **`queues`** *(array)*: A list of queue definitions. Each object in the list includes:
+  - **`max_rate`** *(string)*: Maximum bandwidth for the individual queue (bps).
+  - **`min_rate`** *(string)*: Minimum guaranteed bandwidth for the queue (bps).
+
+---
+
+#### Rule Configuration Parameters
+
+- **`priority`** *(integer)*: Priority of the QoS rule. Higher values indicate higher priority.
+
+- **`match`** *(object)*: Criteria used to match traffic for the rule:
+  - **`in_port`** *(integer)*: Input port number.
+  - **`dl_type`** *(string)*: Data link type (e.g., `0x0800` for IPv4).
+  - **`nw_proto`** *(string)*: Network protocol (e.g., `TCP`, `UDP`).
+  - **`nw_dst`** *(string)*: Destination IP address or subnet (e.g., `10.0.0.1` or `10.0.0.0/24`).
+  - **`tp_dst`** *(integer)*: Transport-layer destination port (e.g., `80` for HTTP).
+
+- **`actions`** *(object)*:
+  - **`queue`** *(integer)*: The ID of the queue to which matched packets will be assigned.
+
+---
+
+#### Deletion Parameters
+
+- **`qos_id`** *(integer or string)*: ID of the QoS rule to delete, or `"all"` to delete all rules for the given switch.
+
+
+
 #### Notes - Order to Apply QoS CLI Commands
 
 1. Set Queue (`POST /qos/queue/{dpid}`): First, configure the QoS queue on the target switch and port. Without this step, QoS rules won’t have valid queues to apply.

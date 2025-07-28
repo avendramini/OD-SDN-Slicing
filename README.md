@@ -8,7 +8,7 @@
 
 
 > **Authors:** Alberto Vendramini, Giorgia Gabardi, Nicolò Marconi                                                         
-> **Course:** Softwarized and virtualized network                                                                            
+> **Course:** Softwarized and virtualized mobile networks                                                                           
 > **Institution:** University of Trento  
 > **Academic Year:** 2024–2025
 
@@ -47,7 +47,7 @@
 
 ## Project Idea
 
-The project simulates a smart, software-defined network for a modern zoo — a complex environment with diverse operational needs. The network integrates multiple functional zones such as administration, animal care, retail, security and visitor services.
+The project simulates a smart, software-defined network for a modern zoo, a complex environment with diverse operational needs. The network integrates multiple functional zones such as administration, animal care, retail, security and visitor services.
 
 Using SDN and network slicing, the system dynamically adapts to different scenarios:
 

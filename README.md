@@ -384,10 +384,28 @@ The following commands allow interaction with the controller for setting time mo
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
-#### General Notes
+#### Slice & Mode Control API — Parameters Reference
 
-- `<mode> = 0` → **Day**, `<mode> = 1` → **Night**  
-  This value must be correctly set when performing time-specific operations.
+This section lists the parameters used in slice and mode management API requests.
+
+### Mode Management Parameters
+
+- **`mode`** *(integer)*: Specifies the operation mode of the system.
+  - `0` → **Day Mode**
+  - `1` → **Night Mode**
+
+  This value must be correctly set when performing time-specific actions (e.g., slice configuration or reset).  
+  It is included in requests to differentiate between modes of operation.
+
+---
+
+### Slice Management Parameters
+
+- **`slice_id`** *(string or integer)*: Identifier of the slice being added or removed.   This is a **1-indexed** value, ranging from `1` to `13`. Each slice represents a distinct network partition or service profile.
+
+------------------
+
+#### General Notes
 
 - Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using: `curl -X GET http://localhost:8080/mode/get`
 
@@ -455,6 +473,7 @@ This section lists all parameters used in the QoS API requests, along with their
 - **`qos_id`** *(integer or string)*: ID of the QoS rule to delete, or `"all"` to delete all rules for the given switch.
 
 
+---
 
 #### Notes - Order to Apply QoS CLI Commands
 

@@ -260,7 +260,10 @@ This section guides you through basic connectivity checks and bandwidth limit ve
 
 #### 1. Test Basic Connectivity (ping)  
 Use this to verify which hosts can reach each other, according to your slicing and QoS rules.
-``` mininet> pingall ```
+
+```bash
+mininet> pingall 
+```
 
 This will show a matrix of which hosts can ping others. If rules are correct, only specific hosts should be able to communicate.
 

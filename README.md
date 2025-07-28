@@ -234,7 +234,10 @@ Night: During the night, it links security systems to the central database for d
 
 Follow the instructions provided in this [link](https://www.granelli-lab.org/researches/relevant-projects/comnetsemu-labs). After installation, complete the following additional steps:
 
-1. Copy and paste this command: `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
+1. Copy and paste this command:
+```bash
+ `git clone git@github.com:avendramini/OD-SDN-Slicing.git`.
+ ```
 2. Do `cd OD-SDN-Slicing`.
 3. Download the external libraries by running:
 ```bash

@@ -384,11 +384,11 @@ The following commands allow interaction with the controller for setting time mo
 | Access static file (HTML) | Access the web server for serving frontend files (e.g. GUI)                                          | `curl http://localhost:8080/index.html`                                                                                   |
 
 
-#### Slice & Mode Control API — Parameters Reference
+### Slice Parameters Reference
 
 This section lists the parameters used in slice and mode management API requests.
 
-### Mode Management Parameters
+#### Mode Management Parameters
 
 - **`mode`** *(integer)*: Specifies the operation mode of the system.
   - `0` → **Day Mode**
@@ -399,13 +399,13 @@ This section lists the parameters used in slice and mode management API requests
 
 ---
 
-### Slice Management Parameters
+#### Slice Management Parameters
 
 - **`slice_id`** *(string or integer)*: Identifier of the slice being added or removed.   This is a **1-indexed** value, ranging from `1` to `13`. Each slice represents a distinct network partition or service profile.
 
 ------------------
 
-#### General Notes
+### General Notes
 
 - Before performing operations like **adding or removing slices**, ensure the controller is set to the appropriate time mode using: `curl -X GET http://localhost:8080/mode/get`
 
